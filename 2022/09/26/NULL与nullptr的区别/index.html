@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 5.4.2">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.13.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12},"copycode":{"enable":true,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="问题引入之前刷力扣题的时候，就注意到了平常我使用的NULL的地方在CPP题解里大多是已nullptr的形式出现，但因为做题目时，并没有感觉到二者的巨大区别，所以没有细想，但今天又碰到了，于是我决定一探究竟。 强类型语言与弱类型语言在理解两者区别的时候，我们先来认识一下什么是强类型语言和弱类型语言。 强类型语言中，一旦某一个变量被定义了类型，则如果不经过强制类型转换就无法改变类型，并且一个对象从属的">
+<meta property="og:type" content="article">
+<meta property="og:title" content="NULL与nullptr的区别">
+<meta property="og:url" content="http://example.com/2022/09/26/NULL%E4%B8%8Enullptr%E7%9A%84%E5%8C%BA%E5%88%AB/index.html">
+<meta property="og:site_name" content="Gray&#39;s Blog">
+<meta property="og:description" content="问题引入之前刷力扣题的时候，就注意到了平常我使用的NULL的地方在CPP题解里大多是已nullptr的形式出现，但因为做题目时，并没有感觉到二者的巨大区别，所以没有细想，但今天又碰到了，于是我决定一探究竟。 强类型语言与弱类型语言在理解两者区别的时候，我们先来认识一下什么是强类型语言和弱类型语言。 强类型语言中，一旦某一个变量被定义了类型，则如果不经过强制类型转换就无法改变类型，并且一个对象从属的">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://cdn.jsdelivr.net/gh/graywenhui/blogImage@main/img/image-20220927204313213.png">
+<meta property="article:published_time" content="2022-09-26T04:27:15.000Z">
+<meta property="article:modified_time" content="2022-09-28T08:07:59.196Z">
+<meta property="article:author" content="Wang Wenhui">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/graywenhui/blogImage@main/img/image-20220927204313213.png">
+
+
+<link rel="canonical" href="http://example.com/2022/09/26/NULL%E4%B8%8Enullptr%E7%9A%84%E5%8C%BA%E5%88%AB/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2022/09/26/NULL%E4%B8%8Enullptr%E7%9A%84%E5%8C%BA%E5%88%AB/","path":"2022/09/26/NULL与nullptr的区别/","title":"NULL与nullptr的区别"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>NULL与nullptr的区别 | Gray's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Gray's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E5%BC%95%E5%85%A5"><span class="nav-number">1.</span> <span class="nav-text">问题引入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%BA%E7%B1%BB%E5%9E%8B%E8%AF%AD%E8%A8%80%E4%B8%8E%E5%BC%B1%E7%B1%BB%E5%9E%8B%E8%AF%AD%E8%A8%80"><span class="nav-number">2.</span> <span class="nav-text">强类型语言与弱类型语言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#NULL%E4%B8%8Enullptr%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">3.</span> <span class="nav-text">NULL与nullptr的区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">5.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Wang Wenhui</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">11</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/09/26/NULL%E4%B8%8Enullptr%E7%9A%84%E5%8C%BA%E5%88%AB/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Wang Wenhui">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Gray's Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="NULL与nullptr的区别 | Gray's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          NULL与nullptr的区别
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-09-26 12:27:15" itemprop="dateCreated datePublished" datetime="2022-09-26T12:27:15+08:00">2022-09-26</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-09-28 16:07:59" itemprop="dateModified" datetime="2022-09-28T16:07:59+08:00">2022-09-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/CPP/" itemprop="url" rel="index"><span itemprop="name">CPP</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+	<div>
+		
+			<div>
+	
+		<div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+	
+</div>
+		
+	</div>
+    <div class="post-body" itemprop="articleBody">
+        <h2 id="问题引入"><a href="#问题引入" class="headerlink" title="问题引入"></a>问题引入</h2><p>之前刷力扣题的时候，就注意到了平常我使用的NULL的地方在CPP题解里大多是已nullptr的形式出现，但因为做题目时，并没有感觉到二者的巨大区别，所以没有细想，但今天又碰到了，于是我决定一探究竟。</p>
+<h2 id="强类型语言与弱类型语言"><a href="#强类型语言与弱类型语言" class="headerlink" title="强类型语言与弱类型语言"></a>强类型语言与弱类型语言</h2><p>在理解两者区别的时候，我们先来认识一下什么是<em>强类型语言</em>和<em>弱类型语言</em>。</p>
+<p>强类型语言中，一旦某一个变量被定义了类型，则如果不经过<em>强制类型转换</em>就无法改变类型，并且一个对象从属的类型必须在编译时刻能够被确定。</p>
+<p>弱类型语言则与强类型语言相反，弱类型语言中，一个变量可以根据环境变化自动进行<em>隐式转换</em>就可以改变数据类型。</p>
+<h2 id="NULL与nullptr的区别"><a href="#NULL与nullptr的区别" class="headerlink" title="NULL与nullptr的区别"></a>NULL与nullptr的区别</h2><p>在C语言中，NULL通常被定义为**#define NULL ((void*)0)<strong>，即NULL实际上是一个空指针，在C语言中</strong>NULL**被赋给任意一个类型的指针时，发生隐式转换，变成该类型的空指针。</p>
+<p>而C++中，NULL的定义是这样的**#define NULL 0*<em>，因为C++不能将void</em>类型的指针隐式转换成其他类型的指针，所以引入了0表示空指针。</p>
+<p>这样做会带来一个问题，那就是如果有函数重载的情况那么结果可能会与我们目标不同。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/graywenhui/blogImage@main/img/image-20220927204313213.png" alt="image-20220927204313213"></p>
+<p>于是为了解决这样的问题，C++11引入了<strong>nullptr</strong>这个<strong>关键字</strong>，在任何地方都代表空指针。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>省流：在C++中能用nullptr的时候我们还是尽量用nullptr吧！</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/yutongqing/p/6508327.html#:~:text=%E5%AF%B9%E4%BA%8EC%2FC%2B%2B%E7%9A%84%E5%BC%80%E5%8F%91%E8%80%85%E8%80%8C%E8%A8%80%EF%BC%8C%E6%97%A9%E5%B7%B2%E4%B9%A0%E6%83%AF%E4%BA%86%E4%BD%BF%E7%94%A8NULL%EF%BC%8C%E8%BF%99%E4%B8%AA%E7%94%A8%E6%9D%A5%E8%A1%A8%E7%A4%BA%E7%A9%BA%E6%8C%87%E9%92%88%E7%9A%84%E5%AE%8F%E3%80%82,%E4%B8%80%E7%9B%B4%E7%9F%A5%E9%81%93%E5%AE%83%E6%98%AF%E4%B8%80%E4%B8%AA%E5%AE%8F%E5%AE%9A%E4%B9%89%EF%BC%8C%E5%85%B6%E5%AE%9E%E8%B4%A8%E5%B0%B1%E6%98%AF0%EF%BC%8C%E8%A1%A8%E7%A4%BA%E4%B8%8D%E6%8C%87%E5%90%91%E4%BB%BB%E4%BD%95%E5%86%85%E5%AD%98%E5%9C%B0%E5%9D%80%E7%9A%84%E7%A9%BA%E6%8C%87%E9%92%88%EF%BC%8C%E4%BD%86%E5%8D%B4%E6%B2%A1%E5%81%9A%E4%BB%BB%E4%BD%95%E6%B7%B1%E5%85%A5%E6%80%9D%E8%80%83%E3%80%82">关于C&#x2F;C++中的NULL - 重复啦 - 博客园 (cnblogs.com)</a></p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/62570358">什么是强类型语言，什么是弱类型语言，为什么python也是强类型语言。 - 知乎 (zhihu.com)</a></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/09/23/%E5%9B%BE%E5%BD%A2%E5%AD%A6%E5%88%86%E4%BA%AB-1/" rel="prev" title="图形学分享(1)">
+                  <i class="fa fa-chevron-left"></i> 图形学分享(1)
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/10/04/myGreedySnake/" rel="next" title="myGreedySnake">
+                  myGreedySnake <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Wang Wenhui</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"model":"wanko","bottom":-30,"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>
