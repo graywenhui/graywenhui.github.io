@@ -20,29 +20,27 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.13.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12},"copycode":{"enable":true,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
 
-    <meta name="description" content="问题引入之前刷力扣题的时候，就注意到了平常我使用的NULL的地方在CPP题解里大多是已nullptr的形式出现，但因为做题目时，并没有感觉到二者的巨大区别，所以没有细想，但今天又碰到了，于是我决定一探究竟。 强类型语言与弱类型语言在理解两者区别的时候，我们先来认识一下什么是强类型语言和弱类型语言。 强类型语言中，一旦某一个变量被定义了类型，则如果不经过强制类型转换就无法改变类型，并且一个对象从属的">
+    <meta name="description" content="之前每次涉及安装语言环境的时候，配好环境后，在cmd里能验证安装好，但在vscode里却识别不了命令，解决方案无非是在vscode的json里改改内容之类（大概？），今天又遇到这个问题，网上搜索得知解决方案是vscode里的powershell终端更新最新的路径变量。即在终端里输入: 1$env:Path &#x3D; [System.Environment]::GetEnvironmentVariable">
 <meta property="og:type" content="article">
-<meta property="og:title" content="NULL与nullptr的区别">
-<meta property="og:url" content="http://example.com/2022/09/26/NULL%E4%B8%8Enullptr%E7%9A%84%E5%8C%BA%E5%88%AB/index.html">
+<meta property="og:title" content="vscode终端加载最新路径变量">
+<meta property="og:url" content="http://example.com/2023/01/14/vscode%E7%BB%88%E7%AB%AF%E5%8A%A0%E8%BD%BD%E6%9C%80%E6%96%B0%E8%B7%AF%E5%BE%84%E5%8F%98%E9%87%8F/index.html">
 <meta property="og:site_name" content="Gray&#39;s Blog">
-<meta property="og:description" content="问题引入之前刷力扣题的时候，就注意到了平常我使用的NULL的地方在CPP题解里大多是已nullptr的形式出现，但因为做题目时，并没有感觉到二者的巨大区别，所以没有细想，但今天又碰到了，于是我决定一探究竟。 强类型语言与弱类型语言在理解两者区别的时候，我们先来认识一下什么是强类型语言和弱类型语言。 强类型语言中，一旦某一个变量被定义了类型，则如果不经过强制类型转换就无法改变类型，并且一个对象从属的">
+<meta property="og:description" content="之前每次涉及安装语言环境的时候，配好环境后，在cmd里能验证安装好，但在vscode里却识别不了命令，解决方案无非是在vscode的json里改改内容之类（大概？），今天又遇到这个问题，网上搜索得知解决方案是vscode里的powershell终端更新最新的路径变量。即在终端里输入: 1$env:Path &#x3D; [System.Environment]::GetEnvironmentVariable">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://cdn.jsdelivr.net/gh/graywenhui/blogImage@main/img/image-20220927204313213.png">
-<meta property="article:published_time" content="2022-09-26T04:27:15.000Z">
-<meta property="article:modified_time" content="2022-09-28T08:07:59.196Z">
+<meta property="article:published_time" content="2023-01-14T07:08:45.000Z">
+<meta property="article:modified_time" content="2023-01-14T13:26:50.186Z">
 <meta property="article:author" content="Wang Wenhui">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/graywenhui/blogImage@main/img/image-20220927204313213.png">
 
 
-<link rel="canonical" href="http://example.com/2022/09/26/NULL%E4%B8%8Enullptr%E7%9A%84%E5%8C%BA%E5%88%AB/">
+<link rel="canonical" href="http://example.com/2023/01/14/vscode%E7%BB%88%E7%AB%AF%E5%8A%A0%E8%BD%BD%E6%9C%80%E6%96%B0%E8%B7%AF%E5%BE%84%E5%8F%98%E9%87%8F/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2022/09/26/NULL%E4%B8%8Enullptr%E7%9A%84%E5%8C%BA%E5%88%AB/","path":"2022/09/26/NULL与nullptr的区别/","title":"NULL与nullptr的区别"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2023/01/14/vscode%E7%BB%88%E7%AB%AF%E5%8A%A0%E8%BD%BD%E6%9C%80%E6%96%B0%E8%B7%AF%E5%BE%84%E5%8F%98%E9%87%8F/","path":"2023/01/14/vscode终端加载最新路径变量/","title":"vscode终端加载最新路径变量"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>NULL与nullptr的区别 | Gray's Blog</title>
+<title>vscode终端加载最新路径变量 | Gray's Blog</title>
   
 
 
@@ -106,7 +104,7 @@
 
   <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+    <div class="sidebar-inner sidebar-overview-active">
       <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           文章目录
@@ -119,7 +117,6 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E5%BC%95%E5%85%A5"><span class="nav-number">1.</span> <span class="nav-text">问题引入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%BA%E7%B1%BB%E5%9E%8B%E8%AF%AD%E8%A8%80%E4%B8%8E%E5%BC%B1%E7%B1%BB%E5%9E%8B%E8%AF%AD%E8%A8%80"><span class="nav-number">2.</span> <span class="nav-text">强类型语言与弱类型语言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#NULL%E4%B8%8Enullptr%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">3.</span> <span class="nav-text">NULL与nullptr的区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">5.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -182,7 +179,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2022/09/26/NULL%E4%B8%8Enullptr%E7%9A%84%E5%8C%BA%E5%88%AB/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/01/14/vscode%E7%BB%88%E7%AB%AF%E5%8A%A0%E8%BD%BD%E6%9C%80%E6%96%B0%E8%B7%AF%E5%BE%84%E5%8F%98%E9%87%8F/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -195,12 +192,12 @@
     </span>
 
     <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="NULL与nullptr的区别 | Gray's Blog">
+      <meta itemprop="name" content="vscode终端加载最新路径变量 | Gray's Blog">
       <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          NULL与nullptr的区别
+          vscode终端加载最新路径变量
         </h1>
 
         <div class="post-meta-container">
@@ -210,15 +207,9 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
+      
 
-      <time title="创建时间：2022-09-26 12:27:15" itemprop="dateCreated datePublished" datetime="2022-09-26T12:27:15+08:00">2022-09-26</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-09-28 16:07:59" itemprop="dateModified" datetime="2022-09-28T16:07:59+08:00">2022-09-28</time>
+      <time title="创建时间：2023-01-14 15:08:45 / 修改时间：21:26:50" itemprop="dateCreated datePublished" datetime="2023-01-14T15:08:45+08:00">2023-01-14</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -226,7 +217,7 @@
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/CPP/" itemprop="url" rel="index"><span itemprop="name">CPP</span></a>
+          <a href="/categories/vscode/" itemprop="url" rel="index"><span itemprop="name">vscode</span></a>
         </span>
     </span>
 
@@ -249,18 +240,11 @@
 		
 	</div>
     <div class="post-body" itemprop="articleBody">
-        <h2 id="问题引入"><a href="#问题引入" class="headerlink" title="问题引入"></a>问题引入</h2><p>之前刷力扣题的时候，就注意到了平常我使用的NULL的地方在CPP题解里大多是已nullptr的形式出现，但因为做题目时，并没有感觉到二者的巨大区别，所以没有细想，但今天又碰到了，于是我决定一探究竟。</p>
-<h2 id="强类型语言与弱类型语言"><a href="#强类型语言与弱类型语言" class="headerlink" title="强类型语言与弱类型语言"></a>强类型语言与弱类型语言</h2><p>在理解两者区别的时候，我们先来认识一下什么是<em>强类型语言</em>和<em>弱类型语言</em>。</p>
-<p>强类型语言中，一旦某一个变量被定义了类型，则如果不经过<em>强制类型转换</em>就无法改变类型，并且一个对象从属的类型必须在编译时刻能够被确定。</p>
-<p>弱类型语言则与强类型语言相反，弱类型语言中，一个变量可以根据环境变化自动进行<em>隐式转换</em>就可以改变数据类型。</p>
-<h2 id="NULL与nullptr的区别"><a href="#NULL与nullptr的区别" class="headerlink" title="NULL与nullptr的区别"></a>NULL与nullptr的区别</h2><p>在C语言中，NULL通常被定义为**#define NULL ((void*)0)<strong>，即NULL实际上是一个空指针，在C语言中</strong>NULL**被赋给任意一个类型的指针时，发生隐式转换，变成该类型的空指针。</p>
-<p>而C++中，NULL的定义是这样的**#define NULL 0*<em>，因为C++不能将void</em>类型的指针隐式转换成其他类型的指针，所以引入了0表示空指针。</p>
-<p>这样做会带来一个问题，那就是如果有函数重载的情况那么结果可能会与我们目标不同。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/graywenhui/blogImage@main/img/image-20220927204313213.png" alt="image-20220927204313213"></p>
-<p>于是为了解决这样的问题，C++11引入了<strong>nullptr</strong>这个<strong>关键字</strong>，在任何地方都代表空指针。</p>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>省流：在C++中能用nullptr的时候我们还是尽量用nullptr吧！</p>
-<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/yutongqing/p/6508327.html#:~:text=%E5%AF%B9%E4%BA%8EC%2FC%2B%2B%E7%9A%84%E5%BC%80%E5%8F%91%E8%80%85%E8%80%8C%E8%A8%80%EF%BC%8C%E6%97%A9%E5%B7%B2%E4%B9%A0%E6%83%AF%E4%BA%86%E4%BD%BF%E7%94%A8NULL%EF%BC%8C%E8%BF%99%E4%B8%AA%E7%94%A8%E6%9D%A5%E8%A1%A8%E7%A4%BA%E7%A9%BA%E6%8C%87%E9%92%88%E7%9A%84%E5%AE%8F%E3%80%82,%E4%B8%80%E7%9B%B4%E7%9F%A5%E9%81%93%E5%AE%83%E6%98%AF%E4%B8%80%E4%B8%AA%E5%AE%8F%E5%AE%9A%E4%B9%89%EF%BC%8C%E5%85%B6%E5%AE%9E%E8%B4%A8%E5%B0%B1%E6%98%AF0%EF%BC%8C%E8%A1%A8%E7%A4%BA%E4%B8%8D%E6%8C%87%E5%90%91%E4%BB%BB%E4%BD%95%E5%86%85%E5%AD%98%E5%9C%B0%E5%9D%80%E7%9A%84%E7%A9%BA%E6%8C%87%E9%92%88%EF%BC%8C%E4%BD%86%E5%8D%B4%E6%B2%A1%E5%81%9A%E4%BB%BB%E4%BD%95%E6%B7%B1%E5%85%A5%E6%80%9D%E8%80%83%E3%80%82">关于C&#x2F;C++中的NULL - 重复啦 - 博客园 (cnblogs.com)</a></p>
-<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/62570358">什么是强类型语言，什么是弱类型语言，为什么python也是强类型语言。 - 知乎 (zhihu.com)</a></p>
+        <p>之前每次涉及安装语言环境的时候，配好环境后，在cmd里能验证安装好，但在vscode里却识别不了命令，解决方案无非是在vscode的json里改改内容之类（大概？），今天又遇到这个问题，网上搜索得知解决方案是vscode里的powershell终端更新最新的路径变量。<br>即在终端里输入:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$env:Path = [System.Environment]::GetEnvironmentVariable(&quot;Path&quot;,&quot;Machine&quot;)</span><br></pre></td></tr></table></figure>
+
+<p>就可以使当前的PowerShell实例从计算机加载最新的路径变量，问题就解决了。<br>不过是否所有涉及到环境变量的问题都可以这样解决还待验证。</p>
+<p>参考：<a target="_blank" rel="noopener" href="https://juejin.cn/post/7037772997322604551">Go常见问题（一）Visual Studio Code 无法识别 go 指令 - 掘金 (juejin.cn)</a></p>
 
     </div>
 
@@ -274,13 +258,13 @@
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/2022/09/23/%E5%9B%BE%E5%BD%A2%E5%AD%A6%E5%88%86%E4%BA%AB-1/" rel="prev" title="图形学分享(1)">
-                  <i class="fa fa-chevron-left"></i> 图形学分享(1)
+                <a href="/2022/12/24/%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3/" rel="prev" title="滑动窗口">
+                  <i class="fa fa-chevron-left"></i> 滑动窗口
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/2022/10/04/myGreedySnake/" rel="next" title="myGreedySnake">
-                  myGreedySnake <i class="fa fa-chevron-right"></i>
+                <a href="/2023/01/15/go%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%95/" rel="next" title="go基础语法">
+                  go基础语法 <i class="fa fa-chevron-right"></i>
                 </a>
             </div>
           </div>
