@@ -125,7 +125,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-count">18</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -174,6 +174,118 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/01/16/go%E6%B5%8B%E8%AF%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Wang Wenhui">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Gray's Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Gray's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2023/01/16/go%E6%B5%8B%E8%AF%95/" class="post-title-link" itemprop="url">Go测试</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2023-01-16 22:41:12 / 修改时间：23:24:35" itemprop="dateCreated datePublished" datetime="2023-01-16T22:41:12+08:00">2023-01-16</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/go/" itemprop="url" rel="index"><span itemprop="name">go</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+	<div>
+		
+	</div>
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="重点内容"><a href="#重点内容" class="headerlink" title="重点内容"></a>重点内容</h1><ol>
+<li>单元测试</li>
+<li>Mock测试</li>
+<li>基准测试</li>
+<li>需求设计</li>
+<li>代码开发</li>
+<li>测试运行</li>
+</ol>
+<h1 id="详细知识点"><a href="#详细知识点" class="headerlink" title="详细知识点"></a>详细知识点</h1><h2 id="单元测试"><a href="#单元测试" class="headerlink" title="单元测试"></a>单元测试</h2><p><em><strong>规则:</strong></em></p>
+<ol>
+<li><p>所有测试文件以_test.go结尾</p>
+</li>
+<li><p>测试函数 func TestXxx(*testing.T)</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">TestPublishPost</span><span class="params">(t *testing.T)</span></span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>初始化逻辑放到TestMain中</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">TestMain</span><span class="params">(m *testing.M)</span></span>&#123;</span><br><span class="line">    <span class="comment">//测试前：数据装载、配置初始化等前置工作</span></span><br><span class="line">    code := m.Run()</span><br><span class="line">    <span class="comment">//测试后：释放资源等收尾工作</span></span><br><span class="line">    </span><br><span class="line">    os.Exit(code)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ol>
+<p>代码覆盖率：验证代码的完备性，一般50%~60%，较高80%</p>
+<h2 id="Mock"><a href="#Mock" class="headerlink" title="Mock"></a>Mock</h2><p>常用的一个mock开源包 monkey：<a target="_blank" rel="noopener" href="https://github.com/bouk/monkey">https://github.com/bouk/monkey</a></p>
+<p>实现不对file文件的强依赖？可以不再依赖本地文件</p>
+<h2 id="基准测试"><a href="#基准测试" class="headerlink" title="基准测试"></a>基准测试</h2><p>对代码进行<strong>性能分析</strong></p>
+<p>· 优化代码，需要对当前代码分析</p>
+<p>· 内置的测试框架提供了基准测试的能力</p>
+<p>例子：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
     <link itemprop="mainEntityOfPage" href="http://example.com/2023/01/16/Go%E8%BF%9B%E9%98%B6/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -202,8 +314,18 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
+      
 
-      <time title="创建时间：2023-01-16 17:06:17" itemprop="dateCreated datePublished" datetime="2023-01-16T17:06:17+08:00">2023-01-16</time>
+      <time title="创建时间：2023-01-16 17:06:17 / 修改时间：22:49:23" itemprop="dateCreated datePublished" datetime="2023-01-16T17:06:17+08:00">2023-01-16</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/go/" itemprop="url" rel="index"><span itemprop="name">go</span></a>
+        </span>
     </span>
 
   
@@ -219,7 +341,52 @@
 		
 	</div>
     <div class="post-body" itemprop="articleBody">
-          
+          <h1 id="重点内容"><a href="#重点内容" class="headerlink" title="重点内容"></a>重点内容</h1><ol>
+<li><p>语言进阶<br>从并发编程的视角了解Go高性能的本质</p>
+</li>
+<li><p>依赖管理<br>了解依赖管理的演进路线</p>
+</li>
+<li><p>测试</p>
+</li>
+<li><p>项目实战<br>通过项目需求、需求拆解、逻辑设计、代码实现感受真实开发</p>
+</li>
+</ol>
+<h1 id="详细知识点"><a href="#详细知识点" class="headerlink" title="详细知识点"></a>详细知识点</h1><h2 id="并发和并行"><a href="#并发和并行" class="headerlink" title="并发和并行"></a>并发和并行</h2><p><em><strong>并发：</strong></em>多线程程序在单核cpu上运行<br><em><strong>并行：</strong></em>多线程程序在多核cpu上运行</p>
+<h3 id="Goroutine"><a href="#Goroutine" class="headerlink" title="Goroutine"></a>Goroutine</h3><p><em><strong>协程：</strong></em>用户态，轻量级线程，栈KB级别<br><em><strong>线程：</strong></em>内核态，线程跑多个协程，栈MB级别<br>go能跑上万个协程</p>
+<p>创建协程：在函数前加 go 关键字,示例：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="CSP-协程间通信"><a href="#CSP-协程间通信" class="headerlink" title="CSP(协程间通信)"></a>CSP(协程间通信)</h3><p>提倡通过<em><strong>通信共享内存</strong></em>而不是通过共享内存实现通信<br>前者需要<strong>通道</strong>，后者需要获取临界区权限，容易发生数据静态，影响性能</p>
+<h3 id="Channel"><a href="#Channel" class="headerlink" title="Channel"></a>Channel</h3><p>创建方式：make(chan 元素类型，[缓冲大小])</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">make</span>(<span class="keyword">chan</span> <span class="type">int</span>) 		<span class="comment">//无缓冲通道</span></span><br><span class="line"><span class="built_in">make</span>(<span class="keyword">chan</span> <span class="type">int</span>,<span class="number">2</span>)	<span class="comment">//有缓冲通道</span></span><br></pre></td></tr></table></figure>
+
+<p>无缓冲：发送的Gorountine和接受的Gorountine同步化，也被称为同步通道</p>
+<p>有缓冲：可以解决同步问题，通道中缓冲满了发送方无法再发送，直到缓冲有空间</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">CalSquare</span><span class="params">()</span></span>&#123;</span><br><span class="line">    src := <span class="built_in">make</span>(<span class="keyword">chan</span> )</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="并发安全Lock"><a href="#并发安全Lock" class="headerlink" title="并发安全Lock"></a>并发安全Lock</h3><p>不加锁可能导致不同进程操作同一块内存，通过Sync完成</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="依赖管理"><a href="#依赖管理" class="headerlink" title="依赖管理"></a>依赖管理</h2><p>三要素：</p>
+<ol>
+<li>配置文件，描述依赖	go.mod 			（类似于CMAKE、makefile？）</li>
+<li>中心仓库管理依赖库    Proxy</li>
+<li>本地工具				       go get&#x2F;mod</li>
+</ol>
+<h3 id="go-mod"><a href="#go-mod" class="headerlink" title="go.mod"></a>go.mod</h3><h3 id="Proxy"><a href="#Proxy" class="headerlink" title="Proxy"></a>Proxy</h3><p>优点：稳定可靠</p>
+<p>GOPROXY&#x3D;”<a target="_blank" rel="noopener" href="https://proxy1.cn,https//proxy2.cn,direct%E2%80%9C">https://proxy1.cn,https://proxy2.cn,direct“</a> ”“内为服务站点url列表，direct表示源站 按顺序</p>
+<h3 id="go-get-x2F-mod"><a href="#go-get-x2F-mod" class="headerlink" title="go get&#x2F;mod"></a>go get&#x2F;mod</h3><p>命令go get example.org&#x2F;pkg </p>
+<ol>
+<li>@update 默认添加</li>
+<li>@none 删除依赖</li>
+<li>@v1.1.2 tag版本，语义版本</li>
+<li>@23dfdd5 特定的commit</li>
+<li>@master 分支最新的commit</li>
+</ol>
+<h4 id="GOPATH-不重要"><a href="#GOPATH-不重要" class="headerlink" title="GOPATH(不重要)"></a>GOPATH(不重要)</h4><p>·环境变量 $GOPATH<br>·项目代码直接依赖src<br>·go get 下载最新版本的包到src目录下</p>
+<p>若A、B两个项目依赖于某一pkg的不同版本：无法实现pkg的<em><strong>多版本控制</strong></em></p>
+<h4 id="Go-Vendor"><a href="#Go-Vendor" class="headerlink" title="Go Vendor"></a>Go Vendor</h4><h4 id="Go-Module"><a href="#Go-Module" class="headerlink" title="Go Module"></a>Go Module</h4><p>· 通过go.mod文件管理依赖包版本<br>· 通过go get&#x2F;go mod指令工具管理依赖包</p>
+
       
     </div>
 
@@ -1078,103 +1245,6 @@
 <li>缺点：实现稍微复杂，其它缺点没有想到。</li>
 </ul>
 <h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p>掘金楼仔的文章(<a target="_blank" rel="noopener" href="https://juejin.cn/post/7145435951899574302">https://juejin.cn/post/7145435951899574302</a>)</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2022/11/21/CPP%E4%B8%AD%E7%9A%84%E6%8C%87%E9%92%88%E5%8F%82%E6%95%B0%E4%BC%A0%E9%80%92%E5%92%8C%E5%BC%95%E7%94%A8%E5%8F%82%E6%95%B0%E4%BC%A0%E9%80%92/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Wang Wenhui">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Gray's Blog">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Gray's Blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/11/21/CPP%E4%B8%AD%E7%9A%84%E6%8C%87%E9%92%88%E5%8F%82%E6%95%B0%E4%BC%A0%E9%80%92%E5%92%8C%E5%BC%95%E7%94%A8%E5%8F%82%E6%95%B0%E4%BC%A0%E9%80%92/" class="post-title-link" itemprop="url">CPP中的指针参数传递和引用参数传递</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2022-11-21 22:43:01" itemprop="dateCreated datePublished" datetime="2022-11-21T22:43:01+08:00">2022-11-21</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-12-20 02:24:23" itemprop="dateModified" datetime="2022-12-20T02:24:23+08:00">2022-12-20</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/CPP/" itemprop="url" rel="index"><span itemprop="name">CPP</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-	<div>
-		
-	</div>
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="指针参数传递"><a href="#指针参数传递" class="headerlink" title="指针参数传递"></a>指针参数传递</h1><p>指针参数传递本质上还是值传递，它和其他值传递一样，传递的也只是一个地址值。只不过能通过改变指针指向地址的值从而改变函数外实参的值。<br>参考代码：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="type">void</span> <span class="title function_">fun1</span><span class="params">(<span class="type">int</span> * p)</span></span><br><span class="line">&#123;</span><br><span class="line">    (*p)++;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;fun1函数中(*p)++后*p的值\n%d\n&quot;</span>,*p);</span><br><span class="line">    <span class="type">int</span> a = <span class="number">20</span>;</span><br><span class="line">    p = &amp;a;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;p指向新地址后p的值\n%d\n&quot;</span>,p);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">int</span> a = <span class="number">1</span>;</span><br><span class="line">    <span class="type">int</span> * p = &amp;a;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;初始化后p的值和*p的值\n%d\n&quot;</span>,p);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%d\n&quot;</span>,*p);</span><br><span class="line">    fun1(p);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;fun1运行后p的值和*p的值\n%d\n&quot;</span>,p);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%d\n&quot;</span>,*p);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>从下图中可以看出，改变指针本身的值，函数内p的值改变了，但函数外p的值没有改变。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/graywenhui/blogImage@main/img/image-20221121224719471.png" alt="image-20221121224719471"></p>
-<h1 id="引用参数传递"><a href="#引用参数传递" class="headerlink" title="引用参数传递"></a>引用参数传递</h1><p>引⽤参数传递和指针参数传递是不同的。</p>
-<p>虽然二者都是在被调函数栈空间上的⼀个局部变量，但是任何对于引⽤参数的处理<br>都会通过⼀个间接寻址的⽅式操作到主调函数中的相关变量。⽽对于指针传递的参数，如果改变被调函数中的指针<br>地址，它将应⽤不到主调函数的相关变量。如果想通过指针参数传递来改变主调函数中的相关变量（地址），那就得使⽤指向指针的指针或者指针引⽤。</p>
-<p>引用的实质其实是<em><strong>指针常量</strong></em>。</p>
-<h1 id="编译角度"><a href="#编译角度" class="headerlink" title="编译角度"></a>编译角度</h1><p>从编译的⻆度来讲，程序在编译时分别将指针和引⽤添加到符号表上，符号表中记录的是变量名及变量所对应地址。指针变量在符号表上对应的地址值为<strong>指针变量的地址值</strong>，⽽引⽤在符号表上对应的地址值为<strong>引用对象的地址值</strong>（与实参名字不同，地址相同）。符号表⽣成之后就不会再改，因此指针可以改变其指向的对象（指针变量中的值可以改），⽽引⽤对象则不能修改。</p>
-<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p>这篇博客用反汇编的方式很清楚的显示出传引用和传指针的区别<a target="_blank" rel="noopener" href="https://blog.csdn.net/K346K346/article/details/46805159">(41条消息) C++ 引用的本质_恋喵大鲤鱼的博客-CSDN博客_c++引用的本质</a></p>
 
       
     </div>

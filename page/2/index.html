@@ -125,7 +125,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-count">18</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -165,6 +165,103 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/11/21/CPP%E4%B8%AD%E7%9A%84%E6%8C%87%E9%92%88%E5%8F%82%E6%95%B0%E4%BC%A0%E9%80%92%E5%92%8C%E5%BC%95%E7%94%A8%E5%8F%82%E6%95%B0%E4%BC%A0%E9%80%92/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Wang Wenhui">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Gray's Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Gray's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2022/11/21/CPP%E4%B8%AD%E7%9A%84%E6%8C%87%E9%92%88%E5%8F%82%E6%95%B0%E4%BC%A0%E9%80%92%E5%92%8C%E5%BC%95%E7%94%A8%E5%8F%82%E6%95%B0%E4%BC%A0%E9%80%92/" class="post-title-link" itemprop="url">CPP中的指针参数传递和引用参数传递</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-11-21 22:43:01" itemprop="dateCreated datePublished" datetime="2022-11-21T22:43:01+08:00">2022-11-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-12-20 02:24:23" itemprop="dateModified" datetime="2022-12-20T02:24:23+08:00">2022-12-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/CPP/" itemprop="url" rel="index"><span itemprop="name">CPP</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+	<div>
+		
+	</div>
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="指针参数传递"><a href="#指针参数传递" class="headerlink" title="指针参数传递"></a>指针参数传递</h1><p>指针参数传递本质上还是值传递，它和其他值传递一样，传递的也只是一个地址值。只不过能通过改变指针指向地址的值从而改变函数外实参的值。<br>参考代码：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="type">void</span> <span class="title function_">fun1</span><span class="params">(<span class="type">int</span> * p)</span></span><br><span class="line">&#123;</span><br><span class="line">    (*p)++;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;fun1函数中(*p)++后*p的值\n%d\n&quot;</span>,*p);</span><br><span class="line">    <span class="type">int</span> a = <span class="number">20</span>;</span><br><span class="line">    p = &amp;a;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;p指向新地址后p的值\n%d\n&quot;</span>,p);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">int</span> a = <span class="number">1</span>;</span><br><span class="line">    <span class="type">int</span> * p = &amp;a;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;初始化后p的值和*p的值\n%d\n&quot;</span>,p);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%d\n&quot;</span>,*p);</span><br><span class="line">    fun1(p);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;fun1运行后p的值和*p的值\n%d\n&quot;</span>,p);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%d\n&quot;</span>,*p);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>从下图中可以看出，改变指针本身的值，函数内p的值改变了，但函数外p的值没有改变。</p>
+<p><img src="https://cdn.jsdelivr.net/gh/graywenhui/blogImage@main/img/image-20221121224719471.png" alt="image-20221121224719471"></p>
+<h1 id="引用参数传递"><a href="#引用参数传递" class="headerlink" title="引用参数传递"></a>引用参数传递</h1><p>引⽤参数传递和指针参数传递是不同的。</p>
+<p>虽然二者都是在被调函数栈空间上的⼀个局部变量，但是任何对于引⽤参数的处理<br>都会通过⼀个间接寻址的⽅式操作到主调函数中的相关变量。⽽对于指针传递的参数，如果改变被调函数中的指针<br>地址，它将应⽤不到主调函数的相关变量。如果想通过指针参数传递来改变主调函数中的相关变量（地址），那就得使⽤指向指针的指针或者指针引⽤。</p>
+<p>引用的实质其实是<em><strong>指针常量</strong></em>。</p>
+<h1 id="编译角度"><a href="#编译角度" class="headerlink" title="编译角度"></a>编译角度</h1><p>从编译的⻆度来讲，程序在编译时分别将指针和引⽤添加到符号表上，符号表中记录的是变量名及变量所对应地址。指针变量在符号表上对应的地址值为<strong>指针变量的地址值</strong>，⽽引⽤在符号表上对应的地址值为<strong>引用对象的地址值</strong>（与实参名字不同，地址相同）。符号表⽣成之后就不会再改，因此指针可以改变其指向的对象（指针变量中的值可以改），⽽引⽤对象则不能修改。</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p>这篇博客用反汇编的方式很清楚的显示出传引用和传指针的区别<a target="_blank" rel="noopener" href="https://blog.csdn.net/K346K346/article/details/46805159">(41条消息) C++ 引用的本质_恋喵大鲤鱼的博客-CSDN博客_c++引用的本质</a></p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
