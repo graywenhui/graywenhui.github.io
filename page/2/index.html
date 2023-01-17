@@ -125,7 +125,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">18</span>
+          <span class="site-state-item-count">19</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -165,6 +165,147 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/12/19/%E9%AB%98%E5%B9%B6%E5%8F%91%E5%B8%B8%E8%A7%81%E9%99%90%E6%B5%81%E6%96%B9%E5%BC%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Wang Wenhui">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Gray's Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Gray's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2022/12/19/%E9%AB%98%E5%B9%B6%E5%8F%91%E5%B8%B8%E8%A7%81%E9%99%90%E6%B5%81%E6%96%B9%E5%BC%8F/" class="post-title-link" itemprop="url">高并发常见限流方式</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2022-12-19 20:11:05 / 修改时间：21:38:30" itemprop="dateCreated datePublished" datetime="2022-12-19T20:11:05+08:00">2022-12-19</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E8%AE%A1%E7%BD%91/" itemprop="url" rel="index"><span itemprop="name">计网</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+	<div>
+		
+	</div>
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="常见限流方式（仅包含单机限流）"><a href="#常见限流方式（仅包含单机限流）" class="headerlink" title="常见限流方式（仅包含单机限流）"></a>常见限流方式（仅包含单机限流）</h1><h2 id="计数器"><a href="#计数器" class="headerlink" title="计数器"></a>计数器</h2><p><em><strong>原理</strong></em>：在一段时间间隔内，对请求进行计数，与阀值进行比较判断是否需要限流，一旦到了时间临界点，将计数器清零。</p>
+<p><em><strong>程序执行逻辑</strong></em>：</p>
+<ul>
+<li>在程序中设置一个变量 count，每接收一个请求就将count +1，同时记录请求时间。</li>
+<li>当下一个请求来的时候判断 count 的计数值是否超过设定的频次，以及当前请求的时间和第一次请求时间是否在 1 分钟内。（如果设定为n次&#x2F;min的话）</li>
+<li>如果在 1 分钟内并且超过设定的频次则说明请求过多，后面的请求就拒绝掉。</li>
+<li>如果该请求与第一个请求的间隔时间大于计数周期，且 count 值还在限流范围内，就重置 count。</li>
+</ul>
+<p><em><strong>缺陷</strong></em>：没有很好处理单位时间的边界。</p>
+<p>如下图，如果有个需求对于某个接口 &#x2F;query 每分钟最多允许访问 200 次，假设有个用户在第 59 秒的最后几毫秒瞬间发送 200 个请求，当 59 秒结束后 Counter 清零了，他在下一秒的时候又发送 200 个请求。那么在 1 秒钟内这个用户发送了 2 倍的请求，这个是符合设计逻辑的，这也是计数器方法的设计缺陷，系统可能会承受恶意用户的大量请求，甚至击穿系统。</p>
+<p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7ba261bc04c7442b8d93d6c159b7a992~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp" alt="img"></p>
+<h2 id="滑动窗口"><a href="#滑动窗口" class="headerlink" title="滑动窗口"></a>滑动窗口</h2><p>滑动窗口是针对计数器存在的临界点缺陷，所谓滑动窗口（Sliding window）是一种流量控制技术，这个词出现在 TCP 协议中。滑动窗口把固定时间片进行划分，并且随着时间的流逝，进行移动，固定数量的可以移动的格子，进行计数并判断阀值。</p>
+<p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/5755d987c19740f1a693f7db5294e2a1~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp" alt="img"></p>
+<p>上图中我们用红色的虚线代表一个时间窗口（一分钟），每个时间窗口有 6 个格子，每个格子是 10 秒钟。每过 10 秒钟时间窗口向右移动一格，可以看红色箭头的方向。我们为每个格子都设置一个独立的计数器 Counter，假如一个请求在 0:45 访问了那么我们将第五个格子的计数器 +1（也是就是 0:40~0:50），在判断限流的时候需要把所有格子的计数加起来和设定的频次进行比较即可。</p>
+<p>如何解决计数器的设计缺陷：</p>
+<p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/fde74d994f12411087e6f3c3f4417b66~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp" alt="img"></p>
+<p>当用户在 0:59 秒钟发送了 200 个请求就会被第六个格子的计数器记录 +200，当下一秒的时候时间窗口向右移动了一个，此时计数器已经记录了该用户发送的 200 个请求，所以再发送的话就会触发限流，则拒绝新的请求。</p>
+<p>其实计数器就是一个格子的滑动窗口，所以想让限流做的更精确只需要划分更多的格子就可以了，为了更精确我们也不知道到底该设置多少个格子，<strong>格子的数量影响着滑动窗口算法的精度，依然有时间片的概念，无法根本解决临界点问题。</strong></p>
+<h2 id="漏桶"><a href="#漏桶" class="headerlink" title="漏桶"></a>漏桶</h2><p><em><strong>原理</strong></em>：一个固定容量的漏桶，按照固定速率流出水滴。</p>
+<p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4af9ff00cab84a4fa622cd8e2a279f56~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp" alt="img"></p>
+<p>一个固定容量的桶，有水流进来，也有水流出去。对于流进来的水来说，我们无法预计一共有多少水会流进来，也无法预计水流的速度。但是对于流出去的水来说，这个桶可以固定水流出的速率（处理速度），从而达到流量整形和流量控制的效果。</p>
+<p><em><strong>特点</strong></em>：</p>
+<ul>
+<li>漏桶具有固定容量，出水速率是固定常量（流出请求）</li>
+<li>如果桶是空的，则不流出水滴</li>
+<li>可以以任意速率流入水滴到漏桶（流入请求）</li>
+<li>如果流入水滴超出了桶的容量，则流入的水滴溢出（新请求被拒绝）</li>
+</ul>
+<p>漏桶限制的是常量流出速率（即流出速率是一个固定常量值），<strong>所以最大的速率就是出水的速率，不能出现突发流量。</strong></p>
+<h2 id="令牌桶"><a href="#令牌桶" class="headerlink" title="令牌桶"></a>令牌桶</h2><p>令牌桶算法（Token Bucket）是网络流量整形（Traffic Shaping）和速率限制（Rate Limiting）中最常使用的一种算法。典型情况下，令牌桶算法用来控制发送到网络上的数据的数目，并允许突发数据的发送。</p>
+<p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/68b7fe323e9e4fe0a83eb14897f018ba~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp" alt="img"></p>
+<p>我们有一个固定的桶，桶里存放着令牌（token）。一开始桶是空的，系统按固定的时间（rate）往桶里添加令牌，直到桶里的令牌数满，多余的添加令牌请求会被丢弃。当请求来的时候，从桶里移除一个令牌，如果桶是空的则拒绝请求或者阻塞。</p>
+<p><em><strong>特点</strong></em>：</p>
+<ul>
+<li>令牌按固定的速率被放入令牌桶中</li>
+<li>桶中最多存放 B 个令牌，当桶满时，新添加的令牌被丢弃或拒绝</li>
+<li>如果桶中的令牌不足 N 个，则不会删除令牌，且请求将被限流（丢弃或阻塞等待）</li>
+</ul>
+<p><strong>令牌桶限制的是平均流入速率</strong>（允许突发请求，只要有令牌就可以处理，支持一次拿3个令牌，4个令牌…），<strong>并允许一定程度突发流量，所以也是非常常用的限流算法。</strong></p>
+<h1 id="限流对比"><a href="#限流对比" class="headerlink" title="限流对比"></a>限流对比</h1><p><strong>计数器：</strong></p>
+<ul>
+<li>优点：固定时间段计数，实现简单，适用不太精准的场景；</li>
+<li>缺点：对边界没有很好处理，导致限流不能精准控制。</li>
+</ul>
+<p><strong>滑动窗口：</strong></p>
+<ul>
+<li>优点：将固定时间段分块，时间比“计数器”复杂，适用于稍微精准的场景；</li>
+<li>缺点：实现稍微复杂，还是不能彻底解决“计数器”存在的边界问题。</li>
+</ul>
+<p><strong>漏桶：</strong></p>
+<ul>
+<li>优点：可以很好的控制消费频率；</li>
+<li>缺点：实现稍微复杂，单位时间内，不能多消费，感觉不太灵活。</li>
+</ul>
+<p><strong>令牌桶：</strong></p>
+<ul>
+<li>优点：可以解决“漏桶”不能灵活消费的问题，又能避免过渡消费，强烈推荐；</li>
+<li>缺点：实现稍微复杂，其它缺点没有想到。</li>
+</ul>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p>掘金楼仔的文章(<a target="_blank" rel="noopener" href="https://juejin.cn/post/7145435951899574302">https://juejin.cn/post/7145435951899574302</a>)</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 

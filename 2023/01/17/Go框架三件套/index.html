@@ -20,31 +20,27 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.13.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12},"copycode":{"enable":true,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
 
-    <meta name="description" content="看完了Lecture 05 Rasterization 1 (Triangles)_哔哩哔哩_bilibiliGAMES101前四节课，完成了作业0的内容，还是比较简单的，这里简答的打卡一下。   （仅作打卡记录，无知识分享）">
+    <meta name="description" content="重点内容 三件套介绍 三件套使用 实战案例  详细知识点Gormhttps:&#x2F;&#x2F;github.com&#x2F;go-gorm&#x2F;gorm Gorm是迭代10年+的ORM框架 基本使用定义gorm model 123456789type Product struct &amp;#123;    Code string    Price uint&amp;#125;&#x2F;&#x2F;为model定义表名func (p Product) Ta">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Games101作业打卡">
-<meta property="og:url" content="http://example.com/2022/09/22/Games101%E4%BD%9C%E4%B8%9A%E6%89%93%E5%8D%A1/index.html">
+<meta property="og:title" content="Go框架三件套">
+<meta property="og:url" content="http://example.com/2023/01/17/Go%E6%A1%86%E6%9E%B6%E4%B8%89%E4%BB%B6%E5%A5%97/index.html">
 <meta property="og:site_name" content="Gray&#39;s Blog">
-<meta property="og:description" content="看完了Lecture 05 Rasterization 1 (Triangles)_哔哩哔哩_bilibiliGAMES101前四节课，完成了作业0的内容，还是比较简单的，这里简答的打卡一下。   （仅作打卡记录，无知识分享）">
+<meta property="og:description" content="重点内容 三件套介绍 三件套使用 实战案例  详细知识点Gormhttps:&#x2F;&#x2F;github.com&#x2F;go-gorm&#x2F;gorm Gorm是迭代10年+的ORM框架 基本使用定义gorm model 123456789type Product struct &amp;#123;    Code string    Price uint&amp;#125;&#x2F;&#x2F;为model定义表名func (p Product) Ta">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://cdn.jsdelivr.net/gh/graywenhui/blogImage@main/img/image-20220922233549116.png">
-<meta property="og:image" content="https://cdn.jsdelivr.net/gh/graywenhui/blogImage@main/img/image-20220922233627011.png">
-<meta property="article:published_time" content="2022-09-22T15:31:08.000Z">
-<meta property="article:modified_time" content="2022-09-22T15:37:11.409Z">
+<meta property="article:published_time" content="2023-01-17T01:40:01.000Z">
+<meta property="article:modified_time" content="2023-01-17T08:32:31.766Z">
 <meta property="article:author" content="Wang Wenhui">
-<meta property="article:tag" content="打卡">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://cdn.jsdelivr.net/gh/graywenhui/blogImage@main/img/image-20220922233549116.png">
 
 
-<link rel="canonical" href="http://example.com/2022/09/22/Games101%E4%BD%9C%E4%B8%9A%E6%89%93%E5%8D%A1/">
+<link rel="canonical" href="http://example.com/2023/01/17/Go%E6%A1%86%E6%9E%B6%E4%B8%89%E4%BB%B6%E5%A5%97/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2022/09/22/Games101%E4%BD%9C%E4%B8%9A%E6%89%93%E5%8D%A1/","path":"2022/09/22/Games101作业打卡/","title":"Games101作业打卡"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2023/01/17/Go%E6%A1%86%E6%9E%B6%E4%B8%89%E4%BB%B6%E5%A5%97/","path":"2023/01/17/Go框架三件套/","title":"Go框架三件套"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>Games101作业打卡 | Gray's Blog</title>
+<title>Go框架三件套 | Gray's Blog</title>
   
 
 
@@ -108,7 +104,7 @@
 
   <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-overview-active">
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
       <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           文章目录
@@ -121,6 +117,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%87%8D%E7%82%B9%E5%86%85%E5%AE%B9"><span class="nav-number">1.</span> <span class="nav-text">重点内容</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%AF%A6%E7%BB%86%E7%9F%A5%E8%AF%86%E7%82%B9"><span class="nav-number">2.</span> <span class="nav-text">详细知识点</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Gorm"><span class="nav-number">2.1.</span> <span class="nav-text">Gorm</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8"><span class="nav-number">2.1.1.</span> <span class="nav-text">基本使用</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Kitex"><span class="nav-number">2.2.</span> <span class="nav-text">Kitex</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Hertz"><span class="nav-number">2.3.</span> <span class="nav-text">Hertz</span></a></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -183,7 +180,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2022/09/22/Games101%E4%BD%9C%E4%B8%9A%E6%89%93%E5%8D%A1/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/01/17/Go%E6%A1%86%E6%9E%B6%E4%B8%89%E4%BB%B6%E5%A5%97/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -196,12 +193,12 @@
     </span>
 
     <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="Games101作业打卡 | Gray's Blog">
+      <meta itemprop="name" content="Go框架三件套 | Gray's Blog">
       <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Games101作业打卡
+          Go框架三件套
         </h1>
 
         <div class="post-meta-container">
@@ -213,7 +210,7 @@
       <span class="post-meta-item-text">发表于</span>
       
 
-      <time title="创建时间：2022-09-22 23:31:08 / 修改时间：23:37:11" itemprop="dateCreated datePublished" datetime="2022-09-22T23:31:08+08:00">2022-09-22</time>
+      <time title="创建时间：2023-01-17 09:40:01 / 修改时间：16:32:31" itemprop="dateCreated datePublished" datetime="2023-01-17T09:40:01+08:00">2023-01-17</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -221,7 +218,7 @@
       </span>
       <span class="post-meta-item-text">分类于</span>
         <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9B%BE%E5%BD%A2%E5%AD%A6/" itemprop="url" rel="index"><span itemprop="name">计算机图形学</span></a>
+          <a href="/categories/go/" itemprop="url" rel="index"><span itemprop="name">go</span></a>
         </span>
     </span>
 
@@ -244,10 +241,26 @@
 		
 	</div>
     <div class="post-body" itemprop="articleBody">
-        <p>看完了<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV1X7411F744?p=5&vd_source=776e896fb8ef55a50d8d39299a6eecca">Lecture 05 Rasterization 1 (Triangles)_哔哩哔哩_bilibili</a>GAMES101前四节课，完成了作业0的内容，还是比较简单的，这里简答的打卡一下。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/graywenhui/blogImage@main/img/image-20220922233549116.png" alt="image-20220922233549116"></p>
-<p><img src="https://cdn.jsdelivr.net/gh/graywenhui/blogImage@main/img/image-20220922233627011.png" alt="image-20220922233627011"></p>
-<p>（仅作打卡记录，无知识分享）</p>
+        <h1 id="重点内容"><a href="#重点内容" class="headerlink" title="重点内容"></a>重点内容</h1><ol>
+<li>三件套介绍</li>
+<li>三件套使用</li>
+<li>实战案例</li>
+</ol>
+<h1 id="详细知识点"><a href="#详细知识点" class="headerlink" title="详细知识点"></a>详细知识点</h1><h2 id="Gorm"><a href="#Gorm" class="headerlink" title="Gorm"></a>Gorm</h2><p><a target="_blank" rel="noopener" href="https://github.com/go-gorm/gorm">https://github.com/go-gorm/gorm</a></p>
+<p>Gorm是迭代10年+的ORM框架</p>
+<h3 id="基本使用"><a href="#基本使用" class="headerlink" title="基本使用"></a>基本使用</h3><p>定义gorm model</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Product <span class="keyword">struct</span> &#123;</span><br><span class="line">    Code <span class="type">string</span></span><br><span class="line">    Price <span class="type">uint</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//为model定义表名</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p Product)</span></span> TableName() <span class="type">string</span> &#123;  </span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;product&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>几个约定：</p>
+<ol>
+<li>默认ID为主键</li>
+</ol>
+<h2 id="Kitex"><a href="#Kitex" class="headerlink" title="Kitex"></a>Kitex</h2><p><a target="_blank" rel="noopener" href="https://github.com/go-gorm/gorm">https://github.com/go-gorm/gorm</a></p>
+<p>Golang微服务RPC框架</p>
+<h2 id="Hertz"><a href="#Hertz" class="headerlink" title="Hertz"></a>Hertz</h2><p><a target="_blank" rel="noopener" href="https://github.com/go-gorm/gorm">https://github.com/go-gorm/gorm</a></p>
+<p>HTTP框架</p>
 
     </div>
 
@@ -256,19 +269,16 @@
     
 
     <footer class="post-footer">
-          <div class="post-tags">
-              <a href="/tags/%E6%89%93%E5%8D%A1/" rel="tag"># 打卡</a>
-          </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-item">
+                <a href="/2023/01/16/Go%E6%B5%8B%E8%AF%95/" rel="prev" title="Go测试">
+                  <i class="fa fa-chevron-left"></i> Go测试
+                </a>
             </div>
             <div class="post-nav-item">
-                <a href="/2022/09/23/%E5%9B%BE%E5%BD%A2%E5%AD%A6%E5%88%86%E4%BA%AB-1/" rel="next" title="图形学分享(1)">
-                  图形学分享(1) <i class="fa fa-chevron-right"></i>
-                </a>
             </div>
           </div>
     </footer>
