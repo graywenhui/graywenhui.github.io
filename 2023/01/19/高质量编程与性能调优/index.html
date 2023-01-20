@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 5.4.2">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.13.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12},"copycode":{"enable":true,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="重点内容 如何编写更简洁清晰的代码 常用Go语言程序优化手段 熟悉Go程序性能分析工具 了解工程中性能优化的原则和流程  详细知识点高质量编程要点：正确可靠、简洁清晰 · 各种边界条件是否考虑完备· 异常情况处理，稳定性保证· 易读易维护 编程原则：简单性、可读性、生产力简单：消除“多余的复杂性”、逻辑简单清晰刻度：编写可维护代码 编码规范代码格式Golang可以使用Go官方提供的工具gofmt自">
+<meta property="og:type" content="article">
+<meta property="og:title" content="高质量编程与性能调优">
+<meta property="og:url" content="http://example.com/2023/01/19/%E9%AB%98%E8%B4%A8%E9%87%8F%E7%BC%96%E7%A8%8B%E4%B8%8E%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98/index.html">
+<meta property="og:site_name" content="Gray&#39;s Blog">
+<meta property="og:description" content="重点内容 如何编写更简洁清晰的代码 常用Go语言程序优化手段 熟悉Go程序性能分析工具 了解工程中性能优化的原则和流程  详细知识点高质量编程要点：正确可靠、简洁清晰 · 各种边界条件是否考虑完备· 异常情况处理，稳定性保证· 易读易维护 编程原则：简单性、可读性、生产力简单：消除“多余的复杂性”、逻辑简单清晰刻度：编写可维护代码 编码规范代码格式Golang可以使用Go官方提供的工具gofmt自">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-01-19T07:00:44.000Z">
+<meta property="article:modified_time" content="2023-01-19T15:36:33.990Z">
+<meta property="article:author" content="Wang Wenhui">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2023/01/19/%E9%AB%98%E8%B4%A8%E9%87%8F%E7%BC%96%E7%A8%8B%E4%B8%8E%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2023/01/19/%E9%AB%98%E8%B4%A8%E9%87%8F%E7%BC%96%E7%A8%8B%E4%B8%8E%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98/","path":"2023/01/19/高质量编程与性能调优/","title":"高质量编程与性能调优"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>高质量编程与性能调优 | Gray's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Gray's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%87%8D%E7%82%B9%E5%86%85%E5%AE%B9"><span class="nav-number">1.</span> <span class="nav-text">重点内容</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%AF%A6%E7%BB%86%E7%9F%A5%E8%AF%86%E7%82%B9"><span class="nav-number">2.</span> <span class="nav-text">详细知识点</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%AB%98%E8%B4%A8%E9%87%8F%E7%BC%96%E7%A8%8B"><span class="nav-number">2.1.</span> <span class="nav-text">高质量编程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%96%E7%A0%81%E8%A7%84%E8%8C%83"><span class="nav-number">2.1.1.</span> <span class="nav-text">编码规范</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E6%A0%BC%E5%BC%8F"><span class="nav-number">2.1.1.1.</span> <span class="nav-text">代码格式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B3%A8%E9%87%8A"><span class="nav-number">2.1.1.2.</span> <span class="nav-text">注释</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%91%BD%E5%90%8D%E8%A7%84%E8%8C%83"><span class="nav-number">2.1.1.3.</span> <span class="nav-text">命名规范</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8F%98%E9%87%8Fvariable"><span class="nav-number">2.1.1.3.1.</span> <span class="nav-text">变量variable</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%87%BD%E6%95%B0function"><span class="nav-number">2.1.1.3.2.</span> <span class="nav-text">函数function</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#%E5%8C%85package"><span class="nav-number">2.1.1.3.3.</span> <span class="nav-text">包package</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8E%A7%E5%88%B6%E6%B5%81%E7%A8%8B"><span class="nav-number">2.1.1.4.</span> <span class="nav-text">控制流程</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%94%99%E8%AF%AF%E5%92%8C%E5%BC%82%E5%B8%B8%E5%A4%84%E7%90%86"><span class="nav-number">2.1.2.</span> <span class="nav-text">错误和异常处理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AE%80%E5%8D%95%E9%94%99%E8%AF%AF"><span class="nav-number">2.1.2.1.</span> <span class="nav-text">简单错误</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%94%99%E8%AF%AF%E7%9A%84Wrap%E5%92%8CUnWrap%EF%BC%88%E5%8C%85%E8%A3%85%E5%92%8C%E8%A7%A3%E5%8C%85%EF%BC%89"><span class="nav-number">2.1.2.2.</span> <span class="nav-text">错误的Wrap和UnWrap（包装和解包）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%94%99%E8%AF%AF%E5%88%A4%E5%AE%9A"><span class="nav-number">2.1.2.3.</span> <span class="nav-text">错误判定</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#panic"><span class="nav-number">2.1.2.4.</span> <span class="nav-text">panic</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#recover"><span class="nav-number">2.1.2.5.</span> <span class="nav-text">recover</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96"><span class="nav-number">2.2.</span> <span class="nav-text">性能优化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Benchmark"><span class="nav-number">2.2.1.</span> <span class="nav-text">Benchmark</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Slice"><span class="nav-number">2.2.2.</span> <span class="nav-text">Slice</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Map"><span class="nav-number">2.2.3.</span> <span class="nav-text">Map</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%A4%84%E7%90%86"><span class="nav-number">2.2.4.</span> <span class="nav-text">字符串处理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A9%BA%E7%BB%93%E6%9E%84%E4%BD%93"><span class="nav-number">2.2.5.</span> <span class="nav-text">空结构体</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#atomic%E5%8C%85"><span class="nav-number">2.2.6.</span> <span class="nav-text">atomic包</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Wang Wenhui</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">22</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/01/19/%E9%AB%98%E8%B4%A8%E9%87%8F%E7%BC%96%E7%A8%8B%E4%B8%8E%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Wang Wenhui">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Gray's Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="高质量编程与性能调优 | Gray's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          高质量编程与性能调优
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2023-01-19 15:00:44 / 修改时间：23:36:33" itemprop="dateCreated datePublished" datetime="2023-01-19T15:00:44+08:00">2023-01-19</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/go/" itemprop="url" rel="index"><span itemprop="name">go</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+	<div>
+		
+			<div>
+	
+		<div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+	
+</div>
+		
+	</div>
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="重点内容"><a href="#重点内容" class="headerlink" title="重点内容"></a>重点内容</h1><ol>
+<li>如何编写更简洁清晰的代码</li>
+<li>常用Go语言程序优化手段</li>
+<li>熟悉Go程序性能分析工具</li>
+<li>了解工程中性能优化的原则和流程</li>
+</ol>
+<h1 id="详细知识点"><a href="#详细知识点" class="headerlink" title="详细知识点"></a>详细知识点</h1><h2 id="高质量编程"><a href="#高质量编程" class="headerlink" title="高质量编程"></a>高质量编程</h2><p><em><strong>要点：</strong></em>正确可靠、简洁清晰</p>
+<p>· 各种边界条件是否考虑完备<br>· 异常情况处理，稳定性保证<br>· 易读易维护</p>
+<p><em><strong>编程原则：</strong></em>简单性、可读性、生产力<br>简单：消除“多余的复杂性”、逻辑简单清晰<br>刻度：编写可维护代码</p>
+<h3 id="编码规范"><a href="#编码规范" class="headerlink" title="编码规范"></a>编码规范</h3><h4 id="代码格式"><a href="#代码格式" class="headerlink" title="代码格式"></a>代码格式</h4><p>Golang可以使用Go官方提供的工具gofmt自动格式化代码，也可以使用goimports(gofmt+依赖包管理)</p>
+<p>我觉得这种有官方一键整理代码格式的功能挺好的，有的时候写的快，可能哪里敲了空格但代码里没有，格式就会不舒服，一键格式化后就不用花更多时间关注格式问题了</p>
+<h4 id="注释"><a href="#注释" class="headerlink" title="注释"></a>注释</h4><ol>
+<li>注释应该解释代码	作用</li>
+<li>​                                   如何做的</li>
+<li>​                                   实现的原因</li>
+<li>​                                   什么情况会出错</li>
+</ol>
+<p>1：适合注释公共符号<br>2：适合注释代码实现过程<br>3：适合解释代码的外部因素，提供额外上下文<br>4：适合解释代码的限制条件</p>
+<p>公共符号始终要注释！</p>
+<p>这里我看下来的感受是注释还是用英文吧，因为看视频里的例子全是英文注释，个人用不同IDE时，如果是两种编码规则中文注释就会乱码，英文就不会出现这个情况了。</p>
+<h4 id="命名规范"><a href="#命名规范" class="headerlink" title="命名规范"></a>命名规范</h4><h5 id="变量variable"><a href="#变量variable" class="headerlink" title="变量variable"></a>变量variable</h5><p>简洁胜于冗长<br>缩略词全大写、当位于变量开头且不需导出时小写<br>    使用ServeHTTP而不是ServeHttp<br>    使用XMLHTTPRequest或xmlHTTPRequest<br>变量距离被使用的地方越远，则需要携带越多的上下文信息<br>    全局变量名字中需要更多上下文信息</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//Good</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Client)</span></span> send(req *Request, deadline time.Time)</span><br><span class="line"></span><br><span class="line"><span class="comment">//Bad</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Client)</span></span> send(req *Request, t time.Time)</span><br></pre></td></tr></table></figure>
+
+<p>这个例子可以很明显看出deadline做参数名比t做参数名含义更明显</p>
+<h5 id="函数function"><a href="#函数function" class="headerlink" title="函数function"></a>函数function</h5><p>函数名不携带包名的上下文信息，因为包名和函数名总是成对出现的<br>函数名尽量简短<br>名为foo的包某个函数返回类型Foo时，可以省略类型信息而不导致歧义	返回其他类型时可以加入类型信息</p>
+<p>http包中创建服务函数如何命名？：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Serve</span><span class="params">(I net.Listener, handler Handler)</span></span> <span class="type">error</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">ServeHTTP</span><span class="params">(I net.Listener, handler Handler)</span></span> <span class="type">error</span></span><br></pre></td></tr></table></figure>
+
+<p>因为是http包中的函数，调用时会http.Serve，所以再加HTTP就会很多余</p>
+<h5 id="包package"><a href="#包package" class="headerlink" title="包package"></a>包package</h5><p>只由小写字母组成，不包含大写字母和下划线等字符<br>简短并包含一定的上下文信息。<br>不要与标准库同名。如不用strings</p>
+<p>对Golang包的理解不是很深刻，这部分后面继续理解</p>
+<h4 id="控制流程"><a href="#控制流程" class="headerlink" title="控制流程"></a>控制流程</h4><p>1、避免嵌套，保持流程清晰</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//Bad</span></span><br><span class="line"><span class="keyword">if</span> foo &#123;</span><br><span class="line">    <span class="keyword">return</span> x</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//Good</span></span><br><span class="line"><span class="keyword">if</span> foo &#123;</span><br><span class="line">    <span class="keyword">return</span> x</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">return</span> <span class="literal">nil</span></span><br></pre></td></tr></table></figure>
+
+<p>这个例子中，两个分支都包含return语句，可以去除冗余的else。这个错误处理中比较常见，前几节课看到的代码中基本都是这样的处理</p>
+<p>2、尽量保证正常代码路径为最小缩进，即优先处理错误情况&#x2F;特殊情况，尽早返回或继续循环减少嵌套</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//Bad </span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">OneFunc</span><span class="params">()</span></span> &#123;</span><br><span class="line">    err := doSomething()</span><br><span class="line">    <span class="keyword">if</span> err == <span class="literal">nil</span> &#123;</span><br><span class="line">        err := doAnotherThing()</span><br><span class="line">        <span class="keyword">if</span> err == <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">nil</span> <span class="comment">// normal case</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> err</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//Good</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">OneFunc</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> err := doSomething(); err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> err</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> err := doAnotherThing(); err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> err </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">nil</span> <span class="comment">// normal case </span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里可以很清楚的看到两段代码的功能是一样的，但是下面的比上面的要简洁清晰的多</p>
+<p>简单来说，正常情况放最后，先处理特殊情况和异常情况</p>
+<h3 id="错误和异常处理"><a href="#错误和异常处理" class="headerlink" title="错误和异常处理"></a>错误和异常处理</h3><h4 id="简单错误"><a href="#简单错误" class="headerlink" title="简单错误"></a>简单错误</h4><p>指仅出现一次的错误，在其他地方不需要捕获该错误<br>优先使用errors.New来创建匿名变量直接表示简单错误<br>如果有格式化的需求，使用fmt.Errorf</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">defaultCheckRedirect</span><span class="params">(req *Request, via []*Request)</span></span> <span class="type">error</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(via) &gt;= <span class="number">10</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> errors.New(<span class="string">&quot;stopped after 10 redirects&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="错误的Wrap和UnWrap（包装和解包）"><a href="#错误的Wrap和UnWrap（包装和解包）" class="headerlink" title="错误的Wrap和UnWrap（包装和解包）"></a>错误的Wrap和UnWrap（包装和解包）</h4><p>wrap提供一个error嵌套另一个error的能力，从而生成error的跟踪链<br>在fmt.Errorf中使用：%w关键字来将一个错误关联至错误链中</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">list, _, err := c.GetBytes(cache.Subkey(a.actionID, <span class="string">&quot;srcfiles&quot;</span>))</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> fmt.Errorf(<span class="string">&quot;reading srcfiles list: %w&quot;</span>, err)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里不是很理解意思，是说可以为错误信息添加上下文？<br>还是说可以把遇到的所有错误信息都输出到一起？</p>
+<h4 id="错误判定"><a href="#错误判定" class="headerlink" title="错误判定"></a>错误判定</h4><p>用 errors.Is 判断一个错误是否为特定错误<br>更可以判定错误链上的所有错误是否包含特定的错误 （比 &#x3D;&#x3D; 功能更强大）</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">data, err = lockedfile.Read(targ)</span><br><span class="line"><span class="keyword">if</span> errors.Is(err, fs.ErrNotExist) &#123;</span><br><span class="line">    <span class="keyword">return</span> []<span class="type">byte</span>&#123;&#125;, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">return</span> data, err</span><br></pre></td></tr></table></figure>
+
+
+
+<p>错误链上获取特定种类的错误：errors.As</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> _, err := os.Open(<span class="string">&quot;non-existing&quot;</span>); err != <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="keyword">var</span> pathError *fs.PathError</span><br><span class="line">    <span class="keyword">if</span> errors.As(err, &amp;pathError) &#123;</span><br><span class="line">        fmt.Println(<span class="string">&quot;Failed at path:&quot;</span>, pathError.Path) </span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        fmt.Println(err)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里意思是获取详细的错误信息？</p>
+<h4 id="panic"><a href="#panic" class="headerlink" title="panic"></a>panic</h4><p>不建议在业务代码中用panic<br>调用函数不包含recover会造成程序崩溃<br>若问题可被屏蔽或解决，使用error代替panic<br>程序启动阶段发生不可逆转的错误时，可以在init或main函数中使用panic</p>
+<h4 id="recover"><a href="#recover" class="headerlink" title="recover"></a>recover</h4><p>recover只能在被defer的函数中使用<br>嵌套无法生效<br>只在当前goroutine生效<br>defer的语句是后进先出</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s *ss)</span></span> Token(skipSpace <span class="type">bool</span>, f <span class="function"><span class="keyword">func</span><span class="params">(<span class="type">rune</span>)</span></span> <span class="type">bool</span>) (tok []<span class="type">byte</span>, err <span class="type">error</span>) &#123;</span><br><span class="line">    <span class="keyword">defer</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="keyword">if</span> e := <span class="built_in">recover</span>(); e != <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> se, ok := e.(scanError); ok &#123;</span><br><span class="line">                err = se.err</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="built_in">panic</span>(e)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;()</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果需要更多上下文信息，可以recover后在log中记录当前的调用栈  通过debug.Stack()</p>
+<p><em><strong>小结：</strong></em><br>    error尽可能提供简明的上下文信息，方便定位问题<br>    panic用于真正异常情况<br>    recover在当前goroutine的被defer的函数中生效</p>
+<h2 id="性能优化"><a href="#性能优化" class="headerlink" title="性能优化"></a>性能优化</h2><p>性能优化是综合评估，有时候时间效率和空间效率可能对立</p>
+<h3 id="Benchmark"><a href="#Benchmark" class="headerlink" title="Benchmark"></a>Benchmark</h3><p>性能表现需要实际数据衡量，Go提供了支持性能测试的benchmark工具</p>
+<h3 id="Slice"><a href="#Slice" class="headerlink" title="Slice"></a>Slice</h3><p>预分配内存<br>使用	make([]int, 0, size)	而不是	make([]int, 0)</p>
+<p>在已有切片基础上创建切片，不会创建新的底层数组<br>所以在原切片大，新切片小的情况下，可使用copy代替re-slice，这样原切片就能被释放了</p>
+<h3 id="Map"><a href="#Map" class="headerlink" title="Map"></a>Map</h3><p>同理，预分配内存</p>
+<p>向map添加元素时会触发map的扩容，提前分配内存可以减少内存拷贝和Rehash的消耗</p>
+<h3 id="字符串处理"><a href="#字符串处理" class="headerlink" title="字符串处理"></a>字符串处理</h3><p>三种字符串拼接方式：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// +</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Plus</span><span class="params">(n <span class="type">int</span>, str <span class="type">string</span>)</span></span> <span class="type">string</span> &#123;</span><br><span class="line">    s := <span class="string">&quot;&quot;</span></span><br><span class="line">    <span class="keyword">for</span> i := <span class="number">0</span>; i &lt; n; i++ &#123;</span><br><span class="line">        s += str</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> s</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//strings.Builder</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">StrBuilder</span><span class="params">(n <span class="type">int</span>, str <span class="type">string</span>)</span></span> <span class="type">string</span> &#123;</span><br><span class="line">    <span class="keyword">var</span> builder strings.Builder</span><br><span class="line">    <span class="keyword">for</span> i := <span class="number">0</span>; i &lt; n; i++ &#123;</span><br><span class="line">        builder.WriteString(str)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> builder.String()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//ByteBuffer</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">ByteBuffer</span><span class="params">(n <span class="type">int</span>, str <span class="type">string</span>)</span></span> <span class="type">string</span> &#123;</span><br><span class="line">    buf := <span class="built_in">new</span>(bytes.Buffer)</span><br><span class="line">    <span class="keyword">for</span> i := <span class="number">0</span>; i &lt; n; i++ &#123;</span><br><span class="line">        buf.WriteString(str)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> buf.String()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>+性能最差，strbuilder比起buffer会短一些，两者性能都比较好</p>
+<p>+拼接时会开辟新的空间，另两个底层都是[]byte数组</p>
+<p>strbuilder直接将底层的[]byte数组转换成了字符串，而bytebuffer转化为字符串时申请了一块空间</p>
+<p>可以在合成时先扩容，这样效率更高	使用 .Grow(n * len(str))</p>
+<h3 id="空结构体"><a href="#空结构体" class="headerlink" title="空结构体"></a>空结构体</h3><p>用空结构体struct{}作为map键值对的值，不占空间，适用于在不取map值的情况</p>
+<h3 id="atomic包"><a href="#atomic包" class="headerlink" title="atomic包"></a>atomic包</h3><p>适用于多线程编程，现在还不是特别懂，先码着？</p>
+<p>锁的实现通过OS实现，属于system call<br>atomic操作通过硬件实现，效率比锁高<br>sync.Mutex应该用来保护一段逻辑，不仅仅用于保护一个变量<br>对于非数值操作，可以使用atomic.Value，能承载一个interface{}</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/01/17/Go%E6%A1%86%E6%9E%B6%E4%B8%89%E4%BB%B6%E5%A5%97/" rel="prev" title="Go框架三件套">
+                  <i class="fa fa-chevron-left"></i> Go框架三件套
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/01/19/%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E5%B7%A5%E5%85%B7/" rel="next" title="性能分析工具">
+                  性能分析工具 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Wang Wenhui</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>
