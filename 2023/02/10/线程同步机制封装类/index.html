@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 5.4.2">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.13.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12},"copycode":{"enable":true,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="线程同步基础知识RAII全称：Resource Acquisition is Initialization 即资源获取即初始化 用类来管理资源，将资源和对象的生命周期绑定（通过构造和析构函数） 核心思想是将资源或者状态与对象的声明周期绑定，通过C++的语言机制，实现安全管理，智能指针就是最好的例子 信号量信号量是一种特殊的变量，只能取自然数值并且只支持两种操作：等待(P)和信号(V),假设有信号量">
+<meta property="og:type" content="article">
+<meta property="og:title" content="线程同步机制封装类">
+<meta property="og:url" content="http://example.com/2023/02/10/%E7%BA%BF%E7%A8%8B%E5%90%8C%E6%AD%A5%E6%9C%BA%E5%88%B6%E5%B0%81%E8%A3%85%E7%B1%BB/index.html">
+<meta property="og:site_name" content="Gray&#39;s Blog">
+<meta property="og:description" content="线程同步基础知识RAII全称：Resource Acquisition is Initialization 即资源获取即初始化 用类来管理资源，将资源和对象的生命周期绑定（通过构造和析构函数） 核心思想是将资源或者状态与对象的声明周期绑定，通过C++的语言机制，实现安全管理，智能指针就是最好的例子 信号量信号量是一种特殊的变量，只能取自然数值并且只支持两种操作：等待(P)和信号(V),假设有信号量">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-02-10T08:07:51.000Z">
+<meta property="article:modified_time" content="2023-02-10T12:35:51.700Z">
+<meta property="article:author" content="Wang Wenhui">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2023/02/10/%E7%BA%BF%E7%A8%8B%E5%90%8C%E6%AD%A5%E6%9C%BA%E5%88%B6%E5%B0%81%E8%A3%85%E7%B1%BB/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2023/02/10/%E7%BA%BF%E7%A8%8B%E5%90%8C%E6%AD%A5%E6%9C%BA%E5%88%B6%E5%B0%81%E8%A3%85%E7%B1%BB/","path":"2023/02/10/线程同步机制封装类/","title":"线程同步机制封装类"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>线程同步机制封装类 | Gray's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Gray's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E5%90%8C%E6%AD%A5"><span class="nav-number">1.</span> <span class="nav-text">线程同步</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86"><span class="nav-number">1.1.</span> <span class="nav-text">基础知识</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#RAII"><span class="nav-number">1.1.1.</span> <span class="nav-text">RAII</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%A1%E5%8F%B7%E9%87%8F"><span class="nav-number">1.1.2.</span> <span class="nav-text">信号量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%92%E6%96%A5%E9%87%8F"><span class="nav-number">1.1.3.</span> <span class="nav-text">互斥量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9D%A1%E4%BB%B6%E5%8F%98%E9%87%8F"><span class="nav-number">1.1.4.</span> <span class="nav-text">条件变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8A%9F%E8%83%BD"><span class="nav-number">1.1.5.</span> <span class="nav-text">功能</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Wang Wenhui</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">29</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/02/10/%E7%BA%BF%E7%A8%8B%E5%90%8C%E6%AD%A5%E6%9C%BA%E5%88%B6%E5%B0%81%E8%A3%85%E7%B1%BB/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Wang Wenhui">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Gray's Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="线程同步机制封装类 | Gray's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          线程同步机制封装类
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2023-02-10 16:07:51 / 修改时间：20:35:51" itemprop="dateCreated datePublished" datetime="2023-02-10T16:07:51+08:00">2023-02-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/TinyWebServer/" itemprop="url" rel="index"><span itemprop="name">TinyWebServer</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+	<div>
+		
+			<div>
+	
+		<div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+	
+</div>
+		
+	</div>
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="线程同步"><a href="#线程同步" class="headerlink" title="线程同步"></a>线程同步</h1><h2 id="基础知识"><a href="#基础知识" class="headerlink" title="基础知识"></a>基础知识</h2><h3 id="RAII"><a href="#RAII" class="headerlink" title="RAII"></a>RAII</h3><p>全称：Resource Acquisition is Initialization 即资源获取即初始化</p>
+<p>用类来管理资源，将资源和对象的生命周期绑定（通过构造和析构函数）</p>
+<p>核心思想是将资源或者状态与对象的声明周期绑定，通过C++的语言机制，实现安全管理，智能指针就是最好的例子</p>
+<h3 id="信号量"><a href="#信号量" class="headerlink" title="信号量"></a>信号量</h3><p>信号量是一种特殊的变量，只能取自然数值并且只支持两种操作：等待(P)和信号(V),假设有信号量SV，对它的P，V操作如下：<br>    P，如果SV的值大于0，则将其减一；若SV的值为0，则挂起执行<br>    V，如果有其他进程因为等待SV而挂起，则唤醒；若没有，则将SV值加一</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">sem<span class="emphasis">_init函数用于初始化一个未命名的信号量</span></span><br><span class="line"><span class="emphasis"></span></span><br><span class="line"><span class="emphasis">sem_</span>destory函数用于销毁信号量</span><br><span class="line"></span><br><span class="line">sem<span class="emphasis">_wait函数将以原子操作方式将信号量减一,信号量为0时,sem_</span>wait阻塞</span><br><span class="line"></span><br><span class="line">sem<span class="emphasis">_post函数以原子操作方式将信号量加一,信号量大于0时,唤醒调用sem_</span>post的线程</span><br></pre></td></tr></table></figure>
+
+<p>以上函数，成功返回0，失败返回errno</p>
+<h3 id="互斥量"><a href="#互斥量" class="headerlink" title="互斥量"></a>互斥量</h3><p>互斥锁，也称互斥量，可以保护关键代码段，以确保独占式访问。当进入关键代码段，获得互斥锁将其加锁；离开关键代码段，唤醒等待该互斥锁的线程</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">pthread<span class="emphasis">_mutex_</span>init函数用于初始化互斥锁</span><br><span class="line"></span><br><span class="line">pthread<span class="emphasis">_mutex_</span>destory函数用于销毁互斥锁</span><br><span class="line"></span><br><span class="line">pthread<span class="emphasis">_mutex_</span>lock函数以原子操作方式给互斥锁加锁</span><br><span class="line"></span><br><span class="line">pthread<span class="emphasis">_mutex_</span>unlock函数以原子操作方式给互斥锁解锁</span><br></pre></td></tr></table></figure>
+
+<p>以上函数，成功返回0，失败返回errno</p>
+<h3 id="条件变量"><a href="#条件变量" class="headerlink" title="条件变量"></a>条件变量</h3><p>条件变量提供了一种线程间的通知机制，当某个共享数据达到某个值时，唤醒等待这个共享数据的线程</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">pthread<span class="emphasis">_cond_</span>init函数用于初始化条件变量</span><br><span class="line"></span><br><span class="line">pthread<span class="emphasis">_cond_</span>destory函数销毁条件变量</span><br><span class="line"></span><br><span class="line">pthread<span class="emphasis">_cond_</span>broadcast函数以广播的方式唤醒所有等待目标条件变量的线程</span><br><span class="line"></span><br><span class="line">pthread<span class="emphasis">_cond_</span>wait函数用于等待目标条件变量.该函数调用时需要传入 mutex参数(加锁的互斥锁) ,函数执行时,先把调用线程放入条件变量的请求队列,然后将互斥锁mutex解锁,当函数成功返回为0时,互斥锁会再次被锁上. 也就是说函数内部会有一次解锁和加锁操作.</span><br></pre></td></tr></table></figure>
+
+<h3 id="功能"><a href="#功能" class="headerlink" title="功能"></a>功能</h3><p>锁机制：<br>    实现多线程同步，通过锁机制，确保任一时刻只能有一个线程能进入关键代码段</p>
+<p>封装：<br>    将锁的创建和销毁封装在类的构造与析构函数中，实现RAII机制</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">sem</span> &#123;</span><br><span class="line">    <span class="keyword">public</span>:</span><br><span class="line">    	<span class="built_in">sem</span>()</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">//信号量初始化</span></span><br><span class="line">            <span class="keyword">if</span>(<span class="built_in">sem_init</span>(&amp;m_m_sem,<span class="number">0</span>,<span class="number">0</span>) != <span class="number">0</span>)&#123;</span><br><span class="line">                <span class="keyword">throw</span> std::<span class="built_in">exception</span>();</span><br><span class="line">            &#125;</span><br><span class="line">		&#125;</span><br><span class="line">    </span><br><span class="line">    	~<span class="built_in">sem</span>()</span><br><span class="line">        &#123;</span><br><span class="line">			<span class="built_in">sem_destory</span>(&amp;m_sem);</span><br><span class="line">		&#125;</span><br><span class="line">	<span class="keyword">private</span>:</span><br><span class="line">    	<span class="type">sem_t</span> m_sem;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>将重复代码封装为函数，减少代码的重复</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"> <span class="number">1</span>   <span class="comment">//条件变量的使用机制需要配合锁来使用</span></span><br><span class="line"> <span class="number">2</span>   <span class="comment">//内部会有一次加锁和解锁</span></span><br><span class="line"> <span class="number">3</span>   <span class="comment">//封装起来会使得更加简洁</span></span><br><span class="line"> <span class="number">4</span>   <span class="function"><span class="type">bool</span> <span class="title">wait</span><span class="params">()</span></span></span><br><span class="line"><span class="function"> 5   </span>&#123;</span><br><span class="line"> <span class="number">6</span>       <span class="type">int</span> ret = <span class="number">0</span>;</span><br><span class="line"> <span class="number">7</span>       <span class="built_in">pthread_mutex_lock</span>(&amp;m_mutex);</span><br><span class="line"> <span class="number">8</span>       ret = <span class="built_in">pthread_cond_wait</span>(&amp;m_cond,&amp;m_mutex);</span><br><span class="line"> <span class="number">9</span>       <span class="built_in">pthread_mutex_unlock</span>(&amp;m_mutex);</span><br><span class="line"><span class="number">10</span>       <span class="keyword">return</span> ret == <span class="number">0</span>;</span><br><span class="line"><span class="number">11</span>   &#125;</span><br><span class="line"><span class="number">12</span>   <span class="function"><span class="type">bool</span> <span class="title">signal</span><span class="params">()</span></span></span><br><span class="line"><span class="function">13   </span>&#123;</span><br><span class="line"><span class="number">14</span>       <span class="keyword">return</span> <span class="built_in">pthread_cond_signal</span>(&amp;m_cond) == <span class="number">0</span>;</span><br><span class="line"><span class="number">15</span>   &#125;</span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/02/08/RPC%E6%A1%86%E6%9E%B6/" rel="prev" title="RPC框架">
+                  <i class="fa fa-chevron-left"></i> RPC框架
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Wang Wenhui</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>
