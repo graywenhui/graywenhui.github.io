@@ -125,7 +125,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">29</span>
+          <span class="site-state-item-count">31</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -136,7 +136,7 @@
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-count">3</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -165,6 +165,257 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/02/11/wsl%E5%AE%89%E8%A3%85mysql/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Wang Wenhui">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Gray's Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Gray's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2023/02/11/wsl%E5%AE%89%E8%A3%85mysql/" class="post-title-link" itemprop="url">wsl安装mysql</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2023-02-11 14:01:40 / 修改时间：14:40:29" itemprop="dateCreated datePublished" datetime="2023-02-11T14:01:40+08:00">2023-02-11</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+	<div>
+		
+	</div>
+    <div class="post-body" itemprop="articleBody">
+          <p>整个流程参照<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/373254891">https://zhuanlan.zhihu.com/p/373254891</a></p>
+<h4 id="安装mysql"><a href="#安装mysql" class="headerlink" title="安装mysql"></a>安装mysql</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get update;</span><br><span class="line">sudo apt-get install mysql-server</span><br></pre></td></tr></table></figure>
+
+<p>这里第一步更新我就出了问题，报错大概是</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get update</span><br><span class="line"></span><br><span class="line">E: Could not get lock /var/lib/apt/lists/lock - open (11: Resource temporarily unavailable)</span><br><span class="line">E: Unable to lock directory /var/lib/apt/lists/</span><br></pre></td></tr></table></figure>
+
+<p>然后搜了一下<a target="_blank" rel="noopener" href="https://www.cnblogs.com/qq952693358/p/6537846.html%EF%BC%8C%E5%8F%AF%E8%83%BD%E6%98%AF%E6%9C%89%E4%B8%AA%E8%BF%9B%E7%A8%8B%E6%AD%A3%E5%9C%A8apt-get%EF%BC%8C%E9%9C%80%E8%A6%81kill%E6%8E%89%E8%BF%9B%E7%A8%8B">https://www.cnblogs.com/qq952693358/p/6537846.html，可能是有个进程正在apt-get，需要kill掉进程</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo <span class="built_in">rm</span> /var/lib/apt/lists/lock</span><br></pre></td></tr></table></figure>
+
+<p>然后再更新就好了，继续sudo apt-get install mysql-server也没问题</p>
+<h4 id="启动mysql服务"><a href="#启动mysql服务" class="headerlink" title="启动mysql服务"></a>启动mysql服务</h4><p>有以下几个指令</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#check the status of mysql </span></span><br><span class="line">sudo service mysql status</span><br><span class="line"></span><br><span class="line"><span class="comment">#start mysql </span></span><br><span class="line">sudo service mysql start  </span><br><span class="line"></span><br><span class="line"><span class="comment">#stop mysql </span></span><br><span class="line">sudo service mysql stop  </span><br><span class="line"></span><br><span class="line"><span class="comment">#restart msyql </span></span><br><span class="line">sudo service mysql restart</span><br></pre></td></tr></table></figure>
+
+<p>先查看一下状态</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">graywenhui@Grays-LAPTOP:~$ service mysql status</span><br><span class="line"> </span><br><span class="line"> <span class="comment">#下面是信息</span></span><br><span class="line"> * MySQL is stopped.</span><br></pre></td></tr></table></figure>
+
+<p>然后启动</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">graywenhui@Grays-LAPTOP:~$ sudo service mysql start</span><br><span class="line"></span><br><span class="line"><span class="comment">#下面是信息</span></span><br><span class="line"> * Starting MySQL database server mysqld                                                         su: warning: cannot change directory to /nonexistent: No such file or directory</span><br></pre></td></tr></table></figure>
+
+<p>又报错了，继续搜<a target="_blank" rel="noopener" href="https://www.cnblogs.com/cnwcl/p/13805643.html%EF%BC%8C%E5%8F%91%E7%8E%B0%E5%8F%AF%E8%83%BD%E6%98%AFmysql%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%BC%82%E5%B8%B8%E5%85%B3%E6%9C%BA%E5%AF%BC%E8%87%B4%E7%9A%84%EF%BC%8C%E4%B8%8D%E8%BF%87%E6%88%91%E6%89%8D%E5%88%9A%E8%A3%85%E4%B8%8A%EF%BC%8C%E6%9C%89%E7%82%B9%E5%A5%87%E6%80%AA%E3%80%82%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88%EF%BC%9A">https://www.cnblogs.com/cnwcl/p/13805643.html，发现可能是mysql服务器异常关机导致的，不过我才刚装上，有点奇怪。解决方案：</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">graywenhui@Grays-LAPTOP:~$ sudo service mysql stop</span><br><span class="line"></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"> * Stopping MySQL database server mysqld                                                  [ OK ] </span><br><span class="line">graywenhui@Grays-LAPTOP:~$ sudo usermod -d /var/lib/mysql/ mysql</span><br><span class="line"></span><br><span class="line">graywenhui@Grays-LAPTOP:~$ sudo service mysql start</span><br><span class="line">[sudo] password <span class="keyword">for</span> graywenhui: <span class="comment">#这里键入wsl密码</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"> * Starting MySQL database server mysqld</span><br></pre></td></tr></table></figure>
+
+<p>成功了！</p>
+<h4 id="修改root密码"><a href="#修改root密码" class="headerlink" title="修改root密码"></a>修改root密码</h4><p>安装完mysql提供了一个默认的登录用户与密码，可以这样看</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">graywenhui@Grays-LAPTOP:~$ sudo <span class="built_in">cat</span> /etc/mysql/debian.cnf</span><br><span class="line"></span><br><span class="line"><span class="comment">#下面是信息</span></span><br><span class="line"><span class="comment"># Automatically generated for Debian scripts. DO NOT TOUCH!</span></span><br><span class="line">[client]</span><br><span class="line">host     = localhost</span><br><span class="line">user     = debian-sys-maint</span><br><span class="line">password = vdjgK18b5Y4RNk2Q</span><br><span class="line">socket   = /var/run/mysqld/mysqld.sock</span><br><span class="line">[mysql_upgrade]</span><br><span class="line">host     = localhost</span><br><span class="line">user     = debian-sys-maint</span><br><span class="line">password = vdjgK18b5Y4RNk2Q</span><br><span class="line">socket   = /var/run/mysqld/mysqld.sock</span><br></pre></td></tr></table></figure>
+
+<p>[mysql_upgrade]下面的user和password就是mysql的用户和密码了，通过这两进行登录：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">graywenhui@Grays-LAPTOP:~$ sudo mysql -udebian-sys-maint -pvdjgK18b5Y4RNk2Q</span><br><span class="line"></span><br><span class="line"><span class="comment">#下面是信息</span></span><br><span class="line">mysql: [Warning] Using a password on the <span class="built_in">command</span> line interface can be insecure.</span><br><span class="line">Welcome to the MySQL monitor.  Commands end with ; or \g.</span><br><span class="line">Your MySQL connection <span class="built_in">id</span> is 10</span><br><span class="line">Server version: 8.0.32-0ubuntu0.20.04.2 (Ubuntu)</span><br><span class="line"></span><br><span class="line">Copyright (c) 2000, 2023, Oracle and/or its affiliates.</span><br><span class="line"></span><br><span class="line">Oracle is a registered trademark of Oracle Corporation and/or its</span><br><span class="line">affiliates. Other names may be trademarks of their respective</span><br><span class="line">owners.</span><br><span class="line"></span><br><span class="line">Type <span class="string">&#x27;help;&#x27;</span> or <span class="string">&#x27;\h&#x27;</span> <span class="keyword">for</span> <span class="built_in">help</span>. Type <span class="string">&#x27;\c&#x27;</span> to clear the current input statement.</span><br><span class="line"></span><br><span class="line">mysql&gt;</span><br></pre></td></tr></table></figure>
+
+<p>这样就进入到了mysql中，然后切换到mysql对root的密码进行修改：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#选择database</span></span><br><span class="line">mysql&gt; use mysql;</span><br><span class="line"><span class="comment">#</span></span><br><span class="line">Reading table information <span class="keyword">for</span> completion of table and column names</span><br><span class="line">You can turn off this feature to get a quicker startup with -A</span><br><span class="line"></span><br><span class="line">Database changed</span><br><span class="line"></span><br><span class="line"><span class="comment">#更新密码</span></span><br><span class="line">mysql&gt; alter user <span class="string">&#x27;root&#x27;</span>@<span class="string">&#x27;localhost&#x27;</span> identified with mysql_native_password by <span class="string">&#x27;这里填你想要的密码&#x27;</span>;</span><br><span class="line"><span class="comment">#</span></span><br><span class="line">Query OK, 0 rows affected (0.02 sec)</span><br><span class="line"></span><br><span class="line"><span class="comment">#write privileges</span></span><br><span class="line">mysql&gt; flush privileges;</span><br><span class="line"><span class="comment">#</span></span><br><span class="line">Query OK, 0 rows affected (0.01 sec)</span><br><span class="line"></span><br><span class="line"><span class="comment">#然后就可以键入quit退出mysql模式了</span></span><br><span class="line">mysql&gt; quit</span><br></pre></td></tr></table></figure>
+
+<p>然后可以重启一下mysql服务，再用mysql -uroot -p’你刚填的密码‘（注意这里的’‘要去掉，上面的’‘要保留），然后就好了</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/02/10/%E5%8D%8A%E5%90%8C%E6%AD%A5%E5%8D%8A%E5%8F%8D%E5%BA%94%E5%A0%86%E7%BA%BF%E7%A8%8B%E6%B1%A0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Wang Wenhui">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Gray's Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Gray's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2023/02/10/%E5%8D%8A%E5%90%8C%E6%AD%A5%E5%8D%8A%E5%8F%8D%E5%BA%94%E5%A0%86%E7%BA%BF%E7%A8%8B%E6%B1%A0/" class="post-title-link" itemprop="url">半同步半反应堆线程池</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-02-10 22:13:45" itemprop="dateCreated datePublished" datetime="2023-02-10T22:13:45+08:00">2023-02-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-02-11 18:21:55" itemprop="dateModified" datetime="2023-02-11T18:21:55+08:00">2023-02-11</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/TinyWebServer/" itemprop="url" rel="index"><span itemprop="name">TinyWebServer</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+	<div>
+		
+	</div>
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="线程池"><a href="#线程池" class="headerlink" title="线程池"></a>线程池</h1><h2 id="服务器编程基本框架"><a href="#服务器编程基本框架" class="headerlink" title="服务器编程基本框架"></a>服务器编程基本框架</h2><p>主要由I&#x2F;O单元，逻辑单元和网络存储单元组成，其中每个单元之间通过请求队列进行通信，从而协同完成任务。</p>
+<p>I&#x2F;O队列：处理客户端连接，读写网络数据<br>逻辑单元：处理业务逻辑的线程<br>网络存储单元：指本地数据库和文件等</p>
+<p><img src="https://cdn.jsdelivr.net/gh/graywenhui/blogImage@main/img/202302102229727.png" alt="image-20230210222856140"></p>
+<h2 id="五种I-x2F-O模型"><a href="#五种I-x2F-O模型" class="headerlink" title="五种I&#x2F;O模型"></a>五种I&#x2F;O模型</h2><h5 id="阻塞IO"><a href="#阻塞IO" class="headerlink" title="阻塞IO"></a>阻塞IO</h5><p>调用者调用了某个函数，等待这个函数返回，期间什么也不做，不停的去检查这个函数有没有返回，必须等待返回才能进行下一步</p>
+<h5 id="非阻塞IO"><a href="#非阻塞IO" class="headerlink" title="非阻塞IO"></a>非阻塞IO</h5><p>非阻塞等待，每隔一段时间就去检测IO事件是否就绪。没有就绪就可以做其他事。非阻塞I&#x2F;O执行系统调用总是立即返回，不管事件是否已经发生，若事件没有发生，则返回-1，此时可以根据errno区分这两种情况，对于accept，recv和send，事件未发生时，errno通常被设置成eagain</p>
+<h5 id="信号驱动IO"><a href="#信号驱动IO" class="headerlink" title="信号驱动IO"></a>信号驱动IO</h5><p>linux用套接口进行信号驱动IO，安装一个信号处理函数，进程继续运行并不阻塞，当IO时间就绪，进程收到SIGIO信号。然后处理IO事件</p>
+<h5 id="IO复用"><a href="#IO复用" class="headerlink" title="IO复用"></a>IO复用</h5><p>linux用select&#x2F;poll函数实现IO复用模型，这两个函数也会使进程阻塞，但是和阻塞IO所不同的是这两个函数可以同时阻塞多个IO操作。而且可以同时对多个读操作、写操作的IO函数进行检测。知道有数据可读或可写时，才真正调用IO操作函数</p>
+<h5 id="异步IO"><a href="#异步IO" class="headerlink" title="异步IO"></a>异步IO</h5><p>linux中，可以调用aio_read函数告诉内核描述字缓冲区指针和缓冲区的大小、文件偏移及通知的方式，然后立即返回，当内核将数据拷贝到缓冲区后，再通知应用程序</p>
+<p>前四种都是同步IO，同步I&#x2F;O指内核向应用程序通知的是就绪事件，比如只通知有客户端连接，要求用户代码自行执行I&#x2F;O操作，异步I&#x2F;O是指内核向应用程序通知的是完成事件，比如读取客户端的数据后才通知应用程序，由内核完成I&#x2F;O操作。</p>
+<p>这里不是很清楚，参考这个回答<a target="_blank" rel="noopener" href="https://www.zhihu.com/question/19732473%E6%AF%94%E8%BE%83%E6%B8%85%E6%A5%9A">https://www.zhihu.com/question/19732473比较清楚</a></p>
+<h2 id="事件处理模式"><a href="#事件处理模式" class="headerlink" title="事件处理模式"></a>事件处理模式</h2><h5 id="reactor模式"><a href="#reactor模式" class="headerlink" title="reactor模式"></a>reactor模式</h5><p>主线程(<strong>I&#x2F;O处理单元</strong>)只负责监听文件描述符上是否有事件发生，有的话立即通知工作线程(<strong>逻辑单元</strong> )，读写数据、接受新连接及处理客户请求均在工作线程中完成。通常由<strong>同步I&#x2F;O</strong>实现</p>
+<h5 id="proactor模式"><a href="#proactor模式" class="headerlink" title="proactor模式"></a>proactor模式</h5><p>主线程和内核负责处理读写数据、接受新连接等I&#x2F;O操作，工作线程仅负责业务逻辑，如处理客户请求。通常由<strong>异步I&#x2F;O</strong>实现</p>
+<h2 id="同步I-x2F-O模拟proactor模式"><a href="#同步I-x2F-O模拟proactor模式" class="headerlink" title="同步I&#x2F;O模拟proactor模式"></a>同步I&#x2F;O模拟proactor模式</h2><p>同步I&#x2F;O模型工作流程如下（epoll_wait为例）：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">主线程往epoll内核事件表注册socket上的读就绪事件。</span><br><span class="line"></span><br><span class="line">主线程调用epoll<span class="emphasis">_wait等待socket上有数据可读</span></span><br><span class="line"><span class="emphasis"></span></span><br><span class="line"><span class="emphasis">当socket上有数据可读，epoll_</span>wait通知主线程,主线程从socket循环读取数据，直到没有更多数据可读，然后将读取到的数据封装成一个请求对象并插入请求队列。</span><br><span class="line"></span><br><span class="line">睡眠在请求队列上某个工作线程被唤醒，它获得请求对象并处理客户请求，然后往epoll内核事件表中注册该socket上的写就绪事件</span><br><span class="line"></span><br><span class="line">主线程调用epoll<span class="emphasis">_wait等待socket可写。</span></span><br><span class="line"><span class="emphasis"></span></span><br><span class="line"><span class="emphasis">当socket上有数据可写，epoll_</span>wait通知主线程。主线程往socket上写入服务器处理客户请求的结果。</span><br></pre></td></tr></table></figure>
+
+<h2 id="并发编程模式"><a href="#并发编程模式" class="headerlink" title="并发编程模式"></a>并发编程模式</h2><p>并发编程方法的实现有多线程和多进程两种。这里的并发模式指I&#x2F;O处理单元与逻辑单元的协同完成任务的方法<br>· 半同步&#x2F;半异步模式<br>· 领导者&#x2F;追随者模式</p>
+<h2 id="半同步-x2F-半反应堆"><a href="#半同步-x2F-半反应堆" class="headerlink" title="半同步&#x2F;半反应堆"></a>半同步&#x2F;半反应堆</h2><p>半同步&#x2F;半反应堆并发模式是半同步&#x2F;半异步的变体，将半异步具体化为某种事件处理模式</p>
+<p>并发模式中的同步和异步：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">同步指的是程序完全按照代码序列的顺序执行</span><br><span class="line"></span><br><span class="line">异步指的是程序的执行需要由系统事件驱动</span><br></pre></td></tr></table></figure>
+
+<p>半同步&#x2F;半异步模式工作流程:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">同步线程用于处理客户逻辑</span><br><span class="line"></span><br><span class="line">异步线程用于处理I/O事件</span><br><span class="line"></span><br><span class="line">异步线程监听到客户请求后，就将其封装成请求对象并插入请求队列中</span><br><span class="line"></span><br><span class="line">请求队列将通知某个工作在同步模式的工作线程来读取并处理该请求对象</span><br></pre></td></tr></table></figure>
+
+<p>半同步&#x2F;半反应堆工作流程（以Proactor模式为例）:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">线程充当异步线程，负责监听所有socket上的事件</span><br><span class="line"></span><br><span class="line">若有新请求到来，主线程接收之以得到新的连接socket，然后往epoll内核事件表中注册该socket上的读写事件</span><br><span class="line"></span><br><span class="line">如果连接socket上有读写事件发生，主线程从socket上接收数据，并将数据封装成请求对象插入到请求队列中</span><br><span class="line"></span><br><span class="line">所有工作线程睡眠在请求队列上，当有任务到来时，通过竞争（如互斥锁）获得任务的接管权</span><br></pre></td></tr></table></figure>
+
+<h2 id="线程池-1"><a href="#线程池-1" class="headerlink" title="线程池"></a>线程池</h2><p>空间换时间,浪费服务器的硬件资源,换取运行效率</p>
+<p>池是一组资源的集合,这组资源在服务器启动之初就被完全创建好并初始化,这称为静态资源</p>
+<p>当服务器进入正式运行阶段,开始处理客户请求的时候,如果它需要相关的资源,可以直接从池中获取,无需动态分配</p>
+<p>当服务器处理完一个客户连接后,可以把相关的资源放回池中,无需执行系统调用释放资源</p>
+<h2 id="pthread-create陷阱"><a href="#pthread-create陷阱" class="headerlink" title="pthread_create陷阱"></a>pthread_create陷阱</h2><p>函数原型</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;pthread.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">pthread_create</span> <span class="params">(<span class="type">pthread_t</span> *thread_tid,                 <span class="comment">//返回新生成的线程的id</span></span></span></span><br><span class="line"><span class="params"><span class="function">                    <span class="type">const</span> <span class="type">pthread_attr_t</span> *attr,         <span class="comment">//指向线程属性的指针,通常设置为NULL</span></span></span></span><br><span class="line"><span class="params"><span class="function">                    <span class="type">void</span> * (*start_routine) (<span class="type">void</span> *),   <span class="comment">//处理线程函数的地址</span></span></span></span><br><span class="line"><span class="params"><span class="function">                    <span class="type">void</span> *arg)</span></span>;                         <span class="comment">//start_routine()中的参数</span></span><br></pre></td></tr></table></figure>
+
+<p>第三个参数是函数指针，指向处理线程函数的地址。该函数，要求为静态函数。如果处理线程函数是类成员函数，则需要将其设置为静态成员函数。</p>
+<p>要这样做的原因是：pthread_create的函数原型中第三个参数的类型为函数指针，指向的线程处理函数参数类型为<code>(void *)</code>,若线程函数为类成员函数，则this指针会作为默认的参数被传进函数中，从而和线程函数参数<code>(void*)</code>不能匹配，不能通过编译。而静态成员函数没有this指针，就没有这个问题</p>
+<h2 id="线程池分析"><a href="#线程池分析" class="headerlink" title="线程池分析"></a>线程池分析</h2><p>线程池的设计模式为半同步&#x2F;半反应堆，其中反应堆具体为Proactor事件处理模式。</p>
+<p>具体的，主线程为异步线程，负责监听文件描述符，接收socket新连接，若当前监听的socket发生了读写事件，然后将任务插入到请求队列。工作线程从请求队列中取出任务，完成读写数据的处理。</p>
+<h5 id="线程池类定义"><a href="#线程池类定义" class="headerlink" title="线程池类定义"></a>线程池类定义</h5><p>线程处理函数和运行函数设置为私有属性</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"> <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"> <span class="keyword">class</span> <span class="title class_">threadpool</span>&#123;</span><br><span class="line">     <span class="keyword">public</span>:</span><br><span class="line">         <span class="comment">//thread_number是线程池中线程的数量</span></span><br><span class="line">         <span class="comment">//max_requests是请求队列中最多允许的、等待处理的请求的数量</span></span><br><span class="line">         <span class="comment">//connPool是数据库连接池指针</span></span><br><span class="line">         <span class="built_in">threadpool</span>(connection_pool *connPool, <span class="type">int</span> thread_number = <span class="number">8</span>, <span class="type">int</span> max_request = <span class="number">10000</span>);</span><br><span class="line">         ~<span class="built_in">threadpool</span>();</span><br><span class="line"> </span><br><span class="line">        <span class="comment">//像请求队列中插入任务请求</span></span><br><span class="line">        <span class="function"><span class="type">bool</span> <span class="title">append</span><span class="params">(T* request)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span>:</span><br><span class="line">        <span class="comment">//工作线程运行的函数</span></span><br><span class="line">        <span class="comment">//它不断从工作队列中取出任务并执行之</span></span><br><span class="line">        <span class="function"><span class="type">static</span> <span class="type">void</span> *<span class="title">worker</span><span class="params">(<span class="type">void</span> *arg)</span></span>;</span><br><span class="line"></span><br><span class="line">        <span class="function"><span class="type">void</span> <span class="title">run</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span>:</span><br><span class="line">        <span class="comment">//线程池中的线程数</span></span><br><span class="line">        <span class="type">int</span> m_thread_number;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//请求队列中允许的最大请求数</span></span><br><span class="line">        <span class="type">int</span> m_max_requests;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//描述线程池的数组，其大小为m_thread_number</span></span><br><span class="line">        <span class="type">pthread_t</span> *m_threads;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//请求队列</span></span><br><span class="line">        std::list&lt;T *&gt;m_workqueue;    </span><br><span class="line"></span><br><span class="line">        <span class="comment">//保护请求队列的互斥锁    </span></span><br><span class="line">        locker m_queuelocker;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//是否有任务需要处理</span></span><br><span class="line">        sem m_queuestat;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//是否结束线程</span></span><br><span class="line">        <span class="type">bool</span> m_stop;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//数据库连接池</span></span><br><span class="line">        connection_pool *m_connPool;  </span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h5 id="线程池创建与回收"><a href="#线程池创建与回收" class="headerlink" title="线程池创建与回收"></a>线程池创建与回收</h5><p>构造函数中创建线程池,pthread_create函数中将类的对象作为参数传递给静态函数(worker),在静态函数中引用这个对象,并调用其动态方法(run)。</p>
+<p>具体的，类对象传递时用this指针，传递给静态函数后，将其转换为线程池类，并调用私有成员函数run。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line">threadpool&lt;T&gt;::<span class="built_in">threadpool</span>( connection_pool *connPool, <span class="type">int</span> thread_number, <span class="type">int</span> max_requests) : <span class="built_in">m_thread_number</span>(thread_number), <span class="built_in">m_max_requests</span>(max_requests), <span class="built_in">m_stop</span>(<span class="literal">false</span>), <span class="built_in">m_threads</span>(<span class="literal">NULL</span>),<span class="built_in">m_connPool</span>(connPool)&#123;</span><br><span class="line"> </span><br><span class="line">     <span class="keyword">if</span>(thread_number&lt;=<span class="number">0</span>||max_requests&lt;=<span class="number">0</span>)</span><br><span class="line">         <span class="keyword">throw</span> std::<span class="built_in">exception</span>();</span><br><span class="line"> </span><br><span class="line">     <span class="comment">//线程id初始化</span></span><br><span class="line">     m_threads=<span class="keyword">new</span> <span class="type">pthread_t</span>[m_thread_number];</span><br><span class="line">     <span class="keyword">if</span>(!m_threads)</span><br><span class="line">        <span class="keyword">throw</span> std::<span class="built_in">exception</span>();</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>;i&lt;thread_number;++i)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">//循环创建线程，并将工作线程按要求进行运行</span></span><br><span class="line">        <span class="keyword">if</span>(<span class="built_in">pthread_create</span>(m_threads+i,<span class="literal">NULL</span>,worker,<span class="keyword">this</span>)!=<span class="number">0</span>)&#123;</span><br><span class="line">            <span class="keyword">delete</span> [] m_threads;</span><br><span class="line">            <span class="keyword">throw</span> std::<span class="built_in">exception</span>();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//将线程进行分离后，不用单独对工作线程进行回收</span></span><br><span class="line">        <span class="keyword">if</span>(<span class="built_in">pthread_detach</span>(m_threads[i]))&#123;</span><br><span class="line">            <span class="keyword">delete</span>[] m_threads;</span><br><span class="line">            <span class="keyword">throw</span> std::<span class="built_in">exception</span>();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="向请求队列中添加任务"><a href="#向请求队列中添加任务" class="headerlink" title="向请求队列中添加任务"></a>向请求队列中添加任务</h5><p>通过list容器创建请求队列，向队列中添加时，通过互斥锁保证线程安全，添加完成后通过信号量提醒有任务要处理，最后注意线程同步。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="type">bool</span> threadpool&lt;T&gt;::<span class="built_in">append</span>(T* request)</span><br><span class="line">&#123;</span><br><span class="line">    m_queuelocker.<span class="built_in">lock</span>();</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//根据硬件，预先设置请求队列的最大值</span></span><br><span class="line">    <span class="keyword">if</span>(m_workqueue.<span class="built_in">size</span>() &gt; m_max_requests)</span><br><span class="line">    &#123;</span><br><span class="line">        m_queuelocker.<span class="built_in">unlock</span>();</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//添加任务</span></span><br><span class="line">    m_workqueue.<span class="built_in">push_back</span>(request);</span><br><span class="line">    m_queuelocker.<span class="built_in">unlock</span>(request);</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h5 id="线程处理函数"><a href="#线程处理函数" class="headerlink" title="线程处理函数"></a>线程处理函数</h5><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<h5 id="run执行任务"><a href="#run执行任务" class="headerlink" title="run执行任务"></a>run执行任务</h5><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -933,269 +1184,8 @@
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/01/19/%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E5%B7%A5%E5%85%B7/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Wang Wenhui">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Gray's Blog">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Gray's Blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2023/01/19/%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E5%B7%A5%E5%85%B7/" class="post-title-link" itemprop="url">性能分析工具</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2023-01-19 22:33:02 / 修改时间：23:33:32" itemprop="dateCreated datePublished" datetime="2023-01-19T22:33:02+08:00">2023-01-19</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/go/" itemprop="url" rel="index"><span itemprop="name">go</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-	<div>
-		
-	</div>
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="性能分析工具-pprof"><a href="#性能分析工具-pprof" class="headerlink" title="性能分析工具 pprof"></a>性能分析工具 pprof</h1><p>pprof是用于可视化和分析性能分析数据的工具</p>
-<h2 id="pprof功能简介"><a href="#pprof功能简介" class="headerlink" title="pprof功能简介"></a>pprof功能简介</h2><p><img src="https://cdn.jsdelivr.net/gh/graywenhui/blogImage@main/img/202301192235548.png" alt="image-20230119223533413"></p>
-<h2 id="pprof排查实战"><a href="#pprof排查实战" class="headerlink" title="pprof排查实战"></a>pprof排查实战</h2><p>代码运行时，浏览器输入：<a target="_blank" rel="noopener" href="http://localhost:6060/debug/pprof/">http://localhost:6060/debug/pprof/</a></p>
-<p>如图：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/graywenhui/blogImage@main/img/202301192237408.png" alt="image-20230119223723338"></p>
-<p><img src="https://cdn.jsdelivr.net/gh/graywenhui/blogImage@main/img/202301192237777.png" alt="image-20230119223738678"></p>
-<p>然后在另一个终端输入：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">go</span> tool pprof <span class="string">&quot;http://localhost:6060/debug/pprof/profile?seconds=10&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p><img src="https://cdn.jsdelivr.net/gh/graywenhui/blogImage@main/img/202301192239523.png" alt="image-20230119223922496"></p>
-<p>命令：topN	查看占用资源最多的函数</p>
-<p>然后输入top：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/graywenhui/blogImage@main/img/202301192239449.png" alt="image-20230119223951414"></p>
-<p>flat		当前函数本身的执行耗时<br>flat%	 flat占CPU总时间的比例<br>sum%   上面每一行的flat%总和<br>cum	  指当前函数本身加上其调用函数的总耗时<br>cum%   cum占CPU总时间的比例</p>
-<p>命令：list	根据指定的正则表达式查找代码行</p>
-<p>输入list Eat：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/graywenhui/blogImage@main/img/202301192246160.png" alt="image-20230119224641123"></p>
-<p>命令：web	调用关系可视化</p>
-<p>输入</p>
-<h2 id="pprof的采样过程和原理"><a href="#pprof的采样过程和原理" class="headerlink" title="pprof的采样过程和原理"></a>pprof的采样过程和原理</h2>
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/01/19/%E9%AB%98%E8%B4%A8%E9%87%8F%E7%BC%96%E7%A8%8B%E4%B8%8E%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Wang Wenhui">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Gray's Blog">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Gray's Blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2023/01/19/%E9%AB%98%E8%B4%A8%E9%87%8F%E7%BC%96%E7%A8%8B%E4%B8%8E%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98/" class="post-title-link" itemprop="url">高质量编程与性能调优</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2023-01-19 15:00:44 / 修改时间：23:36:33" itemprop="dateCreated datePublished" datetime="2023-01-19T15:00:44+08:00">2023-01-19</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/go/" itemprop="url" rel="index"><span itemprop="name">go</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-	<div>
-		
-	</div>
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="重点内容"><a href="#重点内容" class="headerlink" title="重点内容"></a>重点内容</h1><ol>
-<li>如何编写更简洁清晰的代码</li>
-<li>常用Go语言程序优化手段</li>
-<li>熟悉Go程序性能分析工具</li>
-<li>了解工程中性能优化的原则和流程</li>
-</ol>
-<h1 id="详细知识点"><a href="#详细知识点" class="headerlink" title="详细知识点"></a>详细知识点</h1><h2 id="高质量编程"><a href="#高质量编程" class="headerlink" title="高质量编程"></a>高质量编程</h2><p><em><strong>要点：</strong></em>正确可靠、简洁清晰</p>
-<p>· 各种边界条件是否考虑完备<br>· 异常情况处理，稳定性保证<br>· 易读易维护</p>
-<p><em><strong>编程原则：</strong></em>简单性、可读性、生产力<br>简单：消除“多余的复杂性”、逻辑简单清晰<br>刻度：编写可维护代码</p>
-<h3 id="编码规范"><a href="#编码规范" class="headerlink" title="编码规范"></a>编码规范</h3><h4 id="代码格式"><a href="#代码格式" class="headerlink" title="代码格式"></a>代码格式</h4><p>Golang可以使用Go官方提供的工具gofmt自动格式化代码，也可以使用goimports(gofmt+依赖包管理)</p>
-<p>我觉得这种有官方一键整理代码格式的功能挺好的，有的时候写的快，可能哪里敲了空格但代码里没有，格式就会不舒服，一键格式化后就不用花更多时间关注格式问题了</p>
-<h4 id="注释"><a href="#注释" class="headerlink" title="注释"></a>注释</h4><ol>
-<li>注释应该解释代码	作用</li>
-<li>​                                   如何做的</li>
-<li>​                                   实现的原因</li>
-<li>​                                   什么情况会出错</li>
-</ol>
-<p>1：适合注释公共符号<br>2：适合注释代码实现过程<br>3：适合解释代码的外部因素，提供额外上下文<br>4：适合解释代码的限制条件</p>
-<p>公共符号始终要注释！</p>
-<p>这里我看下来的感受是注释还是用英文吧，因为看视频里的例子全是英文注释，个人用不同IDE时，如果是两种编码规则中文注释就会乱码，英文就不会出现这个情况了。</p>
-<h4 id="命名规范"><a href="#命名规范" class="headerlink" title="命名规范"></a>命名规范</h4><h5 id="变量variable"><a href="#变量variable" class="headerlink" title="变量variable"></a>变量variable</h5><p>简洁胜于冗长<br>缩略词全大写、当位于变量开头且不需导出时小写<br>    使用ServeHTTP而不是ServeHttp<br>    使用XMLHTTPRequest或xmlHTTPRequest<br>变量距离被使用的地方越远，则需要携带越多的上下文信息<br>    全局变量名字中需要更多上下文信息</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//Good</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Client)</span></span> send(req *Request, deadline time.Time)</span><br><span class="line"></span><br><span class="line"><span class="comment">//Bad</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Client)</span></span> send(req *Request, t time.Time)</span><br></pre></td></tr></table></figure>
-
-<p>这个例子可以很明显看出deadline做参数名比t做参数名含义更明显</p>
-<h5 id="函数function"><a href="#函数function" class="headerlink" title="函数function"></a>函数function</h5><p>函数名不携带包名的上下文信息，因为包名和函数名总是成对出现的<br>函数名尽量简短<br>名为foo的包某个函数返回类型Foo时，可以省略类型信息而不导致歧义	返回其他类型时可以加入类型信息</p>
-<p>http包中创建服务函数如何命名？：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Serve</span><span class="params">(I net.Listener, handler Handler)</span></span> <span class="type">error</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">ServeHTTP</span><span class="params">(I net.Listener, handler Handler)</span></span> <span class="type">error</span></span><br></pre></td></tr></table></figure>
-
-<p>因为是http包中的函数，调用时会http.Serve，所以再加HTTP就会很多余</p>
-<h5 id="包package"><a href="#包package" class="headerlink" title="包package"></a>包package</h5><p>只由小写字母组成，不包含大写字母和下划线等字符<br>简短并包含一定的上下文信息。<br>不要与标准库同名。如不用strings</p>
-<p>对Golang包的理解不是很深刻，这部分后面继续理解</p>
-<h4 id="控制流程"><a href="#控制流程" class="headerlink" title="控制流程"></a>控制流程</h4><p>1、避免嵌套，保持流程清晰</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//Bad</span></span><br><span class="line"><span class="keyword">if</span> foo &#123;</span><br><span class="line">    <span class="keyword">return</span> x</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//Good</span></span><br><span class="line"><span class="keyword">if</span> foo &#123;</span><br><span class="line">    <span class="keyword">return</span> x</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">return</span> <span class="literal">nil</span></span><br></pre></td></tr></table></figure>
-
-<p>这个例子中，两个分支都包含return语句，可以去除冗余的else。这个错误处理中比较常见，前几节课看到的代码中基本都是这样的处理</p>
-<p>2、尽量保证正常代码路径为最小缩进，即优先处理错误情况&#x2F;特殊情况，尽早返回或继续循环减少嵌套</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//Bad </span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">OneFunc</span><span class="params">()</span></span> &#123;</span><br><span class="line">    err := doSomething()</span><br><span class="line">    <span class="keyword">if</span> err == <span class="literal">nil</span> &#123;</span><br><span class="line">        err := doAnotherThing()</span><br><span class="line">        <span class="keyword">if</span> err == <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">nil</span> <span class="comment">// normal case</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> err</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//Good</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">OneFunc</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> err := doSomething(); err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> err</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> err := doAnotherThing(); err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> err </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">nil</span> <span class="comment">// normal case </span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>这里可以很清楚的看到两段代码的功能是一样的，但是下面的比上面的要简洁清晰的多</p>
-<p>简单来说，正常情况放最后，先处理特殊情况和异常情况</p>
-<h3 id="错误和异常处理"><a href="#错误和异常处理" class="headerlink" title="错误和异常处理"></a>错误和异常处理</h3><h4 id="简单错误"><a href="#简单错误" class="headerlink" title="简单错误"></a>简单错误</h4><p>指仅出现一次的错误，在其他地方不需要捕获该错误<br>优先使用errors.New来创建匿名变量直接表示简单错误<br>如果有格式化的需求，使用fmt.Errorf</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">defaultCheckRedirect</span><span class="params">(req *Request, via []*Request)</span></span> <span class="type">error</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(via) &gt;= <span class="number">10</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> errors.New(<span class="string">&quot;stopped after 10 redirects&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<h4 id="错误的Wrap和UnWrap（包装和解包）"><a href="#错误的Wrap和UnWrap（包装和解包）" class="headerlink" title="错误的Wrap和UnWrap（包装和解包）"></a>错误的Wrap和UnWrap（包装和解包）</h4><p>wrap提供一个error嵌套另一个error的能力，从而生成error的跟踪链<br>在fmt.Errorf中使用：%w关键字来将一个错误关联至错误链中</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">list, _, err := c.GetBytes(cache.Subkey(a.actionID, <span class="string">&quot;srcfiles&quot;</span>))</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> fmt.Errorf(<span class="string">&quot;reading srcfiles list: %w&quot;</span>, err)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>这里不是很理解意思，是说可以为错误信息添加上下文？<br>还是说可以把遇到的所有错误信息都输出到一起？</p>
-<h4 id="错误判定"><a href="#错误判定" class="headerlink" title="错误判定"></a>错误判定</h4><p>用 errors.Is 判断一个错误是否为特定错误<br>更可以判定错误链上的所有错误是否包含特定的错误 （比 &#x3D;&#x3D; 功能更强大）</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">data, err = lockedfile.Read(targ)</span><br><span class="line"><span class="keyword">if</span> errors.Is(err, fs.ErrNotExist) &#123;</span><br><span class="line">    <span class="keyword">return</span> []<span class="type">byte</span>&#123;&#125;, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">return</span> data, err</span><br></pre></td></tr></table></figure>
-
-
-
-<p>错误链上获取特定种类的错误：errors.As</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> _, err := os.Open(<span class="string">&quot;non-existing&quot;</span>); err != <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="keyword">var</span> pathError *fs.PathError</span><br><span class="line">    <span class="keyword">if</span> errors.As(err, &amp;pathError) &#123;</span><br><span class="line">        fmt.Println(<span class="string">&quot;Failed at path:&quot;</span>, pathError.Path) </span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        fmt.Println(err)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>这里意思是获取详细的错误信息？</p>
-<h4 id="panic"><a href="#panic" class="headerlink" title="panic"></a>panic</h4><p>不建议在业务代码中用panic<br>调用函数不包含recover会造成程序崩溃<br>若问题可被屏蔽或解决，使用error代替panic<br>程序启动阶段发生不可逆转的错误时，可以在init或main函数中使用panic</p>
-<h4 id="recover"><a href="#recover" class="headerlink" title="recover"></a>recover</h4><p>recover只能在被defer的函数中使用<br>嵌套无法生效<br>只在当前goroutine生效<br>defer的语句是后进先出</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s *ss)</span></span> Token(skipSpace <span class="type">bool</span>, f <span class="function"><span class="keyword">func</span><span class="params">(<span class="type">rune</span>)</span></span> <span class="type">bool</span>) (tok []<span class="type">byte</span>, err <span class="type">error</span>) &#123;</span><br><span class="line">    <span class="keyword">defer</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="keyword">if</span> e := <span class="built_in">recover</span>(); e != <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> se, ok := e.(scanError); ok &#123;</span><br><span class="line">                err = se.err</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="built_in">panic</span>(e)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;()</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>如果需要更多上下文信息，可以recover后在log中记录当前的调用栈  通过debug.Stack()</p>
-<p><em><strong>小结：</strong></em><br>    error尽可能提供简明的上下文信息，方便定位问题<br>    panic用于真正异常情况<br>    recover在当前goroutine的被defer的函数中生效</p>
-<h2 id="性能优化"><a href="#性能优化" class="headerlink" title="性能优化"></a>性能优化</h2><p>性能优化是综合评估，有时候时间效率和空间效率可能对立</p>
-<h3 id="Benchmark"><a href="#Benchmark" class="headerlink" title="Benchmark"></a>Benchmark</h3><p>性能表现需要实际数据衡量，Go提供了支持性能测试的benchmark工具</p>
-<h3 id="Slice"><a href="#Slice" class="headerlink" title="Slice"></a>Slice</h3><p>预分配内存<br>使用	make([]int, 0, size)	而不是	make([]int, 0)</p>
-<p>在已有切片基础上创建切片，不会创建新的底层数组<br>所以在原切片大，新切片小的情况下，可使用copy代替re-slice，这样原切片就能被释放了</p>
-<h3 id="Map"><a href="#Map" class="headerlink" title="Map"></a>Map</h3><p>同理，预分配内存</p>
-<p>向map添加元素时会触发map的扩容，提前分配内存可以减少内存拷贝和Rehash的消耗</p>
-<h3 id="字符串处理"><a href="#字符串处理" class="headerlink" title="字符串处理"></a>字符串处理</h3><p>三种字符串拼接方式：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// +</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Plus</span><span class="params">(n <span class="type">int</span>, str <span class="type">string</span>)</span></span> <span class="type">string</span> &#123;</span><br><span class="line">    s := <span class="string">&quot;&quot;</span></span><br><span class="line">    <span class="keyword">for</span> i := <span class="number">0</span>; i &lt; n; i++ &#123;</span><br><span class="line">        s += str</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> s</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//strings.Builder</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">StrBuilder</span><span class="params">(n <span class="type">int</span>, str <span class="type">string</span>)</span></span> <span class="type">string</span> &#123;</span><br><span class="line">    <span class="keyword">var</span> builder strings.Builder</span><br><span class="line">    <span class="keyword">for</span> i := <span class="number">0</span>; i &lt; n; i++ &#123;</span><br><span class="line">        builder.WriteString(str)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> builder.String()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//ByteBuffer</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">ByteBuffer</span><span class="params">(n <span class="type">int</span>, str <span class="type">string</span>)</span></span> <span class="type">string</span> &#123;</span><br><span class="line">    buf := <span class="built_in">new</span>(bytes.Buffer)</span><br><span class="line">    <span class="keyword">for</span> i := <span class="number">0</span>; i &lt; n; i++ &#123;</span><br><span class="line">        buf.WriteString(str)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> buf.String()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>+性能最差，strbuilder比起buffer会短一些，两者性能都比较好</p>
-<p>+拼接时会开辟新的空间，另两个底层都是[]byte数组</p>
-<p>strbuilder直接将底层的[]byte数组转换成了字符串，而bytebuffer转化为字符串时申请了一块空间</p>
-<p>可以在合成时先扩容，这样效率更高	使用 .Grow(n * len(str))</p>
-<h3 id="空结构体"><a href="#空结构体" class="headerlink" title="空结构体"></a>空结构体</h3><p>用空结构体struct{}作为map键值对的值，不占空间，适用于在不取map值的情况</p>
-<h3 id="atomic包"><a href="#atomic包" class="headerlink" title="atomic包"></a>atomic包</h3><p>适用于多线程编程，现在还不是特别懂，先码着？</p>
-<p>锁的实现通过OS实现，属于system call<br>atomic操作通过硬件实现，效率比锁高<br>sync.Mutex应该用来保护一段逻辑，不仅仅用于保护一个变量<br>对于非数值操作，可以使用atomic.Value，能承载一个interface{}</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 </div>

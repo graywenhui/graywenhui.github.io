@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 5.4.2">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.13.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12},"copycode":{"enable":true,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="整个流程参照https:&#x2F;&#x2F;zhuanlan.zhihu.com&#x2F;p&#x2F;373254891 安装mysql12sudo apt-get update;sudo apt-get install mysql-server  这里第一步更新我就出了问题，报错大概是 1234sudo apt-get updateE: Could not get lock &#x2F;var&#x2F;lib&#x2F;apt&#x2F;lists&#x2F;lock -">
+<meta property="og:type" content="article">
+<meta property="og:title" content="wsl安装mysql">
+<meta property="og:url" content="http://example.com/2023/02/11/wsl%E5%AE%89%E8%A3%85mysql/index.html">
+<meta property="og:site_name" content="Gray&#39;s Blog">
+<meta property="og:description" content="整个流程参照https:&#x2F;&#x2F;zhuanlan.zhihu.com&#x2F;p&#x2F;373254891 安装mysql12sudo apt-get update;sudo apt-get install mysql-server  这里第一步更新我就出了问题，报错大概是 1234sudo apt-get updateE: Could not get lock &#x2F;var&#x2F;lib&#x2F;apt&#x2F;lists&#x2F;lock -">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-02-11T06:01:40.000Z">
+<meta property="article:modified_time" content="2023-02-11T06:40:29.068Z">
+<meta property="article:author" content="Wang Wenhui">
+<meta property="article:tag" content="stfw">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2023/02/11/wsl%E5%AE%89%E8%A3%85mysql/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2023/02/11/wsl%E5%AE%89%E8%A3%85mysql/","path":"2023/02/11/wsl安装mysql/","title":"wsl安装mysql"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>wsl安装mysql | Gray's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Gray's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%89%E8%A3%85mysql"><span class="nav-number">1.</span> <span class="nav-text">安装mysql</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%90%AF%E5%8A%A8mysql%E6%9C%8D%E5%8A%A1"><span class="nav-number">2.</span> <span class="nav-text">启动mysql服务</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9root%E5%AF%86%E7%A0%81"><span class="nav-number">3.</span> <span class="nav-text">修改root密码</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Wang Wenhui</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">31</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/02/11/wsl%E5%AE%89%E8%A3%85mysql/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Wang Wenhui">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Gray's Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="wsl安装mysql | Gray's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          wsl安装mysql
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2023-02-11 14:01:40 / 修改时间：14:40:29" itemprop="dateCreated datePublished" datetime="2023-02-11T14:01:40+08:00">2023-02-11</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+	<div>
+		
+			<div>
+	
+		<div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+	
+</div>
+		
+	</div>
+    <div class="post-body" itemprop="articleBody">
+        <p>整个流程参照<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/373254891">https://zhuanlan.zhihu.com/p/373254891</a></p>
+<h4 id="安装mysql"><a href="#安装mysql" class="headerlink" title="安装mysql"></a>安装mysql</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get update;</span><br><span class="line">sudo apt-get install mysql-server</span><br></pre></td></tr></table></figure>
+
+<p>这里第一步更新我就出了问题，报错大概是</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get update</span><br><span class="line"></span><br><span class="line">E: Could not get lock /var/lib/apt/lists/lock - open (11: Resource temporarily unavailable)</span><br><span class="line">E: Unable to lock directory /var/lib/apt/lists/</span><br></pre></td></tr></table></figure>
+
+<p>然后搜了一下<a target="_blank" rel="noopener" href="https://www.cnblogs.com/qq952693358/p/6537846.html%EF%BC%8C%E5%8F%AF%E8%83%BD%E6%98%AF%E6%9C%89%E4%B8%AA%E8%BF%9B%E7%A8%8B%E6%AD%A3%E5%9C%A8apt-get%EF%BC%8C%E9%9C%80%E8%A6%81kill%E6%8E%89%E8%BF%9B%E7%A8%8B">https://www.cnblogs.com/qq952693358/p/6537846.html，可能是有个进程正在apt-get，需要kill掉进程</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo <span class="built_in">rm</span> /var/lib/apt/lists/lock</span><br></pre></td></tr></table></figure>
+
+<p>然后再更新就好了，继续sudo apt-get install mysql-server也没问题</p>
+<h4 id="启动mysql服务"><a href="#启动mysql服务" class="headerlink" title="启动mysql服务"></a>启动mysql服务</h4><p>有以下几个指令</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#check the status of mysql </span></span><br><span class="line">sudo service mysql status</span><br><span class="line"></span><br><span class="line"><span class="comment">#start mysql </span></span><br><span class="line">sudo service mysql start  </span><br><span class="line"></span><br><span class="line"><span class="comment">#stop mysql </span></span><br><span class="line">sudo service mysql stop  </span><br><span class="line"></span><br><span class="line"><span class="comment">#restart msyql </span></span><br><span class="line">sudo service mysql restart</span><br></pre></td></tr></table></figure>
+
+<p>先查看一下状态</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">graywenhui@Grays-LAPTOP:~$ service mysql status</span><br><span class="line"> </span><br><span class="line"> <span class="comment">#下面是信息</span></span><br><span class="line"> * MySQL is stopped.</span><br></pre></td></tr></table></figure>
+
+<p>然后启动</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">graywenhui@Grays-LAPTOP:~$ sudo service mysql start</span><br><span class="line"></span><br><span class="line"><span class="comment">#下面是信息</span></span><br><span class="line"> * Starting MySQL database server mysqld                                                         su: warning: cannot change directory to /nonexistent: No such file or directory</span><br></pre></td></tr></table></figure>
+
+<p>又报错了，继续搜<a target="_blank" rel="noopener" href="https://www.cnblogs.com/cnwcl/p/13805643.html%EF%BC%8C%E5%8F%91%E7%8E%B0%E5%8F%AF%E8%83%BD%E6%98%AFmysql%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%BC%82%E5%B8%B8%E5%85%B3%E6%9C%BA%E5%AF%BC%E8%87%B4%E7%9A%84%EF%BC%8C%E4%B8%8D%E8%BF%87%E6%88%91%E6%89%8D%E5%88%9A%E8%A3%85%E4%B8%8A%EF%BC%8C%E6%9C%89%E7%82%B9%E5%A5%87%E6%80%AA%E3%80%82%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88%EF%BC%9A">https://www.cnblogs.com/cnwcl/p/13805643.html，发现可能是mysql服务器异常关机导致的，不过我才刚装上，有点奇怪。解决方案：</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">graywenhui@Grays-LAPTOP:~$ sudo service mysql stop</span><br><span class="line"></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"> * Stopping MySQL database server mysqld                                                  [ OK ] </span><br><span class="line">graywenhui@Grays-LAPTOP:~$ sudo usermod -d /var/lib/mysql/ mysql</span><br><span class="line"></span><br><span class="line">graywenhui@Grays-LAPTOP:~$ sudo service mysql start</span><br><span class="line">[sudo] password <span class="keyword">for</span> graywenhui: <span class="comment">#这里键入wsl密码</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"> * Starting MySQL database server mysqld</span><br></pre></td></tr></table></figure>
+
+<p>成功了！</p>
+<h4 id="修改root密码"><a href="#修改root密码" class="headerlink" title="修改root密码"></a>修改root密码</h4><p>安装完mysql提供了一个默认的登录用户与密码，可以这样看</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">graywenhui@Grays-LAPTOP:~$ sudo <span class="built_in">cat</span> /etc/mysql/debian.cnf</span><br><span class="line"></span><br><span class="line"><span class="comment">#下面是信息</span></span><br><span class="line"><span class="comment"># Automatically generated for Debian scripts. DO NOT TOUCH!</span></span><br><span class="line">[client]</span><br><span class="line">host     = localhost</span><br><span class="line">user     = debian-sys-maint</span><br><span class="line">password = vdjgK18b5Y4RNk2Q</span><br><span class="line">socket   = /var/run/mysqld/mysqld.sock</span><br><span class="line">[mysql_upgrade]</span><br><span class="line">host     = localhost</span><br><span class="line">user     = debian-sys-maint</span><br><span class="line">password = vdjgK18b5Y4RNk2Q</span><br><span class="line">socket   = /var/run/mysqld/mysqld.sock</span><br></pre></td></tr></table></figure>
+
+<p>[mysql_upgrade]下面的user和password就是mysql的用户和密码了，通过这两进行登录：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">graywenhui@Grays-LAPTOP:~$ sudo mysql -udebian-sys-maint -pvdjgK18b5Y4RNk2Q</span><br><span class="line"></span><br><span class="line"><span class="comment">#下面是信息</span></span><br><span class="line">mysql: [Warning] Using a password on the <span class="built_in">command</span> line interface can be insecure.</span><br><span class="line">Welcome to the MySQL monitor.  Commands end with ; or \g.</span><br><span class="line">Your MySQL connection <span class="built_in">id</span> is 10</span><br><span class="line">Server version: 8.0.32-0ubuntu0.20.04.2 (Ubuntu)</span><br><span class="line"></span><br><span class="line">Copyright (c) 2000, 2023, Oracle and/or its affiliates.</span><br><span class="line"></span><br><span class="line">Oracle is a registered trademark of Oracle Corporation and/or its</span><br><span class="line">affiliates. Other names may be trademarks of their respective</span><br><span class="line">owners.</span><br><span class="line"></span><br><span class="line">Type <span class="string">&#x27;help;&#x27;</span> or <span class="string">&#x27;\h&#x27;</span> <span class="keyword">for</span> <span class="built_in">help</span>. Type <span class="string">&#x27;\c&#x27;</span> to clear the current input statement.</span><br><span class="line"></span><br><span class="line">mysql&gt;</span><br></pre></td></tr></table></figure>
+
+<p>这样就进入到了mysql中，然后切换到mysql对root的密码进行修改：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#选择database</span></span><br><span class="line">mysql&gt; use mysql;</span><br><span class="line"><span class="comment">#</span></span><br><span class="line">Reading table information <span class="keyword">for</span> completion of table and column names</span><br><span class="line">You can turn off this feature to get a quicker startup with -A</span><br><span class="line"></span><br><span class="line">Database changed</span><br><span class="line"></span><br><span class="line"><span class="comment">#更新密码</span></span><br><span class="line">mysql&gt; alter user <span class="string">&#x27;root&#x27;</span>@<span class="string">&#x27;localhost&#x27;</span> identified with mysql_native_password by <span class="string">&#x27;这里填你想要的密码&#x27;</span>;</span><br><span class="line"><span class="comment">#</span></span><br><span class="line">Query OK, 0 rows affected (0.02 sec)</span><br><span class="line"></span><br><span class="line"><span class="comment">#write privileges</span></span><br><span class="line">mysql&gt; flush privileges;</span><br><span class="line"><span class="comment">#</span></span><br><span class="line">Query OK, 0 rows affected (0.01 sec)</span><br><span class="line"></span><br><span class="line"><span class="comment">#然后就可以键入quit退出mysql模式了</span></span><br><span class="line">mysql&gt; quit</span><br></pre></td></tr></table></figure>
+
+<p>然后可以重启一下mysql服务，再用mysql -uroot -p’你刚填的密码‘（注意这里的’‘要去掉，上面的’‘要保留），然后就好了</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/stfw/" rel="tag"># stfw</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/02/10/%E5%8D%8A%E5%90%8C%E6%AD%A5%E5%8D%8A%E5%8F%8D%E5%BA%94%E5%A0%86%E7%BA%BF%E7%A8%8B%E6%B1%A0/" rel="prev" title="半同步半反应堆线程池">
+                  <i class="fa fa-chevron-left"></i> 半同步半反应堆线程池
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Wang Wenhui</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>
