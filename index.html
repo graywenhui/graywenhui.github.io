@@ -125,7 +125,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">31</span>
+          <span class="site-state-item-count">36</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -165,6 +165,602 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/03/27/Makefile/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Wang Wenhui">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Gray's Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Gray's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2023/03/27/Makefile/" class="post-title-link" itemprop="url">Makefile</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2023-03-27 08:43:54 / 修改时间：17:29:48" itemprop="dateCreated datePublished" datetime="2023-03-27T08:43:54+08:00">2023-03-27</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/CPP/" itemprop="url" rel="index"><span itemprop="name">CPP</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+	<div>
+		
+	</div>
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="Makefile"><a href="#Makefile" class="headerlink" title="Makefile"></a>Makefile</h1><h2 id="规则"><a href="#规则" class="headerlink" title="规则"></a>规则</h2><p>一个Makefile文件由一个<strong>规则</strong>或多个<strong>规则</strong>组成<br>其他规则一般为第一条规则服务</p>
+<p><strong>目标 …: 依赖 …<br>    命令（shell命令）<br>    …</strong></p>
+<p>目标：最终要生成的文件<br>依赖：生成目标需要的文件或是目标<br>命令：执行命令对依赖操作，生成目标（必须tab缩进）</p>
+<p>示例：</p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">mubiao: yilai1.c yilai2.c yilai3.c</span></span><br><span class="line">	gcc yilai1.c yilai2.c yilai3.c -o mubiao</span><br></pre></td></tr></table></figure>
+
+<h2 id="工作原理"><a href="#工作原理" class="headerlink" title="工作原理"></a>工作原理</h2><h6 id="命令在执行之前，需要先检查规则中的依赖是否存在"><a href="#命令在执行之前，需要先检查规则中的依赖是否存在" class="headerlink" title="命令在执行之前，需要先检查规则中的依赖是否存在"></a>命令在执行之前，需要先检查规则中的依赖是否存在</h6><ol>
+<li>存在，执行命令</li>
+<li>不存在，向下检查其他的规则，查看是否有一个规则是生成这个依赖的，找到就执行这个生成依赖的规则，再执行当前命令</li>
+</ol>
+<h6 id="检测更新，在执行规则中的命令时，会比较目标和依赖文件的时间"><a href="#检测更新，在执行规则中的命令时，会比较目标和依赖文件的时间" class="headerlink" title="检测更新，在执行规则中的命令时，会比较目标和依赖文件的时间"></a>检测更新，在执行规则中的命令时，会比较目标和依赖文件的时间</h6><ol>
+<li>如果依赖的时间比目标的时间晚，需要重新生成目标</li>
+<li>如果依赖的时间比目标的时间早，目标不需要更新，对应规则的命令不需要被执行</li>
+</ol>
+<h6 id="如果有其他规则不会影响到第一条规则的执行，则不会执行"><a href="#如果有其他规则不会影响到第一条规则的执行，则不会执行" class="headerlink" title="如果有其他规则不会影响到第一条规则的执行，则不会执行"></a>如果有其他规则不会影响到第一条规则的执行，则不会执行</h6><p>问题：如果我第一条规则中的依赖需要第二条规则执行，而第二条规则的依赖又需要第三条规则执行，这样可行吗？</p>
+<h2 id="变量"><a href="#变量" class="headerlink" title="变量"></a>变量</h2><p>自定义变量：<br>    变量名&#x3D;变量值	var&#x3D;hello		$(var)<br>预定义变量：(这部分只能在<strong>命令</strong>中使用)<br>    AR：归档维护程序的名称，默认为ar<br>    CC：C编译器的名称，默认为cc<br>    CXX：C++编译器的名称，默认为g++<br>    $@:	目标的完整名称<br>    $&lt;：第一个依赖文件的名称<br>    $^：所有的依赖文件<br>获取变量的值<br>    $(变量名)</p>
+<p>示例：</p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">app:main.c a.c b.c</span></span><br><span class="line">	gcc -c main.c a.c b.c</span><br><span class="line">	</span><br><span class="line"><span class="section">app:main.c a.c b.c</span></span><br><span class="line">	<span class="variable">$(CC)</span> -c <span class="variable">$^</span> -o <span class="variable">$@</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="模式匹配"><a href="#模式匹配" class="headerlink" title="模式匹配"></a>模式匹配</h2><p>%.o:%.c<br>    %：通配符，匹配一个字符串	两个%匹配的是一个字符串</p>
+<p>示例：</p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">%.o:%.c</span></span><br><span class="line">	gcc -c &amp;&lt; -o &amp;@</span><br></pre></td></tr></table></figure>
+
+<h2 id="函数"><a href="#函数" class="headerlink" title="函数"></a>函数</h2><p>$(funcname params)</p>
+<p>示例：</p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$(<span class="built_in">wildcard</span> PATTERN...)</span></span><br><span class="line"><span class="comment">#功能：获取指定目录下指定类型的文件列表</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#参数：PATTERN指的是某个或多个目录下的对应的某种类型的文件，如果有多个目录，一般用空格间隔</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#返回：得到的若干个文件的列表，用空格隔开</span></span><br><span class="line"></span><br><span class="line"><span class="variable">$(<span class="built_in">wildcard</span> *.c ./sub/*.c)</span></span><br><span class="line"><span class="comment">#返回格式：a.c b.c c.c d.c e.c f.c</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$(<span class="built_in">patsubst</span> &lt;pattern&gt;,&lt;replacement&gt;,&lt;text&gt;)</span></span><br><span class="line"><span class="comment">#功能：查找&lt;text&gt;中的单词是否符合模式&lt;pattern&gt;，符合就用&lt;replacement&gt;替换</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#&lt;pattern&gt;可以包括通配符&#x27;%&#x27;，表示任意长度的字符串，如果&lt;replacement&gt;中也包含&#x27;%&#x27;,则这个字符串将是前面代表的字符串</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#返回：函数返回被替换过后的字符串</span></span><br><span class="line"></span><br><span class="line"><span class="variable">$(<span class="built_in">patsubst</span> %.c, %.o, x.c bar.c)</span></span><br><span class="line"><span class="comment">#返回格式：x.o bar.o</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h2><p>可以手动创建命令:</p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta"><span class="keyword">.PHONY</span>:clean</span></span><br><span class="line"><span class="section">make:</span></span><br><span class="line">	rm xxx -f</span><br><span class="line"><span class="comment">#.PHONY表示clean是伪目标，不会生成文件</span></span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/03/23/%E9%9D%99%E6%80%81%E5%BA%93%E5%92%8C%E5%8A%A8%E6%80%81%E5%BA%93/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Wang Wenhui">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Gray's Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Gray's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2023/03/23/%E9%9D%99%E6%80%81%E5%BA%93%E5%92%8C%E5%8A%A8%E6%80%81%E5%BA%93/" class="post-title-link" itemprop="url">静态库和动态库</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-03-23 16:30:10" itemprop="dateCreated datePublished" datetime="2023-03-23T16:30:10+08:00">2023-03-23</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-03-27 08:34:19" itemprop="dateModified" datetime="2023-03-27T08:34:19+08:00">2023-03-27</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/CPP/" itemprop="url" rel="index"><span itemprop="name">CPP</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+	<div>
+		
+	</div>
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="库"><a href="#库" class="headerlink" title="库"></a>库</h1><p> 两种库：静态库和动态库 （共享库）</p>
+<p><strong>区别：</strong> 静态库在程序的链接阶段被复制到了程序中；动态库在链接阶段没有被复制到程序中，而是程序在运行时由系统动态加载到内存中供程序调用。</p>
+<p><strong>好处：</strong>1、代码保密。2、方便部署和开发</p>
+<h2 id="静态库"><a href="#静态库" class="headerlink" title="静态库"></a>静态库</h2><p><em><strong>命名规则：</strong></em></p>
+<p>​	Linux：libxxx.a<br>​		lib：前缀（固定）<br>​		xxx：库的名字，自己起<br>​		.a：后缀（固定）</p>
+<p>​	Windows：libxxx.lib</p>
+<p><em><strong>制作：</strong></em></p>
+<p>​	gcc获得.o文件</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -c xxx.c xxx.c xxx.c</span><br></pre></td></tr></table></figure>
+
+<p>​	将.o文件打包，使用ac工具（archive）</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ar rcs libxxx.a xxx.o xxx.o</span><br></pre></td></tr></table></figure>
+
+<p>​	r - 将文件插入备存文件中</p>
+<p>​	c - 建立备存文件</p>
+<p>​	s - 索引</p>
+<p><em><strong>使用：</strong></em></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc main.c -o xxx -I 头文件所在文件夹 -l 名字 库所在文件夹 </span><br></pre></td></tr></table></figure>
+
+<h2 id="动态库"><a href="#动态库" class="headerlink" title="动态库"></a>动态库</h2><p><em><strong>命名规则：</strong></em></p>
+<p>​	Linux：libxxx.so<br>​		lib：前缀（固定）<br>​		xxx：库的名字，自己起<br>​		.so：后缀（固定）<br>​		在Linux下是一个可执行文件</p>
+<p>​	Windows：libxxx.dll</p>
+<p><em><strong>制作：</strong></em></p>
+<p>​	gcc获得.o文件，<strong>得到和位置无关的代码</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -c -fpic/-fPIC xxx.c xxx.c</span><br></pre></td></tr></table></figure>
+
+<p>​	gcc得到动态库</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -shared xxx.o xxx.o -o libxxx.so</span><br></pre></td></tr></table></figure>
+
+<p><em><strong>使用：</strong></em></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc main.c -o xxx -I 头文件所在文件夹 -L 库所在文件夹 -l 名字</span><br></pre></td></tr></table></figure>
+
+<p> 发现运行不了，因为系统要知道绝对路径</p>
+<p>第一种方法：修改环境变量LD_LIBRARY_PATH</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:要添加的文件夹目录</span><br></pre></td></tr></table></figure>
+
+<p>永久配置：</p>
+<p>用户配置：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">vim .bashrc</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">进入了.bashrc 用vim编辑 在末尾增加</span></span><br><span class="line">export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:要添加的路径</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">保存 然后<span class="built_in">source</span></span></span><br><span class="line"></span><br><span class="line">source .bashrc</span><br></pre></td></tr></table></figure>
+
+<p>系统配置：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">sudo vim /etc/profile</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">在末尾增加</span></span><br><span class="line">export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:要添加的路径</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">保存 然后<span class="built_in">source</span></span></span><br><span class="line"></span><br><span class="line">source /etc/profile</span><br></pre></td></tr></table></figure>
+
+<p>第二种方法：修改&#x2F;etc&#x2F;ld.so.cache文件</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">sudo vim /etc/ld.so.conf</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">把路径写在里面就行，然后保存退出，更新</span></span><br><span class="line"></span><br><span class="line">sudo ldconfig</span><br></pre></td></tr></table></figure>
+
+<p>第三种方法：把库文件放在&#x2F;lib&#x2F;或&#x2F;usr&#x2F;lib目录下（不推荐）</p>
+<h2 id="对比"><a href="#对比" class="headerlink" title="对比"></a>对比</h2><p><strong>静态库：</strong><br>    优点：<br>        · 被打包到应用程序中加载速度快<br>        · 发布程序不用提供静态库，移植方便</p>
+<p>​	缺点：<br>​		· 消耗系统资源，浪费内存<br>​		· 更新、部署、发布麻烦</p>
+<p><strong>动态库：</strong><br>    优点：<br>        · 可以实现进程间资源共享<br>        · 更新、部署、发布简单<br>        · 可以控制何时加载动态库</p>
+<p>​	缺点：<br>​		· 加载速度比静态库慢<br>​		· 发布程序时需要提供依赖的动态库</p>
+<p>之前写过一次贪吃蛇，打包给同学试试的时候，用静态库所有同学都能玩，而用动态库有些同学就玩不了了，就是这个道理。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/03/11/CPP%E5%A4%A7%E5%B0%8F%E6%A0%B9%E5%A0%86-priority-queue/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Wang Wenhui">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Gray's Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Gray's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2023/03/11/CPP%E5%A4%A7%E5%B0%8F%E6%A0%B9%E5%A0%86-priority-queue/" class="post-title-link" itemprop="url">CPP大小根堆-priority_queue</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2023-03-11 14:44:25 / 修改时间：16:42:56" itemprop="dateCreated datePublished" datetime="2023-03-11T14:44:25+08:00">2023-03-11</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">算法</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+	<div>
+		
+	</div>
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="概述和模板定义"><a href="#概述和模板定义" class="headerlink" title="概述和模板定义"></a>概述和模板定义</h1><p>priority_queue容器在头文件<queue>中，位于std命名空间中,容器是有序的。</p>
+<p>模板定义如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;	<span class="keyword">typename</span> T,							<span class="comment">//容器中元素的类型</span></span><br><span class="line">        	<span class="keyword">typename</span> Container=std::vector&lt;T&gt;,	<span class="comment">//底层使用的容器，vector或</span></span><br><span class="line">												<span class="comment">//deque</span></span><br><span class="line">        	<span class="keyword">typename</span> Compare=std::less&lt;T&gt; &gt;	<span class="comment">//排序规则</span></span><br><span class="line">                							<span class="comment">//std::less&lt;T&gt; 		从大到小</span></span><br><span class="line">                							<span class="comment">//std::greater&lt;T&gt;	从小到大</span></span><br><span class="line">                							<span class="comment">//还可以自定义规则，做题一般不用</span></span><br><span class="line"><span class="keyword">class</span> priority_queue&#123;</span><br><span class="line">    <span class="comment">//......</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="创建容器的方法"><a href="#创建容器的方法" class="headerlink" title="创建容器的方法"></a>创建容器的方法</h1><p>最基本的：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">std::priority_queue&lt;<span class="type">int</span>&gt; values;</span><br></pre></td></tr></table></figure>
+
+<p>使用普通数组或其他容器：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//使用普通数组</span></span><br><span class="line"><span class="type">int</span> values[]&#123;<span class="number">4</span>,<span class="number">1</span>,<span class="number">3</span>,<span class="number">2</span>&#125;;</span><br><span class="line"><span class="function">std::priority_queue&lt;<span class="type">int</span>&gt; <span class="title">copy_values</span><span class="params">(values,values+<span class="number">4</span>)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//使用序列式容器</span></span><br><span class="line">std::array&lt;<span class="type">int</span>,4&gt;values&#123; <span class="number">4</span>,<span class="number">1</span>,<span class="number">3</span>,<span class="number">2</span> &#125;;</span><br><span class="line"><span class="function">std::priority_queue&lt;<span class="type">int</span>&gt; <span class="title">copy_values</span><span class="params">(values.begin(),values.end())</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>手动指定：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> values[]&#123; <span class="number">4</span>,<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span> &#125;;</span><br><span class="line">std::priority_queue&lt;<span class="type">int</span>, std::deque&lt;<span class="type">int</span>&gt;, std::greater&lt;<span class="type">int</span>&gt; &gt; <span class="built_in">copy_values</span>(values, values+<span class="number">4</span>);</span><br></pre></td></tr></table></figure>
+
+<h1 id="常用成员函数"><a href="#常用成员函数" class="headerlink" title="常用成员函数"></a>常用成员函数</h1><table>
+<thead>
+<tr>
+<th>成员函数</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>empty()</td>
+<td>如果 priority_queue 为空的话，返回 true；反之，返回 false。</td>
+</tr>
+<tr>
+<td>size()</td>
+<td>返回 priority_queue 中存储元素的个数。</td>
+</tr>
+<tr>
+<td>top()</td>
+<td>返回 priority_queue 中第一个元素的引用形式。</td>
+</tr>
+<tr>
+<td>push(const T&amp; obj)</td>
+<td>根据既定的排序规则，将元素 obj 的副本存储到 priority_queue 中适当的位置。</td>
+</tr>
+<tr>
+<td>push(T&amp;&amp; obj)</td>
+<td>根据既定的排序规则，将元素 obj 移动存储到 priority_queue 中适当的位置。</td>
+</tr>
+<tr>
+<td>emplace(Args&amp;&amp;… args)</td>
+<td>Args&amp;&amp;… args 表示构造一个存储类型的元素所需要的数据（对于类对象来说，可能需要多个数据构造出一个对象）。此函数的功能是根据既定的排序规则，在容器适配器适当的位置直接生成该新元素。</td>
+</tr>
+<tr>
+<td>pop()</td>
+<td>移除 priority_queue 容器适配器中第一个元素。</td>
+</tr>
+<tr>
+<td>swap(priority_queue<T>&amp; other)</td>
+<td>将两个 priority_queue 容器适配器中的元素进行互换，需要注意的是，进行互换的 2 个 priority_queue 容器适配器中存储的元素类型以及底层采用的基础容器类型，都必须相同。</td>
+</tr>
+</tbody></table>
+<p>适用于题目：（待补充）</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a target="_blank" rel="noopener" href="http://c.biancheng.net/view/6987.html">http://c.biancheng.net/view/6987.html</a></p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/03/10/%E5%AE%9A%E6%97%B6%E5%99%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Wang Wenhui">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Gray's Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Gray's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2023/03/10/%E5%AE%9A%E6%97%B6%E5%99%A8/" class="post-title-link" itemprop="url">定时器</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-03-10 10:39:07" itemprop="dateCreated datePublished" datetime="2023-03-10T10:39:07+08:00">2023-03-10</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+	<div>
+		
+	</div>
+    <div class="post-body" itemprop="articleBody">
+          
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/03/09/HTTP/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Wang Wenhui">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Gray's Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Gray's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2023/03/09/HTTP/" class="post-title-link" itemprop="url">HTTP</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-03-09 17:08:50" itemprop="dateCreated datePublished" datetime="2023-03-09T17:08:50+08:00">2023-03-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-03-11 21:31:59" itemprop="dateModified" datetime="2023-03-11T21:31:59+08:00">2023-03-11</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/TinyWebServer/" itemprop="url" rel="index"><span itemprop="name">TinyWebServer</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+	<div>
+		
+	</div>
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="HTTP"><a href="#HTTP" class="headerlink" title="HTTP"></a>HTTP</h1><h2 id="epoll"><a href="#epoll" class="headerlink" title="epoll"></a>epoll</h2><p>epoll是一种I&#x2F;O事件通知机制</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/epoll.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">//该函数创建一个指示epoll内核事件表的文件描述符，</span></span><br><span class="line"><span class="comment">//描述符将用作其他epoll系统调用的第一个参数，size不起作用</span></span><br><span class="line"><span class="comment">//这里不懂size为什么不起作用</span></span><br><span class="line"><span class="comment">//查了一下，size参数表示所要监视文件描述符的最大值，不过在后来的Linux版本中已经被弃用（同时，size不要传0，会报invalid argument错误）</span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">epoll_create</span><span class="params">(<span class="type">int</span> size)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">//该函数操作内核事件表监控的文件描述符上的事件：注册、修改、删除</span></span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">epoll_ctl</span><span class="params">(<span class="type">int</span> epfd, <span class="type">int</span> op, <span class="type">int</span> fd, <span class="keyword">struct</span> epoll_event *event)</span></span></span><br><span class="line"><span class="function"><span class="comment">//· epfd：epoll_create的句柄</span></span></span><br><span class="line"><span class="function"><span class="comment">//· op：表示动作，用3个宏表示：</span></span></span><br><span class="line"><span class="function"><span class="comment">//	· EPOLL_CTL_ADD(注册新的fd到epfd)</span></span></span><br><span class="line"><span class="function"><span class="comment">//  · EPOLL_CTL_MOD(修改已经注册的fd的监听事件)</span></span></span><br><span class="line"><span class="function"><span class="comment">//  · EPOLL_CTL_DEL(从epfd删除一个fd)</span></span></span><br><span class="line"><span class="function"><span class="comment">//· event：告诉内核需要监听的事件</span></span></span><br><span class="line"><span class="function">    </span></span><br><span class="line"><span class="function"><span class="comment">//epoll_event的定义</span></span></span><br><span class="line"><span class="function"><span class="keyword">struct</span> epoll_event </span>&#123;</span><br><span class="line">    <span class="type">_uint32_t</span> events;</span><br><span class="line">    <span class="type">epoll_data_t</span> data;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//epoll_data_t</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">union</span> <span class="title class_">epoll_data</span> &#123;</span><br><span class="line">    <span class="type">void</span> *ptr; <span class="comment">/* 指向用户自定义数据 */</span></span><br><span class="line">    <span class="type">int</span> fd; <span class="comment">/* 注册的文件描述符 */</span></span><br><span class="line">    <span class="type">uint32_t</span> u32; <span class="comment">/* 32-bit integer */</span></span><br><span class="line">    <span class="type">uint64_t</span> u64; <span class="comment">/* 64-bit integer */</span></span><br><span class="line">&#125; <span class="type">epoll_data_t</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">events描述事件类型，其中epoll事件类型有以下几种:</span></span><br><span class="line"><span class="comment">· EPOLLIN：表示对应的文件描述符可以读（包括对端SOCKET正常关闭）</span></span><br><span class="line"><span class="comment">· EPOLLOUT：表示对应的文件描述符可以写</span></span><br><span class="line"><span class="comment">· EPOLLPRI：表示对应的文件描述符有紧急的数据可读（这里应该表示有带外数据到来）</span></span><br><span class="line"><span class="comment">· EPOLLERR：表示对应的文件描述符发生错误</span></span><br><span class="line"><span class="comment">· EPOLLHUP：表示对应的文件描述符被挂断；</span></span><br><span class="line"><span class="comment">· EPOLLET：将EPOLL设为边缘触发（Edge Triggered)模式，这是相对于水平触发		(Level Triggered)而言的</span></span><br><span class="line"><span class="comment">· EPOLLONESHOT：只监听一次事件，当监听完这次事件之后，如果还需要继续监听这个		socket的话，需要再次把这个socket加入到EPOLL队列里 </span></span><br><span class="line"><span class="comment">· EPOLLRDHUP：对端描述符产生一个挂断事件</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//该函数用于等待所监控文件描述符上有事件的产生，返回就绪的文件描述符个数</span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">epoll_wait</span><span class="params">(<span class="type">int</span> epfd, <span class="keyword">struct</span> epoll_event *event, <span class="type">int</span> maxevents, <span class="type">int</span> timeout)</span></span></span><br><span class="line"><span class="function">    </span></span><br><span class="line"><span class="function">· events：用来存内核得到事件的集合	应该是一个数组</span></span><br><span class="line"><span class="function">· maxevents：告之内核这个events有多大，这个maxevents的值不能大于				epoll_create（）时的size</span></span><br><span class="line"><span class="function">· timeout：是超时时间</span></span><br><span class="line"><span class="function">	· -1：调用一直阻塞，直到有文件描述符进入ready状态或捕获到信号才返回</span></span><br><span class="line"><span class="function">	· 0：用于非阻塞检测是否有描述符处于ready状态，不管结果如何，调用都立即返回</span></span><br><span class="line"><span class="function">	· &gt;0：指定毫秒，期间有检测对象变为ready状态或捕获到信号返回，否则直到超时</span></span><br><span class="line"><span class="function">· 返回值：成功返回有多少文件描述符就绪，时间到时返回0，出错返回-1</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="select-x2F-poll-x2F-epoll对比"><a href="#select-x2F-poll-x2F-epoll对比" class="headerlink" title="select&#x2F;poll&#x2F;epoll对比"></a>select&#x2F;poll&#x2F;epoll对比</h5><p><strong>调用函数：</strong></p>
+<p>​	· select和poll都是一个函数，epoll是一组函数</p>
+<p><strong>文件描述符数量及传入方式：</strong></p>
+<p>​	· select通过线性表描述文件描述符集合，文件描述符有上限，一般是1024，但可以修	改源码，重新编译内核，不推荐。传入方式：创建3个文件描述符拷贝到内核中。</p>
+<p>​	· poll是链表描述，突破了文件描述符上限，最大可以打开文件的数目（这里意思是说系统最大的数目？）。传入方式：将传入的struct pollfd结构体数组拷贝到内核中进行监听</p>
+<p>​	· epoll通过红黑树描述，最大可以打开文件的数目，可以通过命令ulimit -n number修	改，仅对当前终端有效。传入方式：epoll通过epoll_create建立一棵红黑树，通过epoll_ctl将要监听的文件描述符注册到红黑树。</p>
+<p><strong>内核态检测文件描述符读写状态的方式：</strong></p>
+<p>​	· select：采用轮询方式，遍历所有fd，最后返回一个描述符读写操作是否就绪的mask掩码，根据掩码给fd_set赋值。</p>
+<p>​	· poll：采用轮询方式，查询每个fd的状态，如果就绪则在等待队列中加入一项并继续遍历</p>
+<p>​	· epoll：采用回调机制，在执行epoll_ctl的add操作时，不仅将文件描述符放到红黑树上，而且也注册了回调函数，内核在检测到某文件描述符可读&#x2F;可写时会调用回调函数，该回调函数将文件描述符放在就绪链表中，当epoll_wait函数调用时，仅仅观察这个list链表里有没有数据即可。只有发生了事件的socket才会主动的去调用 callback函数，其他空闲状态socket则不会，若是就绪事件，插入list。</p>
+<p><strong>找到就绪的文件描述符并传递给用户态的方式:</strong></p>
+<p>​	· select：将之前传入的fd_set拷贝传出到用户态并返回就绪的文件描述符总数。用户态并不知道是哪些文件描述符处于就绪态，需要遍历来判断。</p>
+<p>​	· poll：将之前传入的fd数组拷贝传出到用户态并返回就绪的文件描述符总数。用户态并不知道是哪些文件描述符处于就绪态，需要遍历来判断。</p>
+<p>​	· epoll：epoll返回的发生了事件的个数和结构体数组，结构体包含socket的信息，因此直接处理返回的数组即可，然后遍历依次处理即可。</p>
+<p><strong>重复监听的处理方式:</strong></p>
+<p>​	· select：将新的监听文件描述符集合拷贝传入内核中，继续以上步骤</p>
+<p>​	· poll：将新的struct pollfd结构体数组拷贝传入内核中，继续以上步骤。</p>
+<p>​	· epoll：无需重新构建红黑树，直接沿用已存在的即可。</p>
+<p><strong>工作模式：</strong></p>
+<p>​	· select和poll都只能工作在相对低效的LT模式下。</p>
+<p>​	· epoll则可以工作在ET高效模式，并且epoll还支持EPOLLONESHOT事件，该事件能进一步减少可读、可写和异常事件被触发的次数。 </p>
+<p><strong>应用场景：</strong></p>
+<p>​	· 当所有的fd都是活跃连接，使用epoll，需要建立文件系统，红黑书和链表对于此来说，效率反而不高，不如selece和poll。</p>
+<p>​	· 当监测的fd数目较小，且各个fd都比较活跃，建议使用select或者poll。</p>
+<p>​	· 当监测的fd数目非常大，成千上万，且单位时间只有其中的一部分fd处于就绪状态，这个时候使用epoll能够明显提升性能。</p>
+<h5 id="ET、LT、EPOLLONESHOT"><a href="#ET、LT、EPOLLONESHOT" class="headerlink" title="ET、LT、EPOLLONESHOT"></a>ET、LT、EPOLLONESHOT</h5><p>​	· LT水平触发模式触发时机：</p>
+<ol>
+<li>对于读操作，只要缓冲内容不为空，LT模式返回读就绪。</li>
+<li>对于写操作，只要缓冲区还不满，LT模式会返回写就绪。</li>
+</ol>
+<p>当被监控的文件描述符上有可读写事件发生时，epoll_wait()会通知处理程序去读写。如果这次没有把数据一次性全部读写完(如读写缓冲区太小)，那么下次调用 epoll_wait()时，它还会通知你在上没读写完的文件描述符上继续读写，当然如果你一直不去读写，它会一直通知你。如果系统中有大量你不需要读写的就绪文件描述符，而它们每次都会返回，这样会大大降低处理程序检索自己关心的就绪文件描述符的效率。</p>
+<p>​	· ET边缘触发模式触发时机：</p>
+<p>​		对于读操作：							</p>
+<pre><code> 1. 当缓冲区由不可读变为可读的时候，即缓冲区由空变为不空的时候。
+ 2. 当有新数据到达时，即缓冲区中的待读数据变多的时候。
+ 3. 当缓冲区有数据可读，且应用进程对相应的描述符进行EPOLL_CTL_MOD 修改EPOLLIN事件时。
+</code></pre>
+<p>​		对于写操作：</p>
+<pre><code> 1. 当缓冲区由不可写变为可写时。
+ 2. 当有旧数据被发送走，即缓冲区中的内容变少的时候。
+ 3. 当缓冲区有空间可写，且应用进程对相应的描述符进行EPOLL_CTL_MOD 修改EPOLLOUT事件时。
+</code></pre>
+<p>epoll_wait检测到文件描述符有事件发生，则将其通知给应用程序，应用程序必须立即处理该事</p>
+<p>必须要一次性将数据读取完，使用非阻塞I&#x2F;O，读取到出现eagai</p>
+<p>EPOLLONESHOT</p>
+<p>一个线程读取某个socket上的数据后开始处理数据，在处理过程中该socket上又有新数据可读，此时另一个线程被唤醒读取，此时出现两个线程处理同一个socket</p>
+<p>我们期望的是一个socket连接在任一时刻都只被一个线程处理，通过epoll_ctl对该文件描述符注册epolloneshot事件，一个线程处理socket时，其他线程将无法处理，<strong>当该线程处理完后，需要通过epoll_ctl重置epolloneshot事件</strong></p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -315,7 +911,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-02-11 18:21:55" itemprop="dateModified" datetime="2023-02-11T18:21:55+08:00">2023-02-11</time>
+      <time title="修改时间：2023-03-09 17:12:42" itemprop="dateModified" datetime="2023-03-09T17:12:42+08:00">2023-03-09</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -385,11 +981,12 @@
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line">threadpool&lt;T&gt;::<span class="built_in">threadpool</span>( connection_pool *connPool, <span class="type">int</span> thread_number, <span class="type">int</span> max_requests) : <span class="built_in">m_thread_number</span>(thread_number), <span class="built_in">m_max_requests</span>(max_requests), <span class="built_in">m_stop</span>(<span class="literal">false</span>), <span class="built_in">m_threads</span>(<span class="literal">NULL</span>),<span class="built_in">m_connPool</span>(connPool)&#123;</span><br><span class="line"> </span><br><span class="line">     <span class="keyword">if</span>(thread_number&lt;=<span class="number">0</span>||max_requests&lt;=<span class="number">0</span>)</span><br><span class="line">         <span class="keyword">throw</span> std::<span class="built_in">exception</span>();</span><br><span class="line"> </span><br><span class="line">     <span class="comment">//线程id初始化</span></span><br><span class="line">     m_threads=<span class="keyword">new</span> <span class="type">pthread_t</span>[m_thread_number];</span><br><span class="line">     <span class="keyword">if</span>(!m_threads)</span><br><span class="line">        <span class="keyword">throw</span> std::<span class="built_in">exception</span>();</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>;i&lt;thread_number;++i)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">//循环创建线程，并将工作线程按要求进行运行</span></span><br><span class="line">        <span class="keyword">if</span>(<span class="built_in">pthread_create</span>(m_threads+i,<span class="literal">NULL</span>,worker,<span class="keyword">this</span>)!=<span class="number">0</span>)&#123;</span><br><span class="line">            <span class="keyword">delete</span> [] m_threads;</span><br><span class="line">            <span class="keyword">throw</span> std::<span class="built_in">exception</span>();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//将线程进行分离后，不用单独对工作线程进行回收</span></span><br><span class="line">        <span class="keyword">if</span>(<span class="built_in">pthread_detach</span>(m_threads[i]))&#123;</span><br><span class="line">            <span class="keyword">delete</span>[] m_threads;</span><br><span class="line">            <span class="keyword">throw</span> std::<span class="built_in">exception</span>();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <h5 id="向请求队列中添加任务"><a href="#向请求队列中添加任务" class="headerlink" title="向请求队列中添加任务"></a>向请求队列中添加任务</h5><p>通过list容器创建请求队列，向队列中添加时，通过互斥锁保证线程安全，添加完成后通过信号量提醒有任务要处理，最后注意线程同步。</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="type">bool</span> threadpool&lt;T&gt;::<span class="built_in">append</span>(T* request)</span><br><span class="line">&#123;</span><br><span class="line">    m_queuelocker.<span class="built_in">lock</span>();</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//根据硬件，预先设置请求队列的最大值</span></span><br><span class="line">    <span class="keyword">if</span>(m_workqueue.<span class="built_in">size</span>() &gt; m_max_requests)</span><br><span class="line">    &#123;</span><br><span class="line">        m_queuelocker.<span class="built_in">unlock</span>();</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//添加任务</span></span><br><span class="line">    m_workqueue.<span class="built_in">push_back</span>(request);</span><br><span class="line">    m_queuelocker.<span class="built_in">unlock</span>(request);</span><br><span class="line">    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</span><br><span class="line"><span class="type">bool</span> threadpool&lt;T&gt;::<span class="built_in">append</span>(T* request)</span><br><span class="line">&#123;</span><br><span class="line">    m_queuelocker.<span class="built_in">lock</span>();</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//根据硬件，预先设置请求队列的最大值</span></span><br><span class="line">    <span class="keyword">if</span>(m_workqueue.<span class="built_in">size</span>() &gt; m_max_requests)</span><br><span class="line">    &#123;</span><br><span class="line">        m_queuelocker.<span class="built_in">unlock</span>();</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//添加任务</span></span><br><span class="line">    m_workqueue.<span class="built_in">push_back</span>(request);</span><br><span class="line">    m_queuelocker.<span class="built_in">unlock</span>();</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//信号量提醒有任务要处理</span></span><br><span class="line">    m_queuestat.<span class="built_in">post</span>();</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 
 
-<h5 id="线程处理函数"><a href="#线程处理函数" class="headerlink" title="线程处理函数"></a>线程处理函数</h5><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+<h5 id="线程处理函数"><a href="#线程处理函数" class="headerlink" title="线程处理函数"></a>线程处理函数</h5><p>内部访问私有成员函数run，完成线程处理要求</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
 
 
 
@@ -657,516 +1254,6 @@
 	</div>
     <div class="post-body" itemprop="articleBody">
           
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/01/31/%E5%88%86%E5%B8%83%E5%BC%8F%E7%90%86%E8%AE%BA/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Wang Wenhui">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Gray's Blog">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Gray's Blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2023/01/31/%E5%88%86%E5%B8%83%E5%BC%8F%E7%90%86%E8%AE%BA/" class="post-title-link" itemprop="url">分布式理论</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2023-01-31 21:36:41 / 修改时间：21:41:07" itemprop="dateCreated datePublished" datetime="2023-01-31T21:36:41+08:00">2023-01-31</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/go/" itemprop="url" rel="index"><span itemprop="name">go</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-	<div>
-		
-	</div>
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="重点内容"><a href="#重点内容" class="headerlink" title="重点内容"></a>重点内容</h1><ol>
-<li>分布式概述</li>
-<li>系统模型</li>
-<li>理论基础</li>
-<li>分布式事务</li>
-<li>共识协议</li>
-<li>分布式实践</li>
-</ol>
-<h1 id="详细知识点"><a href="#详细知识点" class="headerlink" title="详细知识点"></a>详细知识点</h1><h2 id="What"><a href="#What" class="headerlink" title="What"></a>What</h2>
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/01/31/%E7%BA%BF%E7%A8%8B%E5%90%8C%E6%AD%A5/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Wang Wenhui">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Gray's Blog">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Gray's Blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2023/01/31/%E7%BA%BF%E7%A8%8B%E5%90%8C%E6%AD%A5/" class="post-title-link" itemprop="url">线程同步</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2023-01-31 15:24:15" itemprop="dateCreated datePublished" datetime="2023-01-31T15:24:15+08:00">2023-01-31</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-	<div>
-		
-	</div>
-    <div class="post-body" itemprop="articleBody">
-          
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/01/30/%E6%9E%B6%E6%9E%84/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Wang Wenhui">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Gray's Blog">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Gray's Blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2023/01/30/%E6%9E%B6%E6%9E%84/" class="post-title-link" itemprop="url">架构</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2023-01-30 20:08:56" itemprop="dateCreated datePublished" datetime="2023-01-30T20:08:56+08:00">2023-01-30</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-01-31 21:36:49" itemprop="dateModified" datetime="2023-01-31T21:36:49+08:00">2023-01-31</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/go/" itemprop="url" rel="index"><span itemprop="name">go</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-	<div>
-		
-	</div>
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="重点内容"><a href="#重点内容" class="headerlink" title="重点内容"></a>重点内容</h1><ol>
-<li>什么是架构</li>
-<li>后端架构剖析</li>
-<li>后端架构的挑战</li>
-<li>实战</li>
-</ol>
-<p>#详细知识点</p>
-<h2 id="What"><a href="#What" class="headerlink" title="What"></a>What</h2><p>定义：架构又称软件架构，是有关软件整体结构与组件的抽象描述，用于指导软件系统各个方面的设计。</p>
-<p>相当于是大厦的地基</p>
-<h3 id="单机架构"><a href="#单机架构" class="headerlink" title="单机架构"></a>单机架构</h3><p>all in one，把所有功能实现在一个进程里面，部署在一个机器上。</p>
-<p>这样做，优点是简单，缺点是运维需要停服，以及C10k问题<br>（C10K问题：服务器如何支持10k个并发连接，concurrent 10000 connection）</p>
-<p>听了之后的架构，我理解是一个人不同类的完整事情做完</p>
-<h3 id="单体架构"><a href="#单体架构" class="headerlink" title="单体架构"></a>单体架构</h3><p>单体架构：分布式部署<br>垂直应用架构：按应用垂直切分</p>
-<p>优点：水平扩容，运维不需要停服<br>问题：职责太多，开发效率不高、爆炸半径大</p>
-<p>垂直应用就是不同人做一件不同的完整事情</p>
-<h3 id="SOA、微服务-水平切分"><a href="#SOA、微服务-水平切分" class="headerlink" title="SOA、微服务|水平切分"></a>SOA、微服务|水平切分</h3><p>SOA（Service-Oriented Architecture）</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/01/29/%E8%A7%84%E5%88%99%E5%BC%95%E6%93%8E%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Wang Wenhui">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Gray's Blog">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Gray's Blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2023/01/29/%E8%A7%84%E5%88%99%E5%BC%95%E6%93%8E%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0/" class="post-title-link" itemprop="url">规则引擎设计与实现</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2023-01-29 21:55:02" itemprop="dateCreated datePublished" datetime="2023-01-29T21:55:02+08:00">2023-01-29</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-01-30 19:52:47" itemprop="dateModified" datetime="2023-01-30T19:52:47+08:00">2023-01-30</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/go/" itemprop="url" rel="index"><span itemprop="name">go</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-	<div>
-		
-	</div>
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="重点内容"><a href="#重点内容" class="headerlink" title="重点内容"></a>重点内容</h1><ol>
-<li>理解规则引擎的组成部分及应用场景</li>
-<li>理解规则引擎的核心原理-编译原理的相关概念</li>
-<li>设计并实现一个规则引擎-YoungEngine</li>
-<li>结合之前所学课程，实现一个Web版规则引擎</li>
-</ol>
-<h1 id="详细知识点"><a href="#详细知识点" class="headerlink" title="详细知识点"></a>详细知识点</h1><h2 id="认识"><a href="#认识" class="headerlink" title="认识"></a>认识</h2><p>简单理解规则引擎就是一个系统，对于一个给定的输入，会有一个特定的输出</p>
-<p><strong>定义：</strong>是一种嵌入在程序中的组件，实现了将业务决策从应用代码中分离出来，并用预定义的语义模块编写业务决策。接受输入，解释业务规则，并根据业务规则做出业务决策。</p>
-<p>我的理解是这里就相当于，整体框架不变的情况下，只要改动中间一个函数内容（但不是函数），就可以实现业务逻辑，规则引擎相当于一个更高能力的函数</p>
-<p>这样做的好处是能够解决重复编码的问题，提高开发效率</p>
-<p><strong>组成部分：</strong>数据输入、规则理解、规则执行</p>
-<p><strong>应用场景：</strong>风控对抗、活动策略运营、数据分析和清洗</p>
-<h2 id="编译原理基本概念"><a href="#编译原理基本概念" class="headerlink" title="编译原理基本概念"></a>编译原理基本概念</h2><h3 id="词法分析"><a href="#词法分析" class="headerlink" title="词法分析"></a>词法分析</h3><p>把源代码字符串转换为此法单元</p>
-<p><img src="https://cdn.jsdelivr.net/gh/graywenhui/blogImage@main/img/202301292227260.png" alt="image-20230129222730104"></p>
-<h3 id="语法分析"><a href="#语法分析" class="headerlink" title="语法分析"></a>语法分析</h3><p>在词法分析的基础上，识别表达式的语法结构的过程</p>
-<p><img src="https://cdn.jsdelivr.net/gh/graywenhui/blogImage@main/img/202301292228118.png" alt="image-20230129222835007"></p>
-<p>这两部分我的理解就是，词法分析是找出一个个整体词块，而语法分析就是在已知一个个整体的情况下分析怎么去执行这一语句</p>
-<h3 id="抽象语法树"><a href="#抽象语法树" class="headerlink" title="抽象语法树"></a>抽象语法树</h3><h4 id="上下文无关语法"><a href="#上下文无关语法" class="headerlink" title="上下文无关语法"></a>上下文无关语法</h4><p>无需考虑上下文，就可以判断正确性，如</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">r := a &gt; b</span><br></pre></td></tr></table></figure>
-
-<p>用巴科斯范式（BNF）表达</p>
-<p>递归下降算法：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/graywenhui/blogImage@main/img/202301292245489.png" alt="image-20230129224550383"></p>
-<p>一步步往下找，找到最匹配底层的部分，然后回溯继续匹配</p>
-<p>这里听概念不是很明白，看例子看的比较明白，右上角一步步往下依赖，找到最匹配的一个部分，然后回溯继续找下一个</p>
-<h3 id="类型检查"><a href="#类型检查" class="headerlink" title="类型检查"></a>类型检查</h3><h4 id="类型综合"><a href="#类型综合" class="headerlink" title="类型综合"></a>类型综合</h4><p>根据子表达式类型构造出父表达式的类型，如29 &gt; 10能推断出父类型是bool类型，而10 + “s1” 推断不出父类型，检查会报错</p>
-<h4 id="编译时检查-amp-运行时检查"><a href="#编译时检查-amp-运行时检查" class="headerlink" title="编译时检查&amp;运行时检查"></a>编译时检查&amp;运行时检查</h4><p>两个时段检查，可以发生在构造语法树时，也可以发生在执行时。前者需提前声明参数类型，后者可以在给特定值时判断是否符合类型</p>
-<h2 id="设计规则引擎"><a href="#设计规则引擎" class="headerlink" title="设计规则引擎"></a>设计规则引擎</h2><h3 id="词法分析-1"><a href="#词法分析-1" class="headerlink" title="词法分析"></a>词法分析</h3><p><img src="https://cdn.jsdelivr.net/gh/graywenhui/blogImage@main/img/202301292354271.png" alt="image-20230129235414122"></p>
-<h3 id="语法分析-1"><a href="#语法分析-1" class="headerlink" title="语法分析"></a>语法分析</h3><p><img src="https://cdn.jsdelivr.net/gh/graywenhui/blogImage@main/img/202301292354296.png" alt="image-20230129235446223"></p>
-<p>优先级表达与语法树结构：</p>
-<p><img src="https://cdn.jsdelivr.net/gh/graywenhui/blogImage@main/img/202301292355968.png" alt="image-20230129235521883"></p>
-<p>大概的原理理解了，真正实现的项目代码实现还需要多点时间理解。</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/01/20/Go%E8%AF%AD%E8%A8%80%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E8%AF%A6%E8%A7%A3/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Wang Wenhui">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Gray's Blog">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Gray's Blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2023/01/20/Go%E8%AF%AD%E8%A8%80%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E8%AF%A6%E8%A7%A3/" class="post-title-link" itemprop="url">Go语言内存管理详解</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2023-01-20 17:24:19 / 修改时间：20:33:04" itemprop="dateCreated datePublished" datetime="2023-01-20T17:24:19+08:00">2023-01-20</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/go/" itemprop="url" rel="index"><span itemprop="name">go</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-	<div>
-		
-	</div>
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="重点内容"><a href="#重点内容" class="headerlink" title="重点内容"></a>重点内容</h1><ol>
-<li>自动内存管理</li>
-<li>Go内存管理及优化</li>
-<li>编译器和静态分析</li>
-<li>Go编译器优化</li>
-</ol>
-<h1 id="详细知识点"><a href="#详细知识点" class="headerlink" title="详细知识点"></a>详细知识点</h1><h2 id="自动内存管理"><a href="#自动内存管理" class="headerlink" title="自动内存管理"></a>自动内存管理</h2><p>· 动态内存</p>
-<p>​	程序在运行时根据需求动态分配的内存：malloc()</p>
-<p>· 自动内存管理</p>
-<p>​	避免手动内存管理，专注于实现业务逻辑<br>​	保证内存使用的<strong>正确</strong>性和<strong>安全性</strong>：double-free problem、use-after-free problem</p>
-<p>· 三个任务</p>
-<p>​	为新对象分配空间<br>​	找到存活的对象<br>​	回收死亡对象的内存空间</p>
-<p><em><strong>相关概念：</strong></em><br>    · Mutator：业务线程，分配新对象，修改对象指向关系<br>    · Collector：GC线程，找到存活对象，回收死亡对象的内存空间<br>    · Serial GC：只有一个collector<br>    · Parallel GC：支持多个collectors同时回收的GC算法<br>    · Concurrent GC：mutator(s)和collector(s)可以<strong>同时执行</strong></p>
-<p>三种GC，Concurrent GC必须感知对象指向关系的变化，否则会导致存活对象被回收</p>
-<p><em><strong>评价GC算法：</strong></em></p>
-<p>​	· 安全性(Safety)：不能回收存活的对象	<strong>基本要求</strong><br>​	· 吞吐率(Throughput)：1- GC时间&#x2F;程序执行总时间	<strong>花在GC上的时间</strong>越短越好<br>​	· 暂停时间(Pause time)：stop the world (STW)	<strong>业务是否感知</strong><br>​	· 内存开销(Space overhead)	<strong>GC元数据开销</strong></p>
-<h3 id="追踪垃圾回收"><a href="#追踪垃圾回收" class="headerlink" title="追踪垃圾回收"></a>追踪垃圾回收</h3><p>回收目标：指针指向关系不可达的对象</p>
-<p>过程：</p>
-<p>​	· 标记根对象（静态变量、全局变量、常量、线程栈等）<br>​	· 标记：找到可达对象（从根对象出发，找到所有可达对象）<br>​	· 清理：所有不可达对象<br>​				· Copying GC：将存活对象复制到另外的内存空间，原空间就可分配了<br>​				· Mark-sweap GC：将死亡对象的内存标记为“可分配”<br>​				· Mark-compact GC：移动并整理存活对象，也就是让他们的地址连续，分配其他空间时就可以从后面开始分配了</p>
-<h3 id="分代GC"><a href="#分代GC" class="headerlink" title="分代GC"></a>分代GC</h3><p>简单来说， 	经历过GC的次数决定对象的年龄，年轻代的存货少，用copying gc,老年代的对象趋于一直活着，反复复制开销大，采用mark-sweep</p>
-<h3 id="引用计数"><a href="#引用计数" class="headerlink" title="引用计数"></a>引用计数</h3><p>看到这个就联想到C++的智能指针，原理一样</p>
-<p>· 每个对象有一个与之关联的引用数目<br>· 对象存活条件：当且仅当引用数大于0</p>
-<p><strong>缺点：</strong></p>
-<p>​	· 维护引用计数开销大：通过原子操作保证对引用计数操作的原子性和可见性<br>​	· 无法回收环形数据结构 – weak reference<br>​	· 内存开销<br>​	· 回收内存时依然可能引发暂停</p>
-<h2 id="Go内存管理及优化"><a href="#Go内存管理及优化" class="headerlink" title="Go内存管理及优化"></a>Go内存管理及优化</h2><h3 id="分块"><a href="#分块" class="headerlink" title="分块"></a>分块</h3><p>目标：为对象在heap上分配内存</p>
-<p>提前将内存分块</p>
-<p>​	系统调用mmap()向OS申请一大块内存，例如4MB<br>​	先将内存划分为大块，例如8KB，称为mspan<br>​	再将大块继续划分为特定大小的小块，用于对象分配<br>​	noscan mspan：分配不包含指针的对象–GC不需要扫描<br>​	scan mspan：分配包含指针的对象–GC需要扫描</p>
-<h3 id="缓存"><a href="#缓存" class="headerlink" title="缓存"></a>缓存</h3><p>虚拟内存一类的？这里就讲了个大概</p>
-<h3 id="内存管理优化"><a href="#内存管理优化" class="headerlink" title="内存管理优化"></a>内存管理优化</h3><h4 id="Balanced-GC"><a href="#Balanced-GC" class="headerlink" title="Balanced GC"></a>Balanced GC</h4><p>本质：将多个小对象的分配合并成一次大对象的分配</p>
-<p>方案：移动GAB中存活的对象<br>    当GAB总大小超过一定阈值时，将GAB中存活的对象复制到另外分配的GAB中<br>    原先的GAB可以释放，避免内存泄漏<br>    本质：用copying GC的算法管理小对象</p>
-<h2 id="编译器和静态分析"><a href="#编译器和静态分析" class="headerlink" title="编译器和静态分析"></a>编译器和静态分析</h2><h3 id="结构"><a href="#结构" class="headerlink" title="结构"></a>结构</h3><p><img src="https://cdn.jsdelivr.net/gh/graywenhui/blogImage@main/img/202301201949845.png" alt="image-20230120194950469"></p>
-<h3 id="静态分析"><a href="#静态分析" class="headerlink" title="静态分析"></a>静态分析</h3><p>不执行程序代码，推导程序行为，分析程序的性质</p>
-<p>两种分析</p>
-<p>​	控制流(Control flow): 程序执行的流程<br>​	数据流(Data flow): 数据在控制流上的传递</p>
-<h3 id="过程内分析和过程间分析"><a href="#过程内分析和过程间分析" class="headerlink" title="过程内分析和过程间分析"></a>过程内分析和过程间分析</h3><p>过程内(Intra-procedural analysis)：仅在函数内进行分析<br>过程间(Inter-procedural analysis)：考虑过程调用时参数传递和返回值的数据流和控制流</p>
-<p>过程间分析要得知调用接口的时哪个类型的变量</p>
-<h2 id="Go编译器优化"><a href="#Go编译器优化" class="headerlink" title="Go编译器优化"></a>Go编译器优化</h2><p>WHY：<br>    用户无感知，重新编译即可获得性能收益<br>    通用性优化</p>
-<p>思路：<br>    用编译时间换取更高效的机器码</p>
-<h3 id="函数内联"><a href="#函数内联" class="headerlink" title="函数内联"></a>函数内联</h3><p>内联：将被调用函数的函数体的副本替换到调用位置上，同时重写代码以反映参数的绑定</p>
-<p>优点：<br>    消除调用开销<br>    将过程间分析转化为过程内分析</p>
-<p>缺点：<br>    函数体变大，icache不友好<br>    编译生成的Go镜像变大</p>
-<h3 id="Beast-mode"><a href="#Beast-mode" class="headerlink" title="Beast mode"></a>Beast mode</h3><p>Go受到很多限制：interface，defer等，限制了内联。	内联策略保守</p>
-<p>Beast mode：调整内联策略，使更多函数被内联<br>    降低函数调用的开销<br>    增加其他优化的机会</p>
-<h3 id="逃逸分析"><a href="#逃逸分析" class="headerlink" title="逃逸分析"></a>逃逸分析</h3><p> 分析代码中指针的动态作用域：指针在何处可以被访问</p>
-<p>若发现指针p在当前作用域s：<br>    · 作为参数传给其他函数<br>    · 传递给全局变量<br>    · 传递给其他goroutine<br>    · 传递给已经逃逸的指针指向的对象<br>则p指向的对象逃逸出s，反之则没有逃逸出s</p>
-<p>Beast mode 让更多函数被内联，扩展了函数边界，更多对象不逃逸</p>
-<p>优化：未逃逸的对象可在<strong>栈上分配</strong><br>    对象在栈上的分配和回收很快，只要移动sp指针就行<br>    减少在heap上的分配，降低GC负担</p>
-
       
     </div>
 

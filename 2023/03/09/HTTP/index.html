@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 5.4.2">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.13.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12},"copycode":{"enable":true,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="HTTPepollepoll是一种I&#x2F;O事件通知机制 12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152#include &lt;sys&#x2F;epoll.h&gt;&#x2F;&#x2F;该函数创建一个指示epoll内核事件表的文件描述符，&#x2F;&#x2F;描述符将用作其他epoll系统">
+<meta property="og:type" content="article">
+<meta property="og:title" content="HTTP">
+<meta property="og:url" content="http://example.com/2023/03/09/HTTP/index.html">
+<meta property="og:site_name" content="Gray&#39;s Blog">
+<meta property="og:description" content="HTTPepollepoll是一种I&#x2F;O事件通知机制 12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152#include &lt;sys&#x2F;epoll.h&gt;&#x2F;&#x2F;该函数创建一个指示epoll内核事件表的文件描述符，&#x2F;&#x2F;描述符将用作其他epoll系统">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-03-09T09:08:50.000Z">
+<meta property="article:modified_time" content="2023-03-11T13:31:59.515Z">
+<meta property="article:author" content="Wang Wenhui">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2023/03/09/HTTP/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2023/03/09/HTTP/","path":"2023/03/09/HTTP/","title":"HTTP"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>HTTP | Gray's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Gray's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#HTTP"><span class="nav-number">1.</span> <span class="nav-text">HTTP</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#epoll"><span class="nav-number">1.1.</span> <span class="nav-text">epoll</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#select-x2F-poll-x2F-epoll%E5%AF%B9%E6%AF%94"><span class="nav-number">1.1.0.0.1.</span> <span class="nav-text">select&#x2F;poll&#x2F;epoll对比</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#ET%E3%80%81LT%E3%80%81EPOLLONESHOT"><span class="nav-number">1.1.0.0.2.</span> <span class="nav-text">ET、LT、EPOLLONESHOT</span></a></li></ol></li></ol></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Wang Wenhui</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">36</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/03/09/HTTP/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Wang Wenhui">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Gray's Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="HTTP | Gray's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          HTTP
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-03-09 17:08:50" itemprop="dateCreated datePublished" datetime="2023-03-09T17:08:50+08:00">2023-03-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-03-11 21:31:59" itemprop="dateModified" datetime="2023-03-11T21:31:59+08:00">2023-03-11</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/TinyWebServer/" itemprop="url" rel="index"><span itemprop="name">TinyWebServer</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+	<div>
+		
+			<div>
+	
+		<div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+	
+</div>
+		
+	</div>
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="HTTP"><a href="#HTTP" class="headerlink" title="HTTP"></a>HTTP</h1><h2 id="epoll"><a href="#epoll" class="headerlink" title="epoll"></a>epoll</h2><p>epoll是一种I&#x2F;O事件通知机制</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;sys/epoll.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">//该函数创建一个指示epoll内核事件表的文件描述符，</span></span><br><span class="line"><span class="comment">//描述符将用作其他epoll系统调用的第一个参数，size不起作用</span></span><br><span class="line"><span class="comment">//这里不懂size为什么不起作用</span></span><br><span class="line"><span class="comment">//查了一下，size参数表示所要监视文件描述符的最大值，不过在后来的Linux版本中已经被弃用（同时，size不要传0，会报invalid argument错误）</span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">epoll_create</span><span class="params">(<span class="type">int</span> size)</span></span></span><br><span class="line"><span class="function"></span></span><br><span class="line"><span class="function"><span class="comment">//该函数操作内核事件表监控的文件描述符上的事件：注册、修改、删除</span></span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">epoll_ctl</span><span class="params">(<span class="type">int</span> epfd, <span class="type">int</span> op, <span class="type">int</span> fd, <span class="keyword">struct</span> epoll_event *event)</span></span></span><br><span class="line"><span class="function"><span class="comment">//· epfd：epoll_create的句柄</span></span></span><br><span class="line"><span class="function"><span class="comment">//· op：表示动作，用3个宏表示：</span></span></span><br><span class="line"><span class="function"><span class="comment">//	· EPOLL_CTL_ADD(注册新的fd到epfd)</span></span></span><br><span class="line"><span class="function"><span class="comment">//  · EPOLL_CTL_MOD(修改已经注册的fd的监听事件)</span></span></span><br><span class="line"><span class="function"><span class="comment">//  · EPOLL_CTL_DEL(从epfd删除一个fd)</span></span></span><br><span class="line"><span class="function"><span class="comment">//· event：告诉内核需要监听的事件</span></span></span><br><span class="line"><span class="function">    </span></span><br><span class="line"><span class="function"><span class="comment">//epoll_event的定义</span></span></span><br><span class="line"><span class="function"><span class="keyword">struct</span> epoll_event </span>&#123;</span><br><span class="line">    <span class="type">_uint32_t</span> events;</span><br><span class="line">    <span class="type">epoll_data_t</span> data;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//epoll_data_t</span></span><br><span class="line"><span class="keyword">typedef</span> <span class="keyword">union</span> <span class="title class_">epoll_data</span> &#123;</span><br><span class="line">    <span class="type">void</span> *ptr; <span class="comment">/* 指向用户自定义数据 */</span></span><br><span class="line">    <span class="type">int</span> fd; <span class="comment">/* 注册的文件描述符 */</span></span><br><span class="line">    <span class="type">uint32_t</span> u32; <span class="comment">/* 32-bit integer */</span></span><br><span class="line">    <span class="type">uint64_t</span> u64; <span class="comment">/* 64-bit integer */</span></span><br><span class="line">&#125; <span class="type">epoll_data_t</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">events描述事件类型，其中epoll事件类型有以下几种:</span></span><br><span class="line"><span class="comment">· EPOLLIN：表示对应的文件描述符可以读（包括对端SOCKET正常关闭）</span></span><br><span class="line"><span class="comment">· EPOLLOUT：表示对应的文件描述符可以写</span></span><br><span class="line"><span class="comment">· EPOLLPRI：表示对应的文件描述符有紧急的数据可读（这里应该表示有带外数据到来）</span></span><br><span class="line"><span class="comment">· EPOLLERR：表示对应的文件描述符发生错误</span></span><br><span class="line"><span class="comment">· EPOLLHUP：表示对应的文件描述符被挂断；</span></span><br><span class="line"><span class="comment">· EPOLLET：将EPOLL设为边缘触发（Edge Triggered)模式，这是相对于水平触发		(Level Triggered)而言的</span></span><br><span class="line"><span class="comment">· EPOLLONESHOT：只监听一次事件，当监听完这次事件之后，如果还需要继续监听这个		socket的话，需要再次把这个socket加入到EPOLL队列里 </span></span><br><span class="line"><span class="comment">· EPOLLRDHUP：对端描述符产生一个挂断事件</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//该函数用于等待所监控文件描述符上有事件的产生，返回就绪的文件描述符个数</span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">epoll_wait</span><span class="params">(<span class="type">int</span> epfd, <span class="keyword">struct</span> epoll_event *event, <span class="type">int</span> maxevents, <span class="type">int</span> timeout)</span></span></span><br><span class="line"><span class="function">    </span></span><br><span class="line"><span class="function">· events：用来存内核得到事件的集合	应该是一个数组</span></span><br><span class="line"><span class="function">· maxevents：告之内核这个events有多大，这个maxevents的值不能大于				epoll_create（）时的size</span></span><br><span class="line"><span class="function">· timeout：是超时时间</span></span><br><span class="line"><span class="function">	· -1：调用一直阻塞，直到有文件描述符进入ready状态或捕获到信号才返回</span></span><br><span class="line"><span class="function">	· 0：用于非阻塞检测是否有描述符处于ready状态，不管结果如何，调用都立即返回</span></span><br><span class="line"><span class="function">	· &gt;0：指定毫秒，期间有检测对象变为ready状态或捕获到信号返回，否则直到超时</span></span><br><span class="line"><span class="function">· 返回值：成功返回有多少文件描述符就绪，时间到时返回0，出错返回-1</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="select-x2F-poll-x2F-epoll对比"><a href="#select-x2F-poll-x2F-epoll对比" class="headerlink" title="select&#x2F;poll&#x2F;epoll对比"></a>select&#x2F;poll&#x2F;epoll对比</h5><p><strong>调用函数：</strong></p>
+<p>​	· select和poll都是一个函数，epoll是一组函数</p>
+<p><strong>文件描述符数量及传入方式：</strong></p>
+<p>​	· select通过线性表描述文件描述符集合，文件描述符有上限，一般是1024，但可以修	改源码，重新编译内核，不推荐。传入方式：创建3个文件描述符拷贝到内核中。</p>
+<p>​	· poll是链表描述，突破了文件描述符上限，最大可以打开文件的数目（这里意思是说系统最大的数目？）。传入方式：将传入的struct pollfd结构体数组拷贝到内核中进行监听</p>
+<p>​	· epoll通过红黑树描述，最大可以打开文件的数目，可以通过命令ulimit -n number修	改，仅对当前终端有效。传入方式：epoll通过epoll_create建立一棵红黑树，通过epoll_ctl将要监听的文件描述符注册到红黑树。</p>
+<p><strong>内核态检测文件描述符读写状态的方式：</strong></p>
+<p>​	· select：采用轮询方式，遍历所有fd，最后返回一个描述符读写操作是否就绪的mask掩码，根据掩码给fd_set赋值。</p>
+<p>​	· poll：采用轮询方式，查询每个fd的状态，如果就绪则在等待队列中加入一项并继续遍历</p>
+<p>​	· epoll：采用回调机制，在执行epoll_ctl的add操作时，不仅将文件描述符放到红黑树上，而且也注册了回调函数，内核在检测到某文件描述符可读&#x2F;可写时会调用回调函数，该回调函数将文件描述符放在就绪链表中，当epoll_wait函数调用时，仅仅观察这个list链表里有没有数据即可。只有发生了事件的socket才会主动的去调用 callback函数，其他空闲状态socket则不会，若是就绪事件，插入list。</p>
+<p><strong>找到就绪的文件描述符并传递给用户态的方式:</strong></p>
+<p>​	· select：将之前传入的fd_set拷贝传出到用户态并返回就绪的文件描述符总数。用户态并不知道是哪些文件描述符处于就绪态，需要遍历来判断。</p>
+<p>​	· poll：将之前传入的fd数组拷贝传出到用户态并返回就绪的文件描述符总数。用户态并不知道是哪些文件描述符处于就绪态，需要遍历来判断。</p>
+<p>​	· epoll：epoll返回的发生了事件的个数和结构体数组，结构体包含socket的信息，因此直接处理返回的数组即可，然后遍历依次处理即可。</p>
+<p><strong>重复监听的处理方式:</strong></p>
+<p>​	· select：将新的监听文件描述符集合拷贝传入内核中，继续以上步骤</p>
+<p>​	· poll：将新的struct pollfd结构体数组拷贝传入内核中，继续以上步骤。</p>
+<p>​	· epoll：无需重新构建红黑树，直接沿用已存在的即可。</p>
+<p><strong>工作模式：</strong></p>
+<p>​	· select和poll都只能工作在相对低效的LT模式下。</p>
+<p>​	· epoll则可以工作在ET高效模式，并且epoll还支持EPOLLONESHOT事件，该事件能进一步减少可读、可写和异常事件被触发的次数。 </p>
+<p><strong>应用场景：</strong></p>
+<p>​	· 当所有的fd都是活跃连接，使用epoll，需要建立文件系统，红黑书和链表对于此来说，效率反而不高，不如selece和poll。</p>
+<p>​	· 当监测的fd数目较小，且各个fd都比较活跃，建议使用select或者poll。</p>
+<p>​	· 当监测的fd数目非常大，成千上万，且单位时间只有其中的一部分fd处于就绪状态，这个时候使用epoll能够明显提升性能。</p>
+<h5 id="ET、LT、EPOLLONESHOT"><a href="#ET、LT、EPOLLONESHOT" class="headerlink" title="ET、LT、EPOLLONESHOT"></a>ET、LT、EPOLLONESHOT</h5><p>​	· LT水平触发模式触发时机：</p>
+<ol>
+<li>对于读操作，只要缓冲内容不为空，LT模式返回读就绪。</li>
+<li>对于写操作，只要缓冲区还不满，LT模式会返回写就绪。</li>
+</ol>
+<p>当被监控的文件描述符上有可读写事件发生时，epoll_wait()会通知处理程序去读写。如果这次没有把数据一次性全部读写完(如读写缓冲区太小)，那么下次调用 epoll_wait()时，它还会通知你在上没读写完的文件描述符上继续读写，当然如果你一直不去读写，它会一直通知你。如果系统中有大量你不需要读写的就绪文件描述符，而它们每次都会返回，这样会大大降低处理程序检索自己关心的就绪文件描述符的效率。</p>
+<p>​	· ET边缘触发模式触发时机：</p>
+<p>​		对于读操作：							</p>
+<pre><code> 1. 当缓冲区由不可读变为可读的时候，即缓冲区由空变为不空的时候。
+ 2. 当有新数据到达时，即缓冲区中的待读数据变多的时候。
+ 3. 当缓冲区有数据可读，且应用进程对相应的描述符进行EPOLL_CTL_MOD 修改EPOLLIN事件时。
+</code></pre>
+<p>​		对于写操作：</p>
+<pre><code> 1. 当缓冲区由不可写变为可写时。
+ 2. 当有旧数据被发送走，即缓冲区中的内容变少的时候。
+ 3. 当缓冲区有空间可写，且应用进程对相应的描述符进行EPOLL_CTL_MOD 修改EPOLLOUT事件时。
+</code></pre>
+<p>epoll_wait检测到文件描述符有事件发生，则将其通知给应用程序，应用程序必须立即处理该事</p>
+<p>必须要一次性将数据读取完，使用非阻塞I&#x2F;O，读取到出现eagai</p>
+<p>EPOLLONESHOT</p>
+<p>一个线程读取某个socket上的数据后开始处理数据，在处理过程中该socket上又有新数据可读，此时另一个线程被唤醒读取，此时出现两个线程处理同一个socket</p>
+<p>我们期望的是一个socket连接在任一时刻都只被一个线程处理，通过epoll_ctl对该文件描述符注册epolloneshot事件，一个线程处理socket时，其他线程将无法处理，<strong>当该线程处理完后，需要通过epoll_ctl重置epolloneshot事件</strong></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/02/11/wsl%E5%AE%89%E8%A3%85mysql/" rel="prev" title="wsl安装mysql">
+                  <i class="fa fa-chevron-left"></i> wsl安装mysql
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/03/10/%E5%AE%9A%E6%97%B6%E5%99%A8/" rel="next" title="定时器">
+                  定时器 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Wang Wenhui</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>
