@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 5.4.2">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.13.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12},"copycode":{"enable":true,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Implement copy-on-write fork(hard)要求我们实现一个写时复制，本来的fork调用直接将父进程的内存复制到子进程中，但通常情况下子进程会执行exec，会丢弃复制的内存，也就是说之前的复制是没意义的。现在我们要做的是在真正需要的时候才完成复制。 根据课程网站上的信息一步一步来 首先在riscv.h中添加一个标志位 1234567#define PTE_V (1L &amp;lt">
+<meta property="og:type" content="article">
+<meta property="og:title" content="copy-on-write">
+<meta property="og:url" content="http://example.com/2023/06/29/copy-on-write/index.html">
+<meta property="og:site_name" content="Gray&#39;s Blog">
+<meta property="og:description" content="Implement copy-on-write fork(hard)要求我们实现一个写时复制，本来的fork调用直接将父进程的内存复制到子进程中，但通常情况下子进程会执行exec，会丢弃复制的内存，也就是说之前的复制是没意义的。现在我们要做的是在真正需要的时候才完成复制。 根据课程网站上的信息一步一步来 首先在riscv.h中添加一个标志位 1234567#define PTE_V (1L &amp;lt">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-06-29T08:16:33.000Z">
+<meta property="article:modified_time" content="2023-08-13T07:51:12.079Z">
+<meta property="article:author" content="Wang Wenhui">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2023/06/29/copy-on-write/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2023/06/29/copy-on-write/","path":"2023/06/29/copy-on-write/","title":"copy-on-write"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>copy-on-write | Gray's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Gray's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Implement-copy-on-write-fork-hard"><span class="nav-number">1.</span> <span class="nav-text">Implement copy-on-write fork(hard)</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Wang Wenhui</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">43</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/06/29/copy-on-write/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Wang Wenhui">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Gray's Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="copy-on-write | Gray's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          copy-on-write
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-06-29 16:16:33" itemprop="dateCreated datePublished" datetime="2023-06-29T16:16:33+08:00">2023-06-29</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-08-13 15:51:12" itemprop="dateModified" datetime="2023-08-13T15:51:12+08:00">2023-08-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/6-S081-Lab/" itemprop="url" rel="index"><span itemprop="name">6.S081 Lab</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+	<div>
+		
+			<div>
+	
+		<div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+	
+</div>
+		
+	</div>
+    <div class="post-body" itemprop="articleBody">
+        <h2 id="Implement-copy-on-write-fork-hard"><a href="#Implement-copy-on-write-fork-hard" class="headerlink" title="Implement copy-on-write fork(hard)"></a>Implement copy-on-write fork(<a target="_blank" rel="noopener" href="https://pdos.csail.mit.edu/6.S081/2022/labs/guidance.html">hard</a>)</h2><p>要求我们实现一个写时复制，本来的fork调用直接将父进程的内存复制到子进程中，但通常情况下子进程会执行exec，会丢弃复制的内存，也就是说之前的复制是没意义的。现在我们要做的是在真正需要的时候才完成复制。</p>
+<p>根据课程网站上的信息一步一步来</p>
+<p>首先在riscv.h中添加一个标志位</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> PTE_V (1L &lt;&lt; 0) <span class="comment">// valid</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PTE_R (1L &lt;&lt; 1)</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PTE_W (1L &lt;&lt; 2)</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PTE_X (1L &lt;&lt; 3)</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PTE_U (1L &lt;&lt; 4) <span class="comment">// user can access</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PTE_C (1L &lt;&lt; 8)</span></span><br><span class="line"><span class="comment">// PTE_C标记一个页面是否为c-o-w fork页面</span></span><br></pre></td></tr></table></figure>
+
+<p>然后定义一个操作内存的锁，因为一开始并不分配页面，而是将同一个内存映射到两个进程里，所以同步引用计数的时候需要用到锁。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 这里的cnt代表当前页面被引用了几次</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">ref_stru</span>&#123;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">spinlock</span> lock;</span><br><span class="line">  <span class="type">int</span> cnt[(PHYSTOP - KERNBASE)/PGSIZE];</span><br><span class="line">&#125; ref;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span></span></span><br><span class="line"><span class="function"><span class="title">kinit</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="built_in">initlock</span>(&amp;kmem.lock, <span class="string">&quot;kmem&quot;</span>);</span><br><span class="line">  <span class="built_in">initlock</span>(&amp;ref.lock, <span class="string">&quot;ref&quot;</span>);</span><br><span class="line">  <span class="built_in">freerange</span>(end, (<span class="type">void</span>*)PHYSTOP);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后定义几个接口封装一下，这样在别的函数中调用更方便，当然这不是封装的优点不止这个</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">acquire_lock</span><span class="params">()</span></span>&#123;</span><br><span class="line">  <span class="built_in">acquire</span>(&amp;ref.lock);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">release_lock</span><span class="params">()</span></span>&#123;</span><br><span class="line">  <span class="built_in">release</span>(&amp;ref.lock);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">ref_set</span><span class="params">(uint64 pa, <span class="type">int</span> n)</span></span>&#123;</span><br><span class="line">  ref.cnt[(pa - KERNBASE) / PGSIZE] = n;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">ref_get</span><span class="params">(uint64 pa)</span></span>&#123;</span><br><span class="line">  <span class="type">int</span> n = ref.cnt[(pa - KERNBASE) / PGSIZE];</span><br><span class="line">  <span class="keyword">return</span> n;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">ref_add</span><span class="params">(uint64 pa, <span class="type">int</span> n)</span></span>&#123;</span><br><span class="line">  ref.cnt[(pa - KERNBASE) / PGSIZE] += n;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>然后修改kfree和kalloc</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// kalloc初始化的时候计数设为1</span></span><br><span class="line"><span class="function"><span class="type">void</span> *</span></span><br><span class="line"><span class="function"><span class="title">kalloc</span><span class="params">(<span class="type">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">run</span> *r;</span><br><span class="line"></span><br><span class="line">  <span class="built_in">acquire</span>(&amp;kmem.lock);</span><br><span class="line">  r = kmem.freelist;</span><br><span class="line">  <span class="keyword">if</span>(r)</span><br><span class="line">    kmem.freelist = r-&gt;next;</span><br><span class="line">  <span class="built_in">release</span>(&amp;kmem.lock);</span><br><span class="line">  <span class="keyword">if</span>(r)</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="comment">//acquire(&amp;ref.lock);</span></span><br><span class="line">    ref.cnt[((uint64)r - KERNBASE) / PGSIZE] = <span class="number">1</span>;</span><br><span class="line">    <span class="comment">//release(&amp;ref.lock);</span></span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span>(r)</span><br><span class="line">    <span class="built_in">memset</span>((<span class="type">char</span>*)r, <span class="number">5</span>, PGSIZE); <span class="comment">// fill with junk</span></span><br><span class="line">  <span class="keyword">return</span> (<span class="type">void</span>*)r;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// kfree每次被调用都将引用记数递减，只有减到0才将内存清空</span></span><br><span class="line"><span class="function"><span class="type">void</span></span></span><br><span class="line"><span class="function"><span class="title">kfree</span><span class="params">(<span class="type">void</span> *pa)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">run</span> *r;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span>(((uint64)pa % PGSIZE) != <span class="number">0</span> || (<span class="type">char</span>*)pa &lt; end || (uint64)pa &gt;= PHYSTOP)</span><br><span class="line">    <span class="built_in">panic</span>(<span class="string">&quot;kfree&quot;</span>);</span><br><span class="line"></span><br><span class="line">  <span class="built_in">acquire</span>(&amp;ref.lock);</span><br><span class="line">  <span class="keyword">if</span>(--ref.cnt[((uint64)pa-KERNBASE)/PGSIZE] == <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="built_in">release</span>(&amp;ref.lock);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Fill with junk to catch dangling refs.</span></span><br><span class="line">    <span class="built_in">memset</span>(pa, <span class="number">1</span>, PGSIZE);</span><br><span class="line">    </span><br><span class="line">    r = (<span class="keyword">struct</span> run*)pa;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">acquire</span>(&amp;kmem.lock);</span><br><span class="line">    r-&gt;next = kmem.freelist;</span><br><span class="line">    kmem.freelist = r;</span><br><span class="line">    <span class="built_in">release</span>(&amp;kmem.lock);</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="built_in">release</span>(&amp;ref.lock);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后在添加几个函数</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 判断一个页面是否是c-o-w页面，是就返回0</span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">cowpage</span><span class="params">(<span class="type">pagetable_t</span> pagetable, uint64 va)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (va &gt;= MAXVA)</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">  <span class="type">pte_t</span>* pte = <span class="built_in">walk</span>(pagetable, va, <span class="number">0</span>);</span><br><span class="line">  <span class="keyword">if</span> (pte == <span class="number">0</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">  <span class="keyword">if</span> ((*pte &amp; PTE_V) == <span class="number">0</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">  <span class="keyword">return</span> (*pte &amp; PTE_C ? <span class="number">0</span> : <span class="number">-1</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 分配页面</span></span><br><span class="line"><span class="function"><span class="type">void</span>* <span class="title">cowalloc</span><span class="params">(<span class="type">pagetable_t</span> pagetable, uint64 va)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">if</span> (va % PGSIZE != <span class="number">0</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">  uint64 pa = <span class="built_in">walkaddr</span>(pagetable, va);</span><br><span class="line">  <span class="keyword">if</span> (pa == <span class="number">0</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">  <span class="type">pte_t</span>* pte = <span class="built_in">walk</span>(pagetable, va, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (<span class="built_in">ref_get</span>((uint64)pa) == <span class="number">1</span>) &#123;</span><br><span class="line">    *pte |= PTE_W;</span><br><span class="line">    *pte &amp;= ~PTE_C;</span><br><span class="line">    <span class="keyword">return</span> (<span class="type">void</span>*)pa;</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="type">char</span>* mem = <span class="built_in">kalloc</span>();</span><br><span class="line">    <span class="keyword">if</span> (mem == <span class="number">0</span>)</span><br><span class="line">      <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    <span class="built_in">memmove</span>(mem, (<span class="type">char</span>*)pa, PGSIZE);</span><br><span class="line"></span><br><span class="line">    *pte &amp;= ~PTE_V;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>(<span class="built_in">mappages</span>(pagetable, va, PGSIZE, (uint64)mem, (<span class="built_in">PTE_FLAGS</span>(*pte) | PTE_W) &amp; ~PTE_C) != <span class="number">0</span> ) &#123;</span><br><span class="line">      <span class="built_in">kfree</span>(mem);</span><br><span class="line">      *pte |= PTE_V;</span><br><span class="line">      <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">kfree</span>((<span class="type">char</span>*)<span class="built_in">PGROUNDDOWN</span>(pa));</span><br><span class="line">    <span class="keyword">return</span> mem;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// copy页面，这里的cowcopy其实就是cowpage+cowalloc，我参考了两个同学的博客，他们的思路不太一样，我就两个都理解并尝试了一下</span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">cowcopy</span><span class="params">(uint64 va)</span></span>&#123;</span><br><span class="line">  va = <span class="built_in">PGROUNDDOWN</span>(va);</span><br><span class="line">  <span class="type">pagetable_t</span> p = <span class="built_in">myproc</span>()-&gt;pagetable;</span><br><span class="line">  <span class="type">pte_t</span>* pte = <span class="built_in">walk</span>(p, va, <span class="number">0</span>);</span><br><span class="line">  uint64 pa = <span class="built_in">PTE2PA</span>(*pte);</span><br><span class="line">  uint flags = <span class="built_in">PTE_FLAGS</span>(*pte);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span>(!(flags &amp; PTE_C)) &#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;not cow\n&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-2</span>;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="built_in">acquire_lock</span>();</span><br><span class="line">  uint count = <span class="built_in">ref_get</span>(pa);</span><br><span class="line">  <span class="keyword">if</span> (count &gt; <span class="number">1</span>) &#123;</span><br><span class="line">    <span class="type">char</span>* mem = <span class="built_in">kalloc</span>();</span><br><span class="line">    <span class="keyword">if</span> (mem == <span class="number">0</span>) </span><br><span class="line">      <span class="keyword">goto</span> bad;</span><br><span class="line">    <span class="built_in">memmove</span>(mem,(<span class="type">char</span>*)pa,PGSIZE);</span><br><span class="line">    <span class="keyword">if</span>(<span class="built_in">mappages</span>(p, va, PGSIZE, (uint64)mem, (flags &amp; (~PTE_C)) | PTE_W) != <span class="number">0</span>) &#123;</span><br><span class="line">      <span class="built_in">kfree</span>(mem);</span><br><span class="line">      <span class="keyword">goto</span> bad;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">ref_add</span>(pa,<span class="number">-1</span>);</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    *pte = ((*pte) &amp; (~PTE_C)) | PTE_W;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="built_in">release_lock</span>();</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">  bad:</span><br><span class="line">  <span class="built_in">release_lock</span>();</span><br><span class="line">  <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后是freerange,在kinit中会调用freerange，接着调用kfeee，如果在freerange里不置1的话，kfree里会减为-1</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span></span></span><br><span class="line"><span class="function"><span class="title">freerange</span><span class="params">(<span class="type">void</span> *pa_start, <span class="type">void</span> *pa_end)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="type">char</span> *p;</span><br><span class="line">  p = (<span class="type">char</span>*)<span class="built_in">PGROUNDUP</span>((uint64)pa_start);</span><br><span class="line">  <span class="keyword">for</span>(; p + PGSIZE &lt;= (<span class="type">char</span>*)pa_end; p += PGSIZE) &#123;</span><br><span class="line">    <span class="built_in">ref_set</span>((uint64)p, <span class="number">1</span>);</span><br><span class="line">    <span class="built_in">kfree</span>(p);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>接着是uvmcopy，这里将原来的分配内存改为将父进程中页表映射到子进程中，两个地址指向同一个物理地址，同时将读写权限关掉，将PTE_C置为1，代表这是c-o-w页面</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span></span></span><br><span class="line"><span class="function"><span class="title">uvmcopy</span><span class="params">(<span class="type">pagetable_t</span> old, <span class="type">pagetable_t</span> <span class="keyword">new</span>, uint64 sz)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="type">pte_t</span> *pte;</span><br><span class="line">  uint64 pa, i;</span><br><span class="line">  uint flags;</span><br><span class="line">  <span class="comment">//char *mem;</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span>(i = <span class="number">0</span>; i &lt; sz; i += PGSIZE)&#123;</span><br><span class="line">    <span class="keyword">if</span>((pte = <span class="built_in">walk</span>(old, i, <span class="number">0</span>)) == <span class="number">0</span>)</span><br><span class="line">      <span class="built_in">panic</span>(<span class="string">&quot;uvmcopy: pte should exist&quot;</span>);</span><br><span class="line">    <span class="keyword">if</span>((*pte &amp; PTE_V) == <span class="number">0</span>)</span><br><span class="line">      <span class="built_in">panic</span>(<span class="string">&quot;uvmcopy: page not present&quot;</span>);</span><br><span class="line">    pa = <span class="built_in">PTE2PA</span>(*pte);</span><br><span class="line">    flags = <span class="built_in">PTE_FLAGS</span>(*pte);</span><br><span class="line"></span><br><span class="line">    *pte = ((*pte) &amp; (~PTE_W)) | PTE_C;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// if((mem = kalloc()) == 0)</span></span><br><span class="line">    <span class="comment">//   goto err;</span></span><br><span class="line">    <span class="comment">// memmove(mem, (char*)pa, PGSIZE);</span></span><br><span class="line">    <span class="keyword">if</span>(<span class="built_in">mappages</span>(<span class="keyword">new</span>, i, PGSIZE, (uint64)pa, (flags &amp; (~PTE_W)) | PTE_C) != <span class="number">0</span>)&#123;</span><br><span class="line">      <span class="comment">//kfree(mem);</span></span><br><span class="line">      <span class="keyword">goto</span> err;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">ref_add</span>(pa,<span class="number">1</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line"> err:</span><br><span class="line">  <span class="built_in">uvmunmap</span>(<span class="keyword">new</span>, <span class="number">0</span>, i / PGSIZE, <span class="number">1</span>);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在usertrap里处理页面错误，这里就是加了一个r_scause() &#x3D;&#x3D; 15的判断，说明这里子进程的页面被访问了，所以要给他分配内存，不能用原来父进程的内存了。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(<span class="built_in">r_scause</span>() == <span class="number">8</span>)&#123;</span><br><span class="line">  <span class="comment">// system call</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span>(<span class="built_in">killed</span>(p))</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">-1</span>);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// sepc points to the ecall instruction,</span></span><br><span class="line">  <span class="comment">// but we want to return to the next instruction.</span></span><br><span class="line">  p-&gt;trapframe-&gt;epc += <span class="number">4</span>;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// an interrupt will change sepc, scause, and sstatus,</span></span><br><span class="line">  <span class="comment">// so enable only now that we&#x27;re done with those registers.</span></span><br><span class="line">  <span class="built_in">intr_on</span>();</span><br><span class="line"></span><br><span class="line">  <span class="built_in">syscall</span>();</span><br><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span>(<span class="built_in">r_scause</span>() == <span class="number">15</span>) &#123;</span><br><span class="line">  uint64 va = <span class="built_in">r_stval</span>();</span><br><span class="line">  <span class="keyword">if</span>(<span class="built_in">cowcopy</span>(va) == <span class="number">-1</span>) &#123;</span><br><span class="line">    p-&gt;killed = <span class="number">1</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125; <span class="keyword">else</span> <span class="keyword">if</span>((which_dev = <span class="built_in">devintr</span>()) != <span class="number">0</span>)&#123;</span><br><span class="line">  <span class="comment">// ok</span></span><br></pre></td></tr></table></figure>
+
+<p>最后在copyout中处理相同的情况</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">int</span></span></span><br><span class="line"><span class="function"><span class="title">copyout</span><span class="params">(<span class="type">pagetable_t</span> pagetable, uint64 dstva, <span class="type">char</span> *src, uint64 len)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  uint64 n, va0, pa0;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">while</span>(len &gt; <span class="number">0</span>)&#123;</span><br><span class="line">    va0 = <span class="built_in">PGROUNDDOWN</span>(dstva);</span><br><span class="line">    pa0 = <span class="built_in">walkaddr</span>(pagetable, va0);</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 这里如果判读是cow页面的话，则分配一个独立的内存</span></span><br><span class="line">    <span class="keyword">if</span>(<span class="built_in">cowpage</span>(pagetable, va0) == <span class="number">0</span>) &#123;</span><br><span class="line">      pa0 = (uint64)<span class="built_in">cowalloc</span>(pagetable, va0);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>(pa0 == <span class="number">0</span>)</span><br><span class="line">      <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    n = PGSIZE - (dstva - va0);</span><br><span class="line">    <span class="keyword">if</span>(n &gt; len)</span><br><span class="line">      n = len;</span><br><span class="line">    <span class="built_in">memmove</span>((<span class="type">void</span> *)(pa0 + (dstva - va0)), src, n);</span><br><span class="line"></span><br><span class="line">    len -= n;</span><br><span class="line">    src += n;</span><br><span class="line">    dstva = va0 + PGSIZE;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>写这个代码的时候，遇到过锁相关的问题，一开始封装接口的时候，在操作计数前后加上了锁的获取和释放，但实际上函数在调用这些接口前，就可能已经获取锁了，如果接口里仍然获取锁的话，就会导致一个自旋锁的锁重入问题，从而发生死锁。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/06/25/traps/" rel="prev" title="traps">
+                  <i class="fa fa-chevron-left"></i> traps
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/07/06/STL/" rel="next" title="STL">
+                  STL <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Wang Wenhui</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 5.4.2">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.13.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12},"copycode":{"enable":true,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="关于页表的内容是比较难的，光是看课程有些晦涩难懂，做实验也需要充分理解代码中的许多内容，所以就先阅读一下实验前置的一些代码。 kernel&#x2F;memlayout.h首先看这个文件，开头是注释&#x2F;&#x2F; Physical memory layout，说明这是关于物理内存布局的，第二段的注释也大致说了一下内存分布。 1234567&#x2F;&#x2F; qemu puts UART registers here in">
+<meta property="og:type" content="article">
+<meta property="og:title" content="pagetable源码阅读">
+<meta property="og:url" content="http://example.com/2023/04/25/pagetable%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB/index.html">
+<meta property="og:site_name" content="Gray&#39;s Blog">
+<meta property="og:description" content="关于页表的内容是比较难的，光是看课程有些晦涩难懂，做实验也需要充分理解代码中的许多内容，所以就先阅读一下实验前置的一些代码。 kernel&#x2F;memlayout.h首先看这个文件，开头是注释&#x2F;&#x2F; Physical memory layout，说明这是关于物理内存布局的，第二段的注释也大致说了一下内存分布。 1234567&#x2F;&#x2F; qemu puts UART registers here in">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-04-25T15:10:42.000Z">
+<meta property="article:modified_time" content="2023-05-06T08:52:17.808Z">
+<meta property="article:author" content="Wang Wenhui">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2023/04/25/pagetable%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2023/04/25/pagetable%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB/","path":"2023/04/25/pagetable源码阅读/","title":"pagetable源码阅读"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>pagetable源码阅读 | Gray's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Gray's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#kernel-x2F-memlayout-h"><span class="nav-number">1.</span> <span class="nav-text">kernel&#x2F;memlayout.h</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#kernel-x2F-vm-c"><span class="nav-number">2.</span> <span class="nav-text">kernel&#x2F;vm.c</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Wang Wenhui</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">43</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/04/25/pagetable%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Wang Wenhui">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Gray's Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="pagetable源码阅读 | Gray's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          pagetable源码阅读
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-04-25 23:10:42" itemprop="dateCreated datePublished" datetime="2023-04-25T23:10:42+08:00">2023-04-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-05-06 16:52:17" itemprop="dateModified" datetime="2023-05-06T16:52:17+08:00">2023-05-06</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/6-S081-Lab/" itemprop="url" rel="index"><span itemprop="name">6.S081 Lab</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+	<div>
+		
+			<div>
+	
+		<div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+	
+</div>
+		
+	</div>
+    <div class="post-body" itemprop="articleBody">
+        <p>关于页表的内容是比较难的，光是看课程有些晦涩难懂，做实验也需要充分理解代码中的许多内容，所以就先阅读一下实验前置的一些代码。</p>
+<h2 id="kernel-x2F-memlayout-h"><a href="#kernel-x2F-memlayout-h" class="headerlink" title="kernel&#x2F;memlayout.h"></a>kernel&#x2F;memlayout.h</h2><p>首先看这个文件，开头是注释<code>// Physical memory layout</code>，说明这是关于物理内存布局的，第二段的注释也大致说了一下内存分布。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// qemu puts UART registers here in physical memory.</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> UART0 0x10000000L</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> UART0_IRQ 10</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// virtio mmio interface</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> VIRTIO0 0x10001000</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> VIRTIO0_IRQ 1</span></span><br></pre></td></tr></table></figure>
+
+<p>两段第一个宏定义解释了两个寄存器在物理内存中的位置，两段第二个宏定义是有关中断的，IRQ应该是Interrupt Request中断请求信号，分别表示UART0设备产生中断时，中断请求号为10，VIRTIO0则为1。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// core local interruptor (CLINT), which contains the timer.</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> CLINT 0x2000000L</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> CLINT_MTIMECMP(hartid) (CLINT + 0x4000 + 8*(hartid))</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> CLINT_MTIME (CLINT + 0xBFF8) <span class="comment">// cycles since boot.</span></span></span><br></pre></td></tr></table></figure>
+
+<p>上面的代码定义了core local interruptor的位置，即为0x2000000。<br>第二个宏定义起到了类似函数的作用，将hartid作为参数传入，计算出hartid对应的mtimecmp寄存器的地址。<br>第三个宏定义则是指定mtime寄存器的地址，即为CLINT基地址+偏移量0xBFF8。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// qemu puts platform-level interrupt controller (PLIC) here.</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PLIC 0x0c000000L</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PLIC_PRIORITY (PLIC + 0x0)</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PLIC_PENDING (PLIC + 0x1000)</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PLIC_MENABLE(hart) (PLIC + 0x2000 + (hart)*0x100)</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PLIC_SENABLE(hart) (PLIC + 0x2080 + (hart)*0x100)</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PLIC_MPRIORITY(hart) (PLIC + 0x200000 + (hart)*0x2000)</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PLIC_SPRIORITY(hart) (PLIC + 0x201000 + (hart)*0x2000)</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PLIC_MCLAIM(hart) (PLIC + 0x200004 + (hart)*0x2000)</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PLIC_SCLAIM(hart) (PLIC + 0x201004 + (hart)*0x2000)</span></span><br></pre></td></tr></table></figure>
+
+<p>这段代码定义了有关PLIC寄存器的一些内容，PLIC是管理外部中断信号的寄存器。<br>首先是基地址，然后是全局中断优先级寄存器(PLIC_PRIORITY)的地址,然后是中断挂起寄存器(PLIC_PENDING)地址。<br>接着是6个类函数定义，依次表示<br>PLIC 的每个处理器核心的全局使能寄存器地址，<br>PLIC 的每个处理器核心的本地（特定于核心的）使能寄存器地址，<br>PLIC 的每个处理器核心的全局中断优先级寄存器地址，<br>PLIC 的每个处理器核心的本地（特定于核心的）中断优先级寄存器地址，<br>PLIC 的每个处理器核心的全局中断声明寄存器地址，<br>PLIC 的每个处理器核心的本地（特定于核心的）中断声明寄存器地址。</p>
+<p>这段跟页表没有特别相关，可以先略过，后面讲中断的时候应该会说到这些寄存器的具体作用。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// the kernel expects there to be RAM</span></span><br><span class="line"><span class="comment">// for use by the kernel and user pages</span></span><br><span class="line"><span class="comment">// from physical address 0x80000000 to PHYSTOP.</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> KERNBASE 0x80000000L</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PHYSTOP (KERNBASE + 128*1024*1024)</span></span><br></pre></td></tr></table></figure>
+
+<p>这段注释很显然，定义了内核起始地址0x80000000，可用于内核和用户页的最大地址，即基地址+128MB空间。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// map the trampoline page to the highest address,</span></span><br><span class="line"><span class="comment">// in both user and kernel space.</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> TRAMPOLINE (MAXVA - PGSIZE)</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// map kernel stacks beneath the trampoline,</span></span><br><span class="line"><span class="comment">// each surrounded by invalid guard pages.</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> KSTACK(p) (TRAMPOLINE - (p)*2*PGSIZE - 3*PGSIZE)</span></span><br></pre></td></tr></table></figure>
+
+<p>第一个定义将<code>TRAMPOLINE</code>页面映射到最高地址，<code>TRAMPOLINE</code>是一个特殊的页面，用于实现在用户态和内核态之间切换。发生转换时，它会用一些预定义好的寄存器保存当前用户态下的程序执行状态，然后将控制权移交给内核。<br>所以这个页面会被映射到每个进程的用户空间和内核空间。<br><code>MAXVA</code>是一个宏定义，映射了虚拟空间最大地址，<code>\#define MAXVA (1L &lt;&lt; (9 + 9 + 9 + 12 - 1))</code>，<code>(MAXVA - PGSIZE)</code>给它预留了一个页面的大小。</p>
+<p>第二个定义映射了kernel stack的地址，p是线程编号，表示是第几个内核线程，每个kstack有一个页存信息，一个页用来作为Guardpage，所以有<code>p*2*PGSIZE</code>。后面的3*PGSIZE是代入0时，要初始分配三个页面，第一个kstack0，顶部和尾部的Guardpage。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// User memory layout.</span></span><br><span class="line"><span class="comment">// Address zero first:</span></span><br><span class="line"><span class="comment">//   text</span></span><br><span class="line"><span class="comment">//   original data and bss</span></span><br><span class="line"><span class="comment">//   fixed-size stack</span></span><br><span class="line"><span class="comment">//   expandable heap</span></span><br><span class="line"><span class="comment">//   ...</span></span><br><span class="line"><span class="comment">//   USYSCALL (shared with kernel)</span></span><br><span class="line"><span class="comment">//   TRAPFRAME (p-&gt;trapframe, used by the trampoline)</span></span><br><span class="line"><span class="comment">//   TRAMPOLINE (the same page as in the kernel)</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> TRAPFRAME (TRAMPOLINE - PGSIZE)</span></span><br><span class="line"><span class="meta">#<span class="keyword">ifdef</span> LAB_PGTBL</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> USYSCALL (TRAPFRAME - PGSIZE)</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">usyscall</span> &#123;</span></span><br><span class="line">  <span class="type">int</span> pid;  <span class="comment">// Process ID</span></span><br><span class="line">&#125;;</span><br><span class="line"><span class="meta">#<span class="keyword">endif</span></span></span><br></pre></td></tr></table></figure>
+
+<p>TRAPFRAME是用于保存进程在陷阱(trap)发生时CPU寄存器状态等信息的页面，在TRAMPOLINE下面一个页面。接下来就定义了一个usyscall结构体。</p>
+<h2 id="kernel-x2F-vm-c"><a href="#kernel-x2F-vm-c" class="headerlink" title="kernel&#x2F;vm.c"></a>kernel&#x2F;vm.c</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//核心的数据结构和一些宏在riscv.h中</span></span><br><span class="line"><span class="keyword">typedef</span> uint64 *<span class="type">pagetable_t</span>; <span class="comment">// 512 PTEs</span></span><br><span class="line"><span class="keyword">typedef</span> uint64 <span class="type">pte_t</span>;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PGSIZE 4096 <span class="comment">// bytes per page</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PGSHIFT 12  <span class="comment">// bits of offset within a page</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">// shift a physical address to the right place for a PTE.</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PA2PTE(pa) ((((uint64)pa) &gt;&gt; 12) &lt;&lt; 10)</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PTE2PA(pte) (((pte) &gt;&gt; 10) &lt;&lt; 12)</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PTE_FLAGS(pte) ((pte) &amp; 0x3FF)</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// extract the three 9-bit page table indices from a virtual address.</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PXMASK          0x1FF <span class="comment">// 9 bits</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PXSHIFT(level)  (PGSHIFT+(9*(level)))</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> PX(level, va) ((((uint64) (va)) &gt;&gt; PXSHIFT(level)) &amp; PXMASK)</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//这是核心函数walk函数</span></span><br><span class="line"><span class="comment">// Return the address of the PTE in page table pagetable</span></span><br><span class="line"><span class="comment">// that corresponds to virtual address va.  If alloc!=0,</span></span><br><span class="line"><span class="comment">// create any required page-table pages.</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">// The risc-v Sv39 scheme has three levels of page-table</span></span><br><span class="line"><span class="comment">// pages. A page-table page contains 512 64-bit PTEs.</span></span><br><span class="line"><span class="comment">// A 64-bit virtual address is split into five fields:</span></span><br><span class="line"><span class="comment">//   39..63 -- must be zero.</span></span><br><span class="line"><span class="comment">//   30..38 -- 9 bits of level-2 index.</span></span><br><span class="line"><span class="comment">//   21..29 -- 9 bits of level-1 index.</span></span><br><span class="line"><span class="comment">//   12..20 -- 9 bits of level-0 index.</span></span><br><span class="line"><span class="comment">//    0..11 -- 12 bits of byte offset within the page.</span></span><br><span class="line"><span class="type">pte_t</span> *</span><br><span class="line"><span class="title function_">walk</span><span class="params">(<span class="type">pagetable_t</span> pagetable, uint64 va, <span class="type">int</span> alloc)</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">if</span>(va &gt;= MAXVA)</span><br><span class="line">    panic(<span class="string">&quot;walk&quot;</span>);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span>(<span class="type">int</span> level = <span class="number">2</span>; level &gt; <span class="number">0</span>; level--) &#123;</span><br><span class="line">    <span class="type">pte_t</span> *pte = &amp;pagetable[PX(level, va)];<span class="comment">//get the address of pgt</span></span><br><span class="line">    <span class="keyword">if</span>(*pte &amp; PTE_V) &#123;</span><br><span class="line">      pagetable = (<span class="type">pagetable_t</span>)PTE2PA(*pte);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="keyword">if</span>(!alloc || (pagetable = (<span class="type">pde_t</span>*)kalloc()) == <span class="number">0</span>)</span><br><span class="line">        <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">      <span class="built_in">memset</span>(pagetable, <span class="number">0</span>, PGSIZE);</span><br><span class="line">      *pte = PA2PTE(pagetable) | PTE_V;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> &amp;pagetable[PX(<span class="number">0</span>, va)];<span class="comment">//shift the offset</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>首先看核心的walk函数，注释也写的比较清楚。<br>先判断有没有超过最大虚拟地址，然后进入3层循环。第一层先从传入的根页表的地址<code>pagetable</code>中找到第一个9位偏移<code>&amp;pagetable[PX(level, va)]</code>对应的PTE，<code>PX (level, va)</code>也给出，即将传入va中取出对应的9bits。然后判断是否有效，有效则将PTE转换为下一级页表的虚拟地址<code>pagetable = (pagetable_t)PTE2PA(*pte)</code>，无效则根据传入的alloc决定是否要为该PTE分配一个页表，并判断分配是否成功。然后继续循环。最后返回一个移除了偏移量的物理地址？即该物理页的基地址？</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Create PTEs for virtual addresses starting at va that refer to</span></span><br><span class="line"><span class="comment">// physical addresses starting at pa. va and size might not</span></span><br><span class="line"><span class="comment">// be page-aligned. Returns 0 on success, -1 if walk() couldn&#x27;t</span></span><br><span class="line"><span class="comment">// allocate a needed page-table page.</span></span><br><span class="line"><span class="type">int</span></span><br><span class="line"><span class="title function_">mappages</span><span class="params">(<span class="type">pagetable_t</span> pagetable, uint64 va, uint64 size, uint64 pa, <span class="type">int</span> perm)</span></span><br><span class="line">&#123;</span><br><span class="line">  uint64 a, last;</span><br><span class="line">  <span class="type">pte_t</span> *pte;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span>(size == <span class="number">0</span>)</span><br><span class="line">    panic(<span class="string">&quot;mappages: size&quot;</span>);</span><br><span class="line">  </span><br><span class="line">  a = PGROUNDDOWN(va);</span><br><span class="line">  last = PGROUNDDOWN(va + size - <span class="number">1</span>);</span><br><span class="line">  <span class="keyword">for</span>(;;)&#123;</span><br><span class="line">    <span class="keyword">if</span>((pte = walk(pagetable, a, <span class="number">1</span>)) == <span class="number">0</span>)</span><br><span class="line">      <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    <span class="keyword">if</span>(*pte &amp; PTE_V)</span><br><span class="line">      panic(<span class="string">&quot;mappages: remap&quot;</span>);</span><br><span class="line">    *pte = PA2PTE(pa) | perm | PTE_V;</span><br><span class="line">    <span class="keyword">if</span>(a == last)</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">    a += PGSIZE;</span><br><span class="line">    pa += PGSIZE;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>由注释可以看出这个函数是给没分配PTE的页表分配PTE的，整个函数结构由一个死循环构成。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/04/17/page-tables/" rel="prev" title="page tables">
+                  <i class="fa fa-chevron-left"></i> page tables
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/06/25/traps/" rel="next" title="traps">
+                  traps <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Wang Wenhui</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

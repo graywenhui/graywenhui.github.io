@@ -125,13 +125,13 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">36</span>
+          <span class="site-state-item-count">43</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
           <a href="/categories/">
-        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-count">9</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
@@ -165,6 +165,978 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/01/29/%E8%A7%84%E5%88%99%E5%BC%95%E6%93%8E%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Wang Wenhui">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Gray's Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Gray's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2023/01/29/%E8%A7%84%E5%88%99%E5%BC%95%E6%93%8E%E8%AE%BE%E8%AE%A1%E4%B8%8E%E5%AE%9E%E7%8E%B0/" class="post-title-link" itemprop="url">规则引擎设计与实现</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-01-29 21:55:02" itemprop="dateCreated datePublished" datetime="2023-01-29T21:55:02+08:00">2023-01-29</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-01-30 19:52:47" itemprop="dateModified" datetime="2023-01-30T19:52:47+08:00">2023-01-30</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/go/" itemprop="url" rel="index"><span itemprop="name">go</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+	<div>
+		
+	</div>
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="重点内容"><a href="#重点内容" class="headerlink" title="重点内容"></a>重点内容</h1><ol>
+<li>理解规则引擎的组成部分及应用场景</li>
+<li>理解规则引擎的核心原理-编译原理的相关概念</li>
+<li>设计并实现一个规则引擎-YoungEngine</li>
+<li>结合之前所学课程，实现一个Web版规则引擎</li>
+</ol>
+<h1 id="详细知识点"><a href="#详细知识点" class="headerlink" title="详细知识点"></a>详细知识点</h1><h2 id="认识"><a href="#认识" class="headerlink" title="认识"></a>认识</h2><p>简单理解规则引擎就是一个系统，对于一个给定的输入，会有一个特定的输出</p>
+<p><strong>定义：</strong>是一种嵌入在程序中的组件，实现了将业务决策从应用代码中分离出来，并用预定义的语义模块编写业务决策。接受输入，解释业务规则，并根据业务规则做出业务决策。</p>
+<p>我的理解是这里就相当于，整体框架不变的情况下，只要改动中间一个函数内容（但不是函数），就可以实现业务逻辑，规则引擎相当于一个更高能力的函数</p>
+<p>这样做的好处是能够解决重复编码的问题，提高开发效率</p>
+<p><strong>组成部分：</strong>数据输入、规则理解、规则执行</p>
+<p><strong>应用场景：</strong>风控对抗、活动策略运营、数据分析和清洗</p>
+<h2 id="编译原理基本概念"><a href="#编译原理基本概念" class="headerlink" title="编译原理基本概念"></a>编译原理基本概念</h2><h3 id="词法分析"><a href="#词法分析" class="headerlink" title="词法分析"></a>词法分析</h3><p>把源代码字符串转换为此法单元</p>
+<p><img src="https://cdn.jsdelivr.net/gh/graywenhui/blogImage@main/img/202301292227260.png" alt="image-20230129222730104"></p>
+<h3 id="语法分析"><a href="#语法分析" class="headerlink" title="语法分析"></a>语法分析</h3><p>在词法分析的基础上，识别表达式的语法结构的过程</p>
+<p><img src="https://cdn.jsdelivr.net/gh/graywenhui/blogImage@main/img/202301292228118.png" alt="image-20230129222835007"></p>
+<p>这两部分我的理解就是，词法分析是找出一个个整体词块，而语法分析就是在已知一个个整体的情况下分析怎么去执行这一语句</p>
+<h3 id="抽象语法树"><a href="#抽象语法树" class="headerlink" title="抽象语法树"></a>抽象语法树</h3><h4 id="上下文无关语法"><a href="#上下文无关语法" class="headerlink" title="上下文无关语法"></a>上下文无关语法</h4><p>无需考虑上下文，就可以判断正确性，如</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">r := a &gt; b</span><br></pre></td></tr></table></figure>
+
+<p>用巴科斯范式（BNF）表达</p>
+<p>递归下降算法：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/graywenhui/blogImage@main/img/202301292245489.png" alt="image-20230129224550383"></p>
+<p>一步步往下找，找到最匹配底层的部分，然后回溯继续匹配</p>
+<p>这里听概念不是很明白，看例子看的比较明白，右上角一步步往下依赖，找到最匹配的一个部分，然后回溯继续找下一个</p>
+<h3 id="类型检查"><a href="#类型检查" class="headerlink" title="类型检查"></a>类型检查</h3><h4 id="类型综合"><a href="#类型综合" class="headerlink" title="类型综合"></a>类型综合</h4><p>根据子表达式类型构造出父表达式的类型，如29 &gt; 10能推断出父类型是bool类型，而10 + “s1” 推断不出父类型，检查会报错</p>
+<h4 id="编译时检查-amp-运行时检查"><a href="#编译时检查-amp-运行时检查" class="headerlink" title="编译时检查&amp;运行时检查"></a>编译时检查&amp;运行时检查</h4><p>两个时段检查，可以发生在构造语法树时，也可以发生在执行时。前者需提前声明参数类型，后者可以在给特定值时判断是否符合类型</p>
+<h2 id="设计规则引擎"><a href="#设计规则引擎" class="headerlink" title="设计规则引擎"></a>设计规则引擎</h2><h3 id="词法分析-1"><a href="#词法分析-1" class="headerlink" title="词法分析"></a>词法分析</h3><p><img src="https://cdn.jsdelivr.net/gh/graywenhui/blogImage@main/img/202301292354271.png" alt="image-20230129235414122"></p>
+<h3 id="语法分析-1"><a href="#语法分析-1" class="headerlink" title="语法分析"></a>语法分析</h3><p><img src="https://cdn.jsdelivr.net/gh/graywenhui/blogImage@main/img/202301292354296.png" alt="image-20230129235446223"></p>
+<p>优先级表达与语法树结构：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/graywenhui/blogImage@main/img/202301292355968.png" alt="image-20230129235521883"></p>
+<p>大概的原理理解了，真正实现的项目代码实现还需要多点时间理解。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/01/20/Go%E8%AF%AD%E8%A8%80%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E8%AF%A6%E8%A7%A3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Wang Wenhui">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Gray's Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Gray's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2023/01/20/Go%E8%AF%AD%E8%A8%80%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E8%AF%A6%E8%A7%A3/" class="post-title-link" itemprop="url">Go语言内存管理详解</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2023-01-20 17:24:19 / 修改时间：20:33:04" itemprop="dateCreated datePublished" datetime="2023-01-20T17:24:19+08:00">2023-01-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/go/" itemprop="url" rel="index"><span itemprop="name">go</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+	<div>
+		
+	</div>
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="重点内容"><a href="#重点内容" class="headerlink" title="重点内容"></a>重点内容</h1><ol>
+<li>自动内存管理</li>
+<li>Go内存管理及优化</li>
+<li>编译器和静态分析</li>
+<li>Go编译器优化</li>
+</ol>
+<h1 id="详细知识点"><a href="#详细知识点" class="headerlink" title="详细知识点"></a>详细知识点</h1><h2 id="自动内存管理"><a href="#自动内存管理" class="headerlink" title="自动内存管理"></a>自动内存管理</h2><p>· 动态内存</p>
+<p>​	程序在运行时根据需求动态分配的内存：malloc()</p>
+<p>· 自动内存管理</p>
+<p>​	避免手动内存管理，专注于实现业务逻辑<br>​	保证内存使用的<strong>正确</strong>性和<strong>安全性</strong>：double-free problem、use-after-free problem</p>
+<p>· 三个任务</p>
+<p>​	为新对象分配空间<br>​	找到存活的对象<br>​	回收死亡对象的内存空间</p>
+<p><em><strong>相关概念：</strong></em><br>    · Mutator：业务线程，分配新对象，修改对象指向关系<br>    · Collector：GC线程，找到存活对象，回收死亡对象的内存空间<br>    · Serial GC：只有一个collector<br>    · Parallel GC：支持多个collectors同时回收的GC算法<br>    · Concurrent GC：mutator(s)和collector(s)可以<strong>同时执行</strong></p>
+<p>三种GC，Concurrent GC必须感知对象指向关系的变化，否则会导致存活对象被回收</p>
+<p><em><strong>评价GC算法：</strong></em></p>
+<p>​	· 安全性(Safety)：不能回收存活的对象	<strong>基本要求</strong><br>​	· 吞吐率(Throughput)：1- GC时间&#x2F;程序执行总时间	<strong>花在GC上的时间</strong>越短越好<br>​	· 暂停时间(Pause time)：stop the world (STW)	<strong>业务是否感知</strong><br>​	· 内存开销(Space overhead)	<strong>GC元数据开销</strong></p>
+<h3 id="追踪垃圾回收"><a href="#追踪垃圾回收" class="headerlink" title="追踪垃圾回收"></a>追踪垃圾回收</h3><p>回收目标：指针指向关系不可达的对象</p>
+<p>过程：</p>
+<p>​	· 标记根对象（静态变量、全局变量、常量、线程栈等）<br>​	· 标记：找到可达对象（从根对象出发，找到所有可达对象）<br>​	· 清理：所有不可达对象<br>​				· Copying GC：将存活对象复制到另外的内存空间，原空间就可分配了<br>​				· Mark-sweap GC：将死亡对象的内存标记为“可分配”<br>​				· Mark-compact GC：移动并整理存活对象，也就是让他们的地址连续，分配其他空间时就可以从后面开始分配了</p>
+<h3 id="分代GC"><a href="#分代GC" class="headerlink" title="分代GC"></a>分代GC</h3><p>简单来说， 	经历过GC的次数决定对象的年龄，年轻代的存货少，用copying gc,老年代的对象趋于一直活着，反复复制开销大，采用mark-sweep</p>
+<h3 id="引用计数"><a href="#引用计数" class="headerlink" title="引用计数"></a>引用计数</h3><p>看到这个就联想到C++的智能指针，原理一样</p>
+<p>· 每个对象有一个与之关联的引用数目<br>· 对象存活条件：当且仅当引用数大于0</p>
+<p><strong>缺点：</strong></p>
+<p>​	· 维护引用计数开销大：通过原子操作保证对引用计数操作的原子性和可见性<br>​	· 无法回收环形数据结构 – weak reference<br>​	· 内存开销<br>​	· 回收内存时依然可能引发暂停</p>
+<h2 id="Go内存管理及优化"><a href="#Go内存管理及优化" class="headerlink" title="Go内存管理及优化"></a>Go内存管理及优化</h2><h3 id="分块"><a href="#分块" class="headerlink" title="分块"></a>分块</h3><p>目标：为对象在heap上分配内存</p>
+<p>提前将内存分块</p>
+<p>​	系统调用mmap()向OS申请一大块内存，例如4MB<br>​	先将内存划分为大块，例如8KB，称为mspan<br>​	再将大块继续划分为特定大小的小块，用于对象分配<br>​	noscan mspan：分配不包含指针的对象–GC不需要扫描<br>​	scan mspan：分配包含指针的对象–GC需要扫描</p>
+<h3 id="缓存"><a href="#缓存" class="headerlink" title="缓存"></a>缓存</h3><p>虚拟内存一类的？这里就讲了个大概</p>
+<h3 id="内存管理优化"><a href="#内存管理优化" class="headerlink" title="内存管理优化"></a>内存管理优化</h3><h4 id="Balanced-GC"><a href="#Balanced-GC" class="headerlink" title="Balanced GC"></a>Balanced GC</h4><p>本质：将多个小对象的分配合并成一次大对象的分配</p>
+<p>方案：移动GAB中存活的对象<br>    当GAB总大小超过一定阈值时，将GAB中存活的对象复制到另外分配的GAB中<br>    原先的GAB可以释放，避免内存泄漏<br>    本质：用copying GC的算法管理小对象</p>
+<h2 id="编译器和静态分析"><a href="#编译器和静态分析" class="headerlink" title="编译器和静态分析"></a>编译器和静态分析</h2><h3 id="结构"><a href="#结构" class="headerlink" title="结构"></a>结构</h3><p><img src="https://cdn.jsdelivr.net/gh/graywenhui/blogImage@main/img/202301201949845.png" alt="image-20230120194950469"></p>
+<h3 id="静态分析"><a href="#静态分析" class="headerlink" title="静态分析"></a>静态分析</h3><p>不执行程序代码，推导程序行为，分析程序的性质</p>
+<p>两种分析</p>
+<p>​	控制流(Control flow): 程序执行的流程<br>​	数据流(Data flow): 数据在控制流上的传递</p>
+<h3 id="过程内分析和过程间分析"><a href="#过程内分析和过程间分析" class="headerlink" title="过程内分析和过程间分析"></a>过程内分析和过程间分析</h3><p>过程内(Intra-procedural analysis)：仅在函数内进行分析<br>过程间(Inter-procedural analysis)：考虑过程调用时参数传递和返回值的数据流和控制流</p>
+<p>过程间分析要得知调用接口的时哪个类型的变量</p>
+<h2 id="Go编译器优化"><a href="#Go编译器优化" class="headerlink" title="Go编译器优化"></a>Go编译器优化</h2><p>WHY：<br>    用户无感知，重新编译即可获得性能收益<br>    通用性优化</p>
+<p>思路：<br>    用编译时间换取更高效的机器码</p>
+<h3 id="函数内联"><a href="#函数内联" class="headerlink" title="函数内联"></a>函数内联</h3><p>内联：将被调用函数的函数体的副本替换到调用位置上，同时重写代码以反映参数的绑定</p>
+<p>优点：<br>    消除调用开销<br>    将过程间分析转化为过程内分析</p>
+<p>缺点：<br>    函数体变大，icache不友好<br>    编译生成的Go镜像变大</p>
+<h3 id="Beast-mode"><a href="#Beast-mode" class="headerlink" title="Beast mode"></a>Beast mode</h3><p>Go受到很多限制：interface，defer等，限制了内联。	内联策略保守</p>
+<p>Beast mode：调整内联策略，使更多函数被内联<br>    降低函数调用的开销<br>    增加其他优化的机会</p>
+<h3 id="逃逸分析"><a href="#逃逸分析" class="headerlink" title="逃逸分析"></a>逃逸分析</h3><p> 分析代码中指针的动态作用域：指针在何处可以被访问</p>
+<p>若发现指针p在当前作用域s：<br>    · 作为参数传给其他函数<br>    · 传递给全局变量<br>    · 传递给其他goroutine<br>    · 传递给已经逃逸的指针指向的对象<br>则p指向的对象逃逸出s，反之则没有逃逸出s</p>
+<p>Beast mode 让更多函数被内联，扩展了函数边界，更多对象不逃逸</p>
+<p>优化：未逃逸的对象可在<strong>栈上分配</strong><br>    对象在栈上的分配和回收很快，只要移动sp指针就行<br>    减少在heap上的分配，降低GC负担</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/01/19/%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E5%B7%A5%E5%85%B7/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Wang Wenhui">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Gray's Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Gray's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2023/01/19/%E6%80%A7%E8%83%BD%E5%88%86%E6%9E%90%E5%B7%A5%E5%85%B7/" class="post-title-link" itemprop="url">性能分析工具</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2023-01-19 22:33:02 / 修改时间：23:33:32" itemprop="dateCreated datePublished" datetime="2023-01-19T22:33:02+08:00">2023-01-19</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/go/" itemprop="url" rel="index"><span itemprop="name">go</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+	<div>
+		
+	</div>
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="性能分析工具-pprof"><a href="#性能分析工具-pprof" class="headerlink" title="性能分析工具 pprof"></a>性能分析工具 pprof</h1><p>pprof是用于可视化和分析性能分析数据的工具</p>
+<h2 id="pprof功能简介"><a href="#pprof功能简介" class="headerlink" title="pprof功能简介"></a>pprof功能简介</h2><p><img src="https://cdn.jsdelivr.net/gh/graywenhui/blogImage@main/img/202301192235548.png" alt="image-20230119223533413"></p>
+<h2 id="pprof排查实战"><a href="#pprof排查实战" class="headerlink" title="pprof排查实战"></a>pprof排查实战</h2><p>代码运行时，浏览器输入：<a target="_blank" rel="noopener" href="http://localhost:6060/debug/pprof/">http://localhost:6060/debug/pprof/</a></p>
+<p>如图：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/graywenhui/blogImage@main/img/202301192237408.png" alt="image-20230119223723338"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/graywenhui/blogImage@main/img/202301192237777.png" alt="image-20230119223738678"></p>
+<p>然后在另一个终端输入：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">go</span> tool pprof <span class="string">&quot;http://localhost:6060/debug/pprof/profile?seconds=10&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p><img src="https://cdn.jsdelivr.net/gh/graywenhui/blogImage@main/img/202301192239523.png" alt="image-20230119223922496"></p>
+<p>命令：topN	查看占用资源最多的函数</p>
+<p>然后输入top：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/graywenhui/blogImage@main/img/202301192239449.png" alt="image-20230119223951414"></p>
+<p>flat		当前函数本身的执行耗时<br>flat%	 flat占CPU总时间的比例<br>sum%   上面每一行的flat%总和<br>cum	  指当前函数本身加上其调用函数的总耗时<br>cum%   cum占CPU总时间的比例</p>
+<p>命令：list	根据指定的正则表达式查找代码行</p>
+<p>输入list Eat：</p>
+<p><img src="https://cdn.jsdelivr.net/gh/graywenhui/blogImage@main/img/202301192246160.png" alt="image-20230119224641123"></p>
+<p>命令：web	调用关系可视化</p>
+<p>输入</p>
+<h2 id="pprof的采样过程和原理"><a href="#pprof的采样过程和原理" class="headerlink" title="pprof的采样过程和原理"></a>pprof的采样过程和原理</h2>
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/01/19/%E9%AB%98%E8%B4%A8%E9%87%8F%E7%BC%96%E7%A8%8B%E4%B8%8E%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Wang Wenhui">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Gray's Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Gray's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2023/01/19/%E9%AB%98%E8%B4%A8%E9%87%8F%E7%BC%96%E7%A8%8B%E4%B8%8E%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98/" class="post-title-link" itemprop="url">高质量编程与性能调优</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2023-01-19 15:00:44 / 修改时间：23:36:33" itemprop="dateCreated datePublished" datetime="2023-01-19T15:00:44+08:00">2023-01-19</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/go/" itemprop="url" rel="index"><span itemprop="name">go</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+	<div>
+		
+	</div>
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="重点内容"><a href="#重点内容" class="headerlink" title="重点内容"></a>重点内容</h1><ol>
+<li>如何编写更简洁清晰的代码</li>
+<li>常用Go语言程序优化手段</li>
+<li>熟悉Go程序性能分析工具</li>
+<li>了解工程中性能优化的原则和流程</li>
+</ol>
+<h1 id="详细知识点"><a href="#详细知识点" class="headerlink" title="详细知识点"></a>详细知识点</h1><h2 id="高质量编程"><a href="#高质量编程" class="headerlink" title="高质量编程"></a>高质量编程</h2><p><em><strong>要点：</strong></em>正确可靠、简洁清晰</p>
+<p>· 各种边界条件是否考虑完备<br>· 异常情况处理，稳定性保证<br>· 易读易维护</p>
+<p><em><strong>编程原则：</strong></em>简单性、可读性、生产力<br>简单：消除“多余的复杂性”、逻辑简单清晰<br>刻度：编写可维护代码</p>
+<h3 id="编码规范"><a href="#编码规范" class="headerlink" title="编码规范"></a>编码规范</h3><h4 id="代码格式"><a href="#代码格式" class="headerlink" title="代码格式"></a>代码格式</h4><p>Golang可以使用Go官方提供的工具gofmt自动格式化代码，也可以使用goimports(gofmt+依赖包管理)</p>
+<p>我觉得这种有官方一键整理代码格式的功能挺好的，有的时候写的快，可能哪里敲了空格但代码里没有，格式就会不舒服，一键格式化后就不用花更多时间关注格式问题了</p>
+<h4 id="注释"><a href="#注释" class="headerlink" title="注释"></a>注释</h4><ol>
+<li>注释应该解释代码	作用</li>
+<li>​                                   如何做的</li>
+<li>​                                   实现的原因</li>
+<li>​                                   什么情况会出错</li>
+</ol>
+<p>1：适合注释公共符号<br>2：适合注释代码实现过程<br>3：适合解释代码的外部因素，提供额外上下文<br>4：适合解释代码的限制条件</p>
+<p>公共符号始终要注释！</p>
+<p>这里我看下来的感受是注释还是用英文吧，因为看视频里的例子全是英文注释，个人用不同IDE时，如果是两种编码规则中文注释就会乱码，英文就不会出现这个情况了。</p>
+<h4 id="命名规范"><a href="#命名规范" class="headerlink" title="命名规范"></a>命名规范</h4><h5 id="变量variable"><a href="#变量variable" class="headerlink" title="变量variable"></a>变量variable</h5><p>简洁胜于冗长<br>缩略词全大写、当位于变量开头且不需导出时小写<br>    使用ServeHTTP而不是ServeHttp<br>    使用XMLHTTPRequest或xmlHTTPRequest<br>变量距离被使用的地方越远，则需要携带越多的上下文信息<br>    全局变量名字中需要更多上下文信息</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//Good</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Client)</span></span> send(req *Request, deadline time.Time)</span><br><span class="line"></span><br><span class="line"><span class="comment">//Bad</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Client)</span></span> send(req *Request, t time.Time)</span><br></pre></td></tr></table></figure>
+
+<p>这个例子可以很明显看出deadline做参数名比t做参数名含义更明显</p>
+<h5 id="函数function"><a href="#函数function" class="headerlink" title="函数function"></a>函数function</h5><p>函数名不携带包名的上下文信息，因为包名和函数名总是成对出现的<br>函数名尽量简短<br>名为foo的包某个函数返回类型Foo时，可以省略类型信息而不导致歧义	返回其他类型时可以加入类型信息</p>
+<p>http包中创建服务函数如何命名？：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Serve</span><span class="params">(I net.Listener, handler Handler)</span></span> <span class="type">error</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">ServeHTTP</span><span class="params">(I net.Listener, handler Handler)</span></span> <span class="type">error</span></span><br></pre></td></tr></table></figure>
+
+<p>因为是http包中的函数，调用时会http.Serve，所以再加HTTP就会很多余</p>
+<h5 id="包package"><a href="#包package" class="headerlink" title="包package"></a>包package</h5><p>只由小写字母组成，不包含大写字母和下划线等字符<br>简短并包含一定的上下文信息。<br>不要与标准库同名。如不用strings</p>
+<p>对Golang包的理解不是很深刻，这部分后面继续理解</p>
+<h4 id="控制流程"><a href="#控制流程" class="headerlink" title="控制流程"></a>控制流程</h4><p>1、避免嵌套，保持流程清晰</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//Bad</span></span><br><span class="line"><span class="keyword">if</span> foo &#123;</span><br><span class="line">    <span class="keyword">return</span> x</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//Good</span></span><br><span class="line"><span class="keyword">if</span> foo &#123;</span><br><span class="line">    <span class="keyword">return</span> x</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">return</span> <span class="literal">nil</span></span><br></pre></td></tr></table></figure>
+
+<p>这个例子中，两个分支都包含return语句，可以去除冗余的else。这个错误处理中比较常见，前几节课看到的代码中基本都是这样的处理</p>
+<p>2、尽量保证正常代码路径为最小缩进，即优先处理错误情况&#x2F;特殊情况，尽早返回或继续循环减少嵌套</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//Bad </span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">OneFunc</span><span class="params">()</span></span> &#123;</span><br><span class="line">    err := doSomething()</span><br><span class="line">    <span class="keyword">if</span> err == <span class="literal">nil</span> &#123;</span><br><span class="line">        err := doAnotherThing()</span><br><span class="line">        <span class="keyword">if</span> err == <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">nil</span> <span class="comment">// normal case</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> err</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//Good</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">OneFunc</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="keyword">if</span> err := doSomething(); err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> err</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> err := doAnotherThing(); err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> err </span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">nil</span> <span class="comment">// normal case </span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里可以很清楚的看到两段代码的功能是一样的，但是下面的比上面的要简洁清晰的多</p>
+<p>简单来说，正常情况放最后，先处理特殊情况和异常情况</p>
+<h3 id="错误和异常处理"><a href="#错误和异常处理" class="headerlink" title="错误和异常处理"></a>错误和异常处理</h3><h4 id="简单错误"><a href="#简单错误" class="headerlink" title="简单错误"></a>简单错误</h4><p>指仅出现一次的错误，在其他地方不需要捕获该错误<br>优先使用errors.New来创建匿名变量直接表示简单错误<br>如果有格式化的需求，使用fmt.Errorf</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">defaultCheckRedirect</span><span class="params">(req *Request, via []*Request)</span></span> <span class="type">error</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(via) &gt;= <span class="number">10</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> errors.New(<span class="string">&quot;stopped after 10 redirects&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h4 id="错误的Wrap和UnWrap（包装和解包）"><a href="#错误的Wrap和UnWrap（包装和解包）" class="headerlink" title="错误的Wrap和UnWrap（包装和解包）"></a>错误的Wrap和UnWrap（包装和解包）</h4><p>wrap提供一个error嵌套另一个error的能力，从而生成error的跟踪链<br>在fmt.Errorf中使用：%w关键字来将一个错误关联至错误链中</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">list, _, err := c.GetBytes(cache.Subkey(a.actionID, <span class="string">&quot;srcfiles&quot;</span>))</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> fmt.Errorf(<span class="string">&quot;reading srcfiles list: %w&quot;</span>, err)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里不是很理解意思，是说可以为错误信息添加上下文？<br>还是说可以把遇到的所有错误信息都输出到一起？</p>
+<h4 id="错误判定"><a href="#错误判定" class="headerlink" title="错误判定"></a>错误判定</h4><p>用 errors.Is 判断一个错误是否为特定错误<br>更可以判定错误链上的所有错误是否包含特定的错误 （比 &#x3D;&#x3D; 功能更强大）</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">data, err = lockedfile.Read(targ)</span><br><span class="line"><span class="keyword">if</span> errors.Is(err, fs.ErrNotExist) &#123;</span><br><span class="line">    <span class="keyword">return</span> []<span class="type">byte</span>&#123;&#125;, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">return</span> data, err</span><br></pre></td></tr></table></figure>
+
+
+
+<p>错误链上获取特定种类的错误：errors.As</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> _, err := os.Open(<span class="string">&quot;non-existing&quot;</span>); err != <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="keyword">var</span> pathError *fs.PathError</span><br><span class="line">    <span class="keyword">if</span> errors.As(err, &amp;pathError) &#123;</span><br><span class="line">        fmt.Println(<span class="string">&quot;Failed at path:&quot;</span>, pathError.Path) </span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        fmt.Println(err)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里意思是获取详细的错误信息？</p>
+<h4 id="panic"><a href="#panic" class="headerlink" title="panic"></a>panic</h4><p>不建议在业务代码中用panic<br>调用函数不包含recover会造成程序崩溃<br>若问题可被屏蔽或解决，使用error代替panic<br>程序启动阶段发生不可逆转的错误时，可以在init或main函数中使用panic</p>
+<h4 id="recover"><a href="#recover" class="headerlink" title="recover"></a>recover</h4><p>recover只能在被defer的函数中使用<br>嵌套无法生效<br>只在当前goroutine生效<br>defer的语句是后进先出</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s *ss)</span></span> Token(skipSpace <span class="type">bool</span>, f <span class="function"><span class="keyword">func</span><span class="params">(<span class="type">rune</span>)</span></span> <span class="type">bool</span>) (tok []<span class="type">byte</span>, err <span class="type">error</span>) &#123;</span><br><span class="line">    <span class="keyword">defer</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">        <span class="keyword">if</span> e := <span class="built_in">recover</span>(); e != <span class="literal">nil</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> se, ok := e.(scanError); ok &#123;</span><br><span class="line">                err = se.err</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="built_in">panic</span>(e)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;()</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果需要更多上下文信息，可以recover后在log中记录当前的调用栈  通过debug.Stack()</p>
+<p><em><strong>小结：</strong></em><br>    error尽可能提供简明的上下文信息，方便定位问题<br>    panic用于真正异常情况<br>    recover在当前goroutine的被defer的函数中生效</p>
+<h2 id="性能优化"><a href="#性能优化" class="headerlink" title="性能优化"></a>性能优化</h2><p>性能优化是综合评估，有时候时间效率和空间效率可能对立</p>
+<h3 id="Benchmark"><a href="#Benchmark" class="headerlink" title="Benchmark"></a>Benchmark</h3><p>性能表现需要实际数据衡量，Go提供了支持性能测试的benchmark工具</p>
+<h3 id="Slice"><a href="#Slice" class="headerlink" title="Slice"></a>Slice</h3><p>预分配内存<br>使用	make([]int, 0, size)	而不是	make([]int, 0)</p>
+<p>在已有切片基础上创建切片，不会创建新的底层数组<br>所以在原切片大，新切片小的情况下，可使用copy代替re-slice，这样原切片就能被释放了</p>
+<h3 id="Map"><a href="#Map" class="headerlink" title="Map"></a>Map</h3><p>同理，预分配内存</p>
+<p>向map添加元素时会触发map的扩容，提前分配内存可以减少内存拷贝和Rehash的消耗</p>
+<h3 id="字符串处理"><a href="#字符串处理" class="headerlink" title="字符串处理"></a>字符串处理</h3><p>三种字符串拼接方式：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// +</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Plus</span><span class="params">(n <span class="type">int</span>, str <span class="type">string</span>)</span></span> <span class="type">string</span> &#123;</span><br><span class="line">    s := <span class="string">&quot;&quot;</span></span><br><span class="line">    <span class="keyword">for</span> i := <span class="number">0</span>; i &lt; n; i++ &#123;</span><br><span class="line">        s += str</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> s</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//strings.Builder</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">StrBuilder</span><span class="params">(n <span class="type">int</span>, str <span class="type">string</span>)</span></span> <span class="type">string</span> &#123;</span><br><span class="line">    <span class="keyword">var</span> builder strings.Builder</span><br><span class="line">    <span class="keyword">for</span> i := <span class="number">0</span>; i &lt; n; i++ &#123;</span><br><span class="line">        builder.WriteString(str)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> builder.String()</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//ByteBuffer</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">ByteBuffer</span><span class="params">(n <span class="type">int</span>, str <span class="type">string</span>)</span></span> <span class="type">string</span> &#123;</span><br><span class="line">    buf := <span class="built_in">new</span>(bytes.Buffer)</span><br><span class="line">    <span class="keyword">for</span> i := <span class="number">0</span>; i &lt; n; i++ &#123;</span><br><span class="line">        buf.WriteString(str)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> buf.String()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>+性能最差，strbuilder比起buffer会短一些，两者性能都比较好</p>
+<p>+拼接时会开辟新的空间，另两个底层都是[]byte数组</p>
+<p>strbuilder直接将底层的[]byte数组转换成了字符串，而bytebuffer转化为字符串时申请了一块空间</p>
+<p>可以在合成时先扩容，这样效率更高	使用 .Grow(n * len(str))</p>
+<h3 id="空结构体"><a href="#空结构体" class="headerlink" title="空结构体"></a>空结构体</h3><p>用空结构体struct{}作为map键值对的值，不占空间，适用于在不取map值的情况</p>
+<h3 id="atomic包"><a href="#atomic包" class="headerlink" title="atomic包"></a>atomic包</h3><p>适用于多线程编程，现在还不是特别懂，先码着？</p>
+<p>锁的实现通过OS实现，属于system call<br>atomic操作通过硬件实现，效率比锁高<br>sync.Mutex应该用来保护一段逻辑，不仅仅用于保护一个变量<br>对于非数值操作，可以使用atomic.Value，能承载一个interface{}</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/01/17/Go%E6%A1%86%E6%9E%B6%E4%B8%89%E4%BB%B6%E5%A5%97/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Wang Wenhui">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Gray's Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Gray's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2023/01/17/Go%E6%A1%86%E6%9E%B6%E4%B8%89%E4%BB%B6%E5%A5%97/" class="post-title-link" itemprop="url">Go框架三件套</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-01-17 09:40:01" itemprop="dateCreated datePublished" datetime="2023-01-17T09:40:01+08:00">2023-01-17</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-01-18 23:28:13" itemprop="dateModified" datetime="2023-01-18T23:28:13+08:00">2023-01-18</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/go/" itemprop="url" rel="index"><span itemprop="name">go</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+	<div>
+		
+	</div>
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="重点内容"><a href="#重点内容" class="headerlink" title="重点内容"></a>重点内容</h1><ol>
+<li>三件套介绍</li>
+<li>三件套使用</li>
+<li>实战案例</li>
+</ol>
+<h1 id="详细知识点"><a href="#详细知识点" class="headerlink" title="详细知识点"></a>详细知识点</h1><h2 id="Gorm"><a href="#Gorm" class="headerlink" title="Gorm"></a>Gorm</h2><p><a target="_blank" rel="noopener" href="https://github.com/go-gorm/gorm">https://github.com/go-gorm/gorm</a></p>
+<p>文档: <a target="_blank" rel="noopener" href="https://gorm.cn/">https://gorm.cn</a></p>
+<p>Gorm是迭代10年+的ORM框架</p>
+<h3 id="基本使用"><a href="#基本使用" class="headerlink" title="基本使用"></a>基本使用</h3><p>定义gorm model</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Product <span class="keyword">struct</span> &#123;</span><br><span class="line">    Code <span class="type">string</span></span><br><span class="line">    Price <span class="type">uint</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//为model定义表名</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(p Product)</span></span> TableName() <span class="type">string</span> &#123;  </span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;product&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    db, err := gorm.Open (</span><br><span class="line">        mysql.Open(<span class="string">&quot;user:pass@tcp(127.0.0.1:3306)/dbname?charset=utf8mb4&amp;parseTime=True&amp;loc=Local&quot;</span>),&amp;gorm.Config&#123;&#125;)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="built_in">panic</span>(<span class="string">&quot;failed to connect database&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="comment">//Create</span></span><br><span class="line">    db.Create(&amp;Product&#123;Code: <span class="string">&quot;D42&quot;</span>, Price: <span class="number">100</span>&#125;)</span><br><span class="line">    <span class="comment">//Read</span></span><br><span class="line">    <span class="keyword">var</span> product Product</span><br><span class="line">    db.First(&amp;product,<span class="number">1</span>) <span class="comment">//根据整形主键查找</span></span><br><span class="line">    db.First(&amp;product,<span class="string">&quot;code = ?&quot;</span>, <span class="string">&quot;D42&quot;</span>)</span><br><span class="line">    <span class="comment">//Update</span></span><br><span class="line">    db.Model(&amp;product).Update(<span class="string">&quot;Price&quot;</span>,<span class="number">200</span>)<span class="comment">//更新单列数据</span></span><br><span class="line">    <span class="comment">//Update多个字段</span></span><br><span class="line">    db.Model(&amp;product).Updates(Product&#123;Price:<span class="number">200</span>, Code: <span class="string">&quot;F42&quot;</span>&#125;)<span class="comment">//仅更新非零值字段</span></span><br><span class="line">    db.Model(&amp;product).Updates(<span class="keyword">map</span>[<span class="type">string</span>]<span class="keyword">interface</span>&#123;&#125;&#123;<span class="string">&quot;Price&quot;</span>: <span class="number">200</span>, <span class="string">&quot;Code&quot;</span>: <span class="string">&quot;F42&quot;</span>&#125;)	<span class="comment">//更新零值</span></span><br><span class="line">    <span class="comment">//Delete</span></span><br><span class="line">    db.Delete(&amp;product, <span class="number">1</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里对Model的用处用法有些不太清楚？</p>
+<p>几个约定：</p>
+<ol>
+<li>默认使用名为ID的字段为主键</li>
+<li>使用结构体的 蛇形负数作为表名</li>
+<li>字段名的蛇形作为列名</li>
+<li>使用CreateAt、UpdateAt字段作为创建、更新时间</li>
+</ol>
+<h3 id="支持的数据库"><a href="#支持的数据库" class="headerlink" title="支持的数据库"></a>支持的数据库</h3><p>MySQL、SQLServer、PostgreSQL、SQLite</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">&quot;gorm.io/driver/sqlserver&quot;</span></span><br><span class="line">    <span class="string">&quot;gorm.io/gorm&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">dsn := <span class="string">&quot;sqlserver://gorm:LoremIpsum86@localhost:9930?database=gorm&quot;</span></span><br><span class="line">db, err := gorm.Open(sqlserver.Open(dsn), &amp;gorm.Config&#123;&#125;)</span><br></pre></td></tr></table></figure>
+
+<h3 id="GORM创建数据"><a href="#GORM创建数据" class="headerlink" title="GORM创建数据"></a>GORM创建数据</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">&quot;fmt&quot;</span></span><br><span class="line">    <span class="string">&quot;gorm.io/driver/mysql&quot;</span></span><br><span class="line">    <span class="string">&quot;gorm.io/gorm&quot;</span></span><br><span class="line">)</span><br><span class="line"><span class="keyword">type</span> Product <span class="keyword">struct</span> &#123;</span><br><span class="line">    ID <span class="type">uint</span>		<span class="string">`gorm:&quot;primarykey&quot;`</span> 	<span class="comment">//定义字段为主键</span></span><br><span class="line">    Code <span class="type">string</span>	<span class="string">`gorm:&quot;column: code&quot;`</span>	<span class="comment">//定义列名</span></span><br><span class="line">    Price <span class="type">uint</span>	<span class="string">`gorm:&quot;column: user_id&quot;`</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    db, err := gorm.Open(mysql.Open(<span class="string">&quot;...&quot;</span>), &amp;gorm.Config&#123;&#125;)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> <span class="comment">// 处理错误</span></span><br><span class="line">    <span class="comment">//创建一条</span></span><br><span class="line">    p := &amp;Product&#123;Code: <span class="string">&quot;D42&quot;</span>&#125;</span><br><span class="line">    res := db.Create(p)</span><br><span class="line">    fmt.Println(res.Error)</span><br><span class="line">    fmt.Println(p.ID)</span><br><span class="line">    <span class="comment">//创建多条</span></span><br><span class="line">    products := []*Product&#123;&#123;Code: <span class="string">&quot;D41&quot;</span>&#125;,&#123;Code: <span class="string">&quot;D42&quot;</span>&#125;,&#123;Code: <span class="string">&quot;D43&quot;</span>&#125;&#125;</span><br><span class="line">    res = db.Create(products)</span><br><span class="line">    fmt.Println(res.Error)</span><br><span class="line">    <span class="keyword">for</span> _, p := <span class="keyword">range</span> products &#123;</span><br><span class="line">        fmt.Println(p.ID)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>创建的时候有些字段并没有赋值，可以通过在结构体中字段后面加标签设置默认值，比如<br>‘gorm:”default:galeone’,类型要匹配上</p>
+<h3 id="查询数据"><a href="#查询数据" class="headerlink" title="查询数据"></a>查询数据</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">u := &amp;User&#123;&#125;</span><br><span class="line">db.First&#123;u&#125;</span><br></pre></td></tr></table></figure>
+
+<p>First查询，获取第一条记录（主键升序），如果查询不到数据则返回ErrRecordNotFound，不常用，一般用Find</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">users := <span class="built_in">make</span>([]*User, <span class="number">0</span>)</span><br><span class="line">result := db.Where(<span class="string">&quot;age &gt; 10&quot;</span>).Find(&amp;users)</span><br><span class="line">fmt.Println(result.RowsAffected)	<span class="comment">//返回找到的记录数</span></span><br><span class="line">fmt.Println(result.Error)</span><br><span class="line"><span class="comment">//IN </span></span><br><span class="line">db.Where(<span class="string">&quot;name IN ?&quot;</span>, []<span class="type">string</span>&#123;<span class="string">&quot;jinzhu&quot;</span>,<span class="string">&quot;jinzhu 2&quot;</span>&#125;).Find(&amp;users)</span><br><span class="line"><span class="comment">//LIKE</span></span><br><span class="line">db.Where(<span class="string">&quot;name LIKE ?&quot;</span>, <span class="string">&quot;%jin%&quot;</span>&#125;).Find(&amp;users)</span><br><span class="line"><span class="comment">//AND</span></span><br><span class="line">db.Where(<span class="string">&quot;name = ? AND age &gt; ?&quot;</span>, <span class="string">&quot;jinzhu&quot;</span>, <span class="string">&quot;22&quot;</span>).Find(&amp;users)</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>Find查询，查询不到则返回空数组，不会出问题</p>
+<p>使用结构体作为查询条件时，GORM只查询非零值字段，如果字段值为0值，则该字段不会被构建为查询条件，解决方案是使用Map构建查询条件</p>
+<h3 id="更新数据"><a href="#更新数据" class="headerlink" title="更新数据"></a>更新数据</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//更新单列</span></span><br><span class="line">db.Model(&amp;User&#123;ID: <span class="number">111</span>&#125;).Where(<span class="string">&quot;age &gt; ?&quot;</span>, <span class="number">18</span>).Update(<span class="string">&quot;name&quot;</span>, <span class="string">&quot;hello&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment">//更新多个列</span></span><br><span class="line">db.Model(&amp;User&#123;ID: <span class="number">111</span>&#125;).Update(User&#123;Name: <span class="string">&quot;hello&quot;</span>, Age: <span class="number">18</span>&#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment">//使用map</span></span><br><span class="line">db.Model(&amp;User&#123;ID: <span class="number">111</span>&#125;).Update(<span class="keyword">map</span>[<span class="type">string</span>]<span class="keyword">interface</span>&#123;&#125;&#123;<span class="string">&quot;name&quot;</span>: <span class="string">&quot;hello&quot;</span>, <span class="string">&quot;age&quot;</span>: <span class="number">18</span>, <span class="string">&quot;actived&quot;</span>: <span class="literal">false</span>&#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment">//更新选定字段</span></span><br><span class="line">db.Model(&amp;User&#123;ID: <span class="number">111</span>&#125;).Select(<span class="string">&quot;name&quot;</span>).Update(<span class="keyword">map</span>[<span class="type">string</span>]<span class="keyword">interface</span>&#123;&#125;&#123;<span class="string">&quot;name&quot;</span>: <span class="string">&quot;hello&quot;</span>, <span class="string">&quot;age&quot;</span>: <span class="number">18</span>, <span class="string">&quot;actived&quot;</span>: <span class="literal">false</span>&#125;)</span><br><span class="line"></span><br><span class="line"><span class="comment">//SQL表达式更新</span></span><br><span class="line">db.Model(&amp;User&#123;ID: <span class="number">111</span>&#125;).Update(<span class="string">&quot;age&quot;</span>, gorm.EXpr(<span class="string">&quot;age * ? + ?&quot;</span>, <span class="number">2</span>, <span class="number">100</span>))</span><br></pre></td></tr></table></figure>
+
+<h3 id="删除数据"><a href="#删除数据" class="headerlink" title="删除数据"></a>删除数据</h3><h4 id="物理删除"><a href="#物理删除" class="headerlink" title="物理删除"></a>物理删除</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">db.Delete(&amp;User&#123;&#125;, <span class="number">10</span>)</span><br><span class="line">db.Delete(&amp;User&#123;&#125;, <span class="string">&quot;10&quot;</span>)</span><br><span class="line">db.Delete(&amp;User&#123;&#125;, []<span class="type">int</span>&#123;<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>&#125;)</span><br><span class="line">db.Where(<span class="string">&quot;name LIKE ?&quot;</span>, <span class="string">&quot;%jinzhu%&quot;</span>).Delete(User&#123;&#125;)</span><br><span class="line">db.Delete(User&#123;&#125;, <span class="string">&quot;email LIKE ?&quot;</span>, <span class="string">&quot;%jinzhu%&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>物理删除，一旦删除就找不回来了</p>
+<h4 id="软删除"><a href="#软删除" class="headerlink" title="软删除"></a>软删除</h4><p>GORM提供gorm.DeleteAt用于实现软删除</p>
+<p>拥有软删除能力的Model调用Delete时，记录不会被真正删除。GORM会将DeteleAt置为当前时间，不能通过正常的查询方法找到该记录</p>
+<p>使用Unscoped可以查询到被软删的数据</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="GORM事务"><a href="#GORM事务" class="headerlink" title="GORM事务"></a>GORM事务</h3><p>Gorm提供了Begin、Commit、Rollback方法用于事务</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">db, err := gorm.Open(mysql.Open(<span class="string">&quot;...&quot;</span>), &amp;gorm.Config&#123;&#125;)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="built_in">panic</span>(<span class="string">&quot;错误信息&quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line">tx := db.Begin() <span class="comment">// 开始事务</span></span><br><span class="line"><span class="comment">//执行db操作，这里开始应该用tx，而不是db</span></span><br><span class="line"><span class="keyword">if</span> err = tx.Create(&amp;User&#123;Name: <span class="string">&quot;name&quot;</span>&#125;).Error; err != <span class="literal">nil</span> &#123;</span><br><span class="line">    tx.Rollback()</span><br><span class="line">    <span class="comment">//遇到错误时回滚事务</span></span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span> err = tx.Create(&amp;User&#123;Name: <span class="string">&quot;name1&quot;</span>&#125;).Error; err != <span class="literal">nil</span> &#123;</span><br><span class="line">    tx.Rollback()</span><br><span class="line">    <span class="comment">//遇到错误时回滚事务</span></span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//提交</span></span><br><span class="line">tx.Commit()</span><br></pre></td></tr></table></figure>
+
+<p><strong>问题：</strong>多个表时容易忘记rollback()<br>所以Gorm提供了Tansaction方法用于自动提交事务，避免漏写commit和rollback</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">db, err := gorm.Open(mysql.Open(<span class="string">&quot;...&quot;</span>), &amp;gorm.Config&#123;&#125;)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="built_in">panic</span>(<span class="string">&quot;错误信息&quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span> err = db.Transaction(<span class="function"><span class="keyword">func</span><span class="params">(tx *gorm.DB)</span></span> <span class="type">error</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> err = tx.Create(&amp;User&#123;Name: <span class="string">&quot;name&quot;</span>&#125;).Error; err != <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="comment">//tx.Rollback()</span></span><br><span class="line">    <span class="keyword">return</span> err</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> err = tx.Create(&amp;User&#123;Name: <span class="string">&quot;name1&quot;</span>&#125;).Error; err != <span class="literal">nil</span> &#123;</span><br><span class="line">    	tx.Rollback()</span><br><span class="line">    	<span class="keyword">return</span> err</span><br><span class="line">	&#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;); err != <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Hook"><a href="#Hook" class="headerlink" title="Hook"></a>Hook</h3><p>Hook是在创建、查询、更新、删除等操作之前、之后自动调用的函数。如果任何Hook返回错误，GORM将停止后续操作并回滚事务</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> User <span class="keyword">struct</span> &#123;</span><br><span class="line">    ID <span class="type">int64</span></span><br><span class="line">    Name <span class="type">string</span> <span class="string">&#x27;gorm:&quot;default:galeone&quot;&#x27;</span></span><br><span class="line">    Age <span class="type">int64</span>	<span class="string">&#x27;gorm:&quot;18&quot;&#x27;</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">type</span> Email <span class="keyword">struct</span> &#123;</span><br><span class="line">    ID <span class="type">int64</span></span><br><span class="line">    Name <span class="type">string</span></span><br><span class="line">    Email <span class="type">string</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(u *User)</span></span> BeforeCreate(tx *gorm.DB) (err <span class="type">error</span>) &#123;</span><br><span class="line">    <span class="keyword">if</span> u.Age &lt; <span class="number">0</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> errors.New(<span class="string">&quot;...&quot;</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> </span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(u *User)</span></span> AfterCreate(tx *gorm.DB) (err <span class="type">error</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> tx.Create(&amp;Email&#123;ID: u.ID, Email: u.Name + <span class="string">&quot;@***.com&quot;</span>&#125;).Error</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="GORM性能提高"><a href="#GORM性能提高" class="headerlink" title="GORM性能提高"></a>GORM性能提高</h3><p>对于写操作，GORM会封装在事务内运行，但会降低性能，可以用SkipDefaultTransaction关闭默认事务</p>
+<p>使用PrepareStmt缓存预编译语句可以提高后续调用的速度。</p>
+<p>&amp;gorm.config{</p>
+<p>​	SkipDefaultTransaction: true,</p>
+<p>​	PrepareStmt:					true</p>
+<p>}</p>
+<h2 id="Kitex"><a href="#Kitex" class="headerlink" title="Kitex"></a>Kitex</h2><p><a target="_blank" rel="noopener" href="https://github.com/go-gorm/gorm">https://github.com/go-gorm/gorm</a></p>
+<p>Golang微服务RPC框架</p>
+<p>对Windows支持不完善，wsl或mac使用</p>
+<p>安装代码生成工具</p>
+<p>​	go install github.com&#x2F;cloudwego&#x2F;kitex&#x2F;tool&#x2F;cmd&#x2F;kitex@latest</p>
+<p>​	go install github.com&#x2F;cloudwego&#x2F;thriftgo@latest</p>
+<h3 id="定义IDL"><a href="#定义IDL" class="headerlink" title="定义IDL"></a>定义IDL</h3><p>IDL用来定义服务与接口</p>
+<p>进行RPC时，需要知道对方接口是什么、要传什么参数、返回值是怎样的，于是就通过IDL约定双方的协议。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">namespace <span class="keyword">go</span> api</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> Request &#123;</span><br><span class="line">    <span class="number">1</span>: <span class="type">string</span> message </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> Response &#123;</span><br><span class="line">    <span class="number">1</span>: <span class="type">string</span> message</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">service Echo &#123;</span><br><span class="line">    Response echo(<span class="number">1</span>: Request req)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>有了IDL就不用看对方的代码了</p>
+<h3 id="Kitex生成代码"><a href="#Kitex生成代码" class="headerlink" title="Kitex生成代码"></a>Kitex生成代码</h3><p>命令: kitex -module example -service example echo.thrift</p>
+<p><img src="https://cdn.jsdelivr.net/gh/graywenhui/blogImage@main/img/202301181723132.png" alt="image-20230118172208304"></p>
+<p>· build.sh：构建脚本</p>
+<p>· kitex_gen：IDL内容相关的生成代码，主要是基础的Server&#x2F;Client代码</p>
+<p>· main.go：程序入口</p>
+<p>· handle.go：用户在该文件里实现IDL service定义的方法</p>
+<h3 id="基本使用-1"><a href="#基本使用-1" class="headerlink" title="基本使用"></a>基本使用</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;context&quot;</span></span><br><span class="line">    <span class="string">&quot;example/kitex_gen/api&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment">//EchoImpl implements the last service interface defined in the IDL</span></span><br><span class="line"><span class="keyword">type</span> EchoImpl <span class="keyword">struct</span>&#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//Echo implements the EchoImpl interface</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s *EchoImpl)</span></span> Echo (ctx context.Context, req *api.Request) (resp *api.Response, err <span class="type">error</span>) &#123;</span><br><span class="line">    <span class="comment">//<span class="doctag">TODO:</span> 要写的代码</span></span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Kitex默认监听8888端口</p>
+<p>以上就是handle.go里要实现的内容</p>
+<h3 id="Kitex-Client-发起请求"><a href="#Kitex-Client-发起请求" class="headerlink" title="Kitex Client 发起请求"></a>Kitex Client 发起请求</h3><p>创建Client：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="string">&quot;example/kitex_gen/api/echo&quot;</span></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;github.com/cloudwego/kitex/client&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//...</span></span><br><span class="line"></span><br><span class="line">c, err := echo.NewClient(<span class="string">&quot;example&quot;</span>, client.WithHostPorts(<span class="string">&quot;0.0.0.0:8888&quot;</span>))</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    log.Fatal(err)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>发起请求：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> <span class="string">&quot;example/kitex_gen/api&quot;</span></span><br><span class="line"><span class="comment">//...</span></span><br><span class="line">req := &amp;api.Request&#123;Message: <span class="string">&quot;my request&quot;</span>&#125;</span><br><span class="line">resp, err := c.Echo(context.Background(), req, callopt.WithRPCTimeout(<span class="number">3</span>*time.Second))</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    log.Fatal(err)</span><br><span class="line">&#125;</span><br><span class="line">log.Println(resp)</span><br></pre></td></tr></table></figure>
+
+<p>Kitex服务注册：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> HelloImpl <span class="keyword">struct</span> &#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(h *HelloImpl)</span></span> Echo(ctx context.Context, req *api.Request) (resp *api.Response, err <span class="type">error</span>) &#123;</span><br><span class="line">    resp = &amp;api.Response&#123;</span><br><span class="line">        Message: req.Message,</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    r, err := etcd.NewEtcdRegistry([]<span class="type">string</span>&#123;<span class="string">&quot;127.0.0.1:2379&quot;</span>&#125;)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        log.Fatal(err)</span><br><span class="line">    &#125;</span><br><span class="line">    server := hello.NewServer(<span class="built_in">new</span>(HelloImpl), server.WithRegistry(r), server.WithServerBasicInfo(&amp;rpcinfo.EndpointBasicInfo&#123;</span><br><span class="line">        ServiceName: <span class="string">&quot;Hello&quot;</span>,</span><br><span class="line">    &#125;))</span><br><span class="line">    err = server.Run()</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        log.Fatal(err)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Kitex发现"><a href="#Kitex发现" class="headerlink" title="Kitex发现"></a>Kitex发现</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    r, err := etcd.NewEtcdResolver([]<span class="type">string</span>&#123;<span class="string">&quot;127.0.0.1:2379&quot;</span>&#125;)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        log.Fatal(err)</span><br><span class="line">    &#125;</span><br><span class="line">    client := hello.MustNewClient(<span class="string">&quot;Hello&quot;</span>, client.WithResolver(r))</span><br><span class="line">    <span class="keyword">for</span> &#123;</span><br><span class="line">        	ctx, cancel := context.WithTimeout(context.Background(), time.Second*<span class="number">3</span>)</span><br><span class="line">        	resp, err := client.Echo(ctx, &amp;api.Request&#123;Message: <span class="string">&quot;Hello&quot;</span>&#125;)</span><br><span class="line">        	cancel()</span><br><span class="line">        	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">            	log.Fatal(err)</span><br><span class="line">        	&#125;</span><br><span class="line">        	log.Println(resp)</span><br><span class="line">        	time.Sleep(time.Second)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里第6行的hello不是很理解</p>
+<h2 id="Hertz"><a href="#Hertz" class="headerlink" title="Hertz"></a>Hertz</h2><p><a target="_blank" rel="noopener" href="https://github.com/go-gorm/gorm">https://github.com/go-gorm/gorm</a></p>
+<p>HTTP框架</p>
+<h3 id="Hertz基本使用"><a href="#Hertz基本使用" class="headerlink" title="Hertz基本使用"></a>Hertz基本使用</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;context&quot;</span></span><br><span class="line">    <span class="string">&quot;github.com/cloudwego/hertz/pkg/app&quot;</span></span><br><span class="line">    <span class="string">&quot;github.com/cloudwego/hertz/pkg/app/server&quot;</span></span><br><span class="line">    <span class="string">&quot;github.com/cloudwego/hertz/pkg/common/utils&quot;</span></span><br><span class="line">    <span class="string">&quot;github.com/cloudwego/hertz/pkg/protocol/consts&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    <span class="comment">//初始化一个hertz对象</span></span><br><span class="line">    h := server.Default(server.WithHostPorts(<span class="string">&quot;127.0.0.1:8080&quot;</span>))</span><br><span class="line">    h.GET(<span class="string">&quot;/ping&quot;</span>, <span class="function"><span class="keyword">func</span><span class="params">(c context.Context, ctx *app.RequestContext)</span></span> &#123;</span><br><span class="line">        ctx.JSON(consts.StatusOK, utils.H&#123;<span class="string">&quot;ping&quot;</span>: <span class="string">&quot;pong&quot;</span>&#125;)</span><br><span class="line">    &#125;)</span><br><span class="line">    h.Spin()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Hertz路由"><a href="#Hertz路由" class="headerlink" title="Hertz路由"></a>Hertz路由</h3><p>hertz提供了GET、POST、PUT、DELETE、ANY等方法用于注册路由</p>
+<p><img src="https://cdn.jsdelivr.net/gh/graywenhui/blogImage@main/img/202301181937395.png" alt="image-20230118193742303"></p>
+<p>hertz还提供了路由组的能力，用于支持路由分组的功能</p>
+<p><img src="https://cdn.jsdelivr.net/gh/graywenhui/blogImage@main/img/202301181939768.png" alt="image-20230118193942710"></p>
+<p>Hertz提供了参数路由和通配路由，优先级：静态路由&gt;命名路由&gt;统配路由</p>
+<p><img src="https://cdn.jsdelivr.net/gh/graywenhui/blogImage@main/img/202301181941884.png" alt="image-20230118194158823"></p>
+<p>第一段为参数路由，第二段为通配路由</p>
+<h3 id="Hertz参数绑定"><a href="#Hertz参数绑定" class="headerlink" title="Hertz参数绑定"></a>Hertz参数绑定</h3><p>Hertz提供了Bind、Validate、BindAndValidate函数用于进行参数绑定和校验</p>
+<p><img src="https://cdn.jsdelivr.net/gh/graywenhui/blogImage@main/img/202301181944835.png" alt="image-20230118194410784"></p>
+<p>Hertz通过Gotag方式确定参数绑在哪里，校验通过vd的tag</p>
+<h3 id="Hertz中间件"><a href="#Hertz中间件" class="headerlink" title="Hertz中间件"></a>Hertz中间件</h3><p>主要分为客户端中间件和服务端中间件，下图是服务端</p>
+<p><img src="https://cdn.jsdelivr.net/gh/graywenhui/blogImage@main/img/202301181951206.png" alt="image-20230118195118129"></p>
+<p>c.Next(ctx)洋葱模型，类似递归？</p>
+<h3 id="Hertz-Client"><a href="#Hertz-Client" class="headerlink" title="Hertz Client"></a>Hertz Client</h3><p>Hertz提供了HTTP Client用于帮助用户发送HTTP请求</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">c, err := client.NewClient()</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="keyword">return</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//send http get request</span></span><br><span class="line">status, body, _ := c.Get(context.Background(), <span class="literal">nil</span>, <span class="string">&quot;http://www.example.com&quot;</span>)</span><br><span class="line">fmt.Printf(<span class="string">&quot;status=%v body=%v\n&quot;</span>, status, <span class="type">string</span>(body))</span><br><span class="line"></span><br><span class="line"><span class="comment">//send http post request</span></span><br><span class="line"><span class="keyword">var</span> postArgs protocol.Args</span><br><span class="line">postArgs.Set(<span class="string">&quot;arg&quot;</span>, <span class="string">&quot;a&quot;</span>) <span class="comment">//Set post args</span></span><br><span class="line">status, body, _ = c.Post(context.Background(), <span class="literal">nil</span>, <span class="string">&quot;http://www.example.com&quot;</span>, &amp;postArgs)</span><br><span class="line">fmt.Printf(<span class="string">&quot;status=%v body=%v\n&quot;</span>, status, <span class="type">string</span>(body))</span><br></pre></td></tr></table></figure>
+
+<h3 id="Hertz代码生成工具"><a href="#Hertz代码生成工具" class="headerlink" title="Hertz代码生成工具"></a>Hertz代码生成工具</h3><p>Hertz提供了代码生成工具Hz，通过定义IDL(inteface description language)文件即可生成对应的基础服务代码</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">namespace <span class="keyword">go</span> hello.example</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> HelloReq &#123;</span><br><span class="line">    <span class="number">1</span>: <span class="type">string</span> Name (api.query=<span class="string">&quot;name&quot;</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> HelloResp &#123;</span><br><span class="line">    <span class="number">1</span>: <span class="type">string</span> RespBody;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">service HelloService &#123;</span><br><span class="line">    HelloResp HelloMethod(<span class="number">1</span>: HelloReq request) (api.get=<span class="string">&quot;/hello&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://cdn.jsdelivr.net/gh/graywenhui/blogImage@main/img/202301182008242.png" alt="image-20230118200838152"></p>
+<h2 id="项目"><a href="#项目" class="headerlink" title="项目"></a>项目</h2><p>不做记录和笔记了，直接把PPT拉下来</p>
+<h3 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h3><p><img src="https://cdn.jsdelivr.net/gh/graywenhui/blogImage@main/img/202301182311278.png" alt="image-20230118231118153"></p>
+<h3 id="功能介绍"><a href="#功能介绍" class="headerlink" title="功能介绍"></a>功能介绍</h3><p><img src="https://cdn.jsdelivr.net/gh/graywenhui/blogImage@main/img/202301182312062.png" alt="image-20230118231214992"></p>
+<p>demouser和demonote是RPC服务</p>
+<h3 id="项目调用关系"><a href="#项目调用关系" class="headerlink" title="项目调用关系"></a>项目调用关系</h3><p><img src="https://cdn.jsdelivr.net/gh/graywenhui/blogImage@main/img/202301182312178.png" alt="image-20230118231237125"></p>
+<p>api服务不直接跟数据库打交道</p>
+<h3 id="IDL介绍"><a href="#IDL介绍" class="headerlink" title="IDL介绍"></a>IDL介绍</h3><p><img src="https://cdn.jsdelivr.net/gh/graywenhui/blogImage@main/img/202301182312035.png" alt="image-20230118231256957"></p>
+<p>这是User的IDL</p>
+<p><img src="https://cdn.jsdelivr.net/gh/graywenhui/blogImage@main/img/202301182313069.png" alt="image-20230118231313020"></p>
+<p>这是Note的IDL</p>
+<h3 id="技术栈介绍"><a href="#技术栈介绍" class="headerlink" title="技术栈介绍"></a>技术栈介绍</h3><p><img src="https://cdn.jsdelivr.net/gh/graywenhui/blogImage@main/img/202301182313876.png" alt="image-20230118231330774"></p>
+<h3 id="Hertz关键代码详解"><a href="#Hertz关键代码详解" class="headerlink" title="Hertz关键代码详解"></a>Hertz关键代码详解</h3><p><img src="https://cdn.jsdelivr.net/gh/graywenhui/blogImage@main/img/202301182314017.png" alt="image-20230118231412961"></p>
+<h3 id="Kitex-Client关键代码详解"><a href="#Kitex-Client关键代码详解" class="headerlink" title="Kitex Client关键代码详解"></a>Kitex Client关键代码详解</h3><p><img src="https://cdn.jsdelivr.net/gh/graywenhui/blogImage@main/img/202301182314666.png" alt="image-20230118231433611"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/graywenhui/blogImage@main/img/202301182314197.png" alt="image-20230118231447142"></p>
+<h3 id="Gorm关键代码详解"><a href="#Gorm关键代码详解" class="headerlink" title="Gorm关键代码详解"></a>Gorm关键代码详解</h3><p><img src="https://cdn.jsdelivr.net/gh/graywenhui/blogImage@main/img/202301182315630.png" alt="image-20230118231531564"></p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/01/16/Go%E6%B5%8B%E8%AF%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Wang Wenhui">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Gray's Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Gray's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2023/01/16/Go%E6%B5%8B%E8%AF%95/" class="post-title-link" itemprop="url">Go测试</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-01-16 22:41:12" itemprop="dateCreated datePublished" datetime="2023-01-16T22:41:12+08:00">2023-01-16</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-01-17 09:42:17" itemprop="dateModified" datetime="2023-01-17T09:42:17+08:00">2023-01-17</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/go/" itemprop="url" rel="index"><span itemprop="name">go</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+	<div>
+		
+	</div>
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="重点内容"><a href="#重点内容" class="headerlink" title="重点内容"></a>重点内容</h1><ol>
+<li>单元测试</li>
+<li>Mock测试</li>
+<li>基准测试</li>
+<li>需求设计</li>
+<li>代码开发</li>
+<li>测试运行</li>
+</ol>
+<h1 id="详细知识点"><a href="#详细知识点" class="headerlink" title="详细知识点"></a>详细知识点</h1><h2 id="单元测试"><a href="#单元测试" class="headerlink" title="单元测试"></a>单元测试</h2><p><em><strong>规则:</strong></em></p>
+<ol>
+<li><p>所有测试文件以_test.go结尾</p>
+</li>
+<li><p>测试函数 func TestXxx(*testing.T)</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">TestPublishPost</span><span class="params">(t *testing.T)</span></span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>初始化逻辑放到TestMain中</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">TestMain</span><span class="params">(m *testing.M)</span></span>&#123;</span><br><span class="line">    <span class="comment">//测试前：数据装载、配置初始化等前置工作</span></span><br><span class="line">    code := m.Run()</span><br><span class="line">    <span class="comment">//测试后：释放资源等收尾工作</span></span><br><span class="line">    </span><br><span class="line">    os.Exit(code)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ol>
+<p>代码覆盖率：验证代码的完备性，一般50%~60%，较高80%</p>
+<h2 id="Mock"><a href="#Mock" class="headerlink" title="Mock"></a>Mock</h2><p>常用的一个mock开源包 monkey：<a target="_blank" rel="noopener" href="https://github.com/bouk/monkey">https://github.com/bouk/monkey</a></p>
+<p>实现不对file文件的强依赖？可以不再依赖本地文件</p>
+<h2 id="基准测试"><a href="#基准测试" class="headerlink" title="基准测试"></a>基准测试</h2><p>对代码进行<strong>性能分析</strong></p>
+<p>· 优化代码，需要对当前代码分析</p>
+<p>· 内置的测试框架提供了基准测试的能力</p>
+<p>例子：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="需求设计"><a href="#需求设计" class="headerlink" title="需求设计"></a>需求设计</h2><p>抽象数据结构</p>
+<h2 id="代码开发"><a href="#代码开发" class="headerlink" title="代码开发"></a>代码开发</h2><p>数据层：数据Model ，外部数据的增删改查</p>
+<p>逻辑层：业务Entity，处理核心业务逻辑输出</p>
+<p>视图层：视图view，处理和外部的交互逻辑</p>
+<h2 id="测试运行"><a href="#测试运行" class="headerlink" title="测试运行"></a>测试运行</h2><h2 id="组件工具"><a href="#组件工具" class="headerlink" title="组件工具"></a>组件工具</h2><p>Gin高性能go web框架 <a target="_blank" rel="noopener" href="https://github.com/gin-gonic/gin#installation">https://github.com/gin-gonic/gin#installation</a></p>
+<p>Go Mod</p>
+<p>​	go mod init</p>
+<p>​	go get gopkg.in&#x2F;gin-gonic&#x2F;<a href="mailto:&#103;&#x69;&#x6e;&#x2e;&#x76;&#49;&#64;&#x76;&#x31;&#46;&#51;&#x2e;&#48;">&#103;&#x69;&#x6e;&#x2e;&#x76;&#49;&#64;&#x76;&#x31;&#46;&#51;&#x2e;&#48;</a></p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/01/16/Go%E8%BF%9B%E9%98%B6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Wang Wenhui">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Gray's Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Gray's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2023/01/16/Go%E8%BF%9B%E9%98%B6/" class="post-title-link" itemprop="url">Go进阶</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2023-01-16 17:06:17 / 修改时间：22:49:23" itemprop="dateCreated datePublished" datetime="2023-01-16T17:06:17+08:00">2023-01-16</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/go/" itemprop="url" rel="index"><span itemprop="name">go</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+	<div>
+		
+	</div>
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="重点内容"><a href="#重点内容" class="headerlink" title="重点内容"></a>重点内容</h1><ol>
+<li><p>语言进阶<br>从并发编程的视角了解Go高性能的本质</p>
+</li>
+<li><p>依赖管理<br>了解依赖管理的演进路线</p>
+</li>
+<li><p>测试</p>
+</li>
+<li><p>项目实战<br>通过项目需求、需求拆解、逻辑设计、代码实现感受真实开发</p>
+</li>
+</ol>
+<h1 id="详细知识点"><a href="#详细知识点" class="headerlink" title="详细知识点"></a>详细知识点</h1><h2 id="并发和并行"><a href="#并发和并行" class="headerlink" title="并发和并行"></a>并发和并行</h2><p><em><strong>并发：</strong></em>多线程程序在单核cpu上运行<br><em><strong>并行：</strong></em>多线程程序在多核cpu上运行</p>
+<h3 id="Goroutine"><a href="#Goroutine" class="headerlink" title="Goroutine"></a>Goroutine</h3><p><em><strong>协程：</strong></em>用户态，轻量级线程，栈KB级别<br><em><strong>线程：</strong></em>内核态，线程跑多个协程，栈MB级别<br>go能跑上万个协程</p>
+<p>创建协程：在函数前加 go 关键字,示例：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="CSP-协程间通信"><a href="#CSP-协程间通信" class="headerlink" title="CSP(协程间通信)"></a>CSP(协程间通信)</h3><p>提倡通过<em><strong>通信共享内存</strong></em>而不是通过共享内存实现通信<br>前者需要<strong>通道</strong>，后者需要获取临界区权限，容易发生数据静态，影响性能</p>
+<h3 id="Channel"><a href="#Channel" class="headerlink" title="Channel"></a>Channel</h3><p>创建方式：make(chan 元素类型，[缓冲大小])</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">make</span>(<span class="keyword">chan</span> <span class="type">int</span>) 		<span class="comment">//无缓冲通道</span></span><br><span class="line"><span class="built_in">make</span>(<span class="keyword">chan</span> <span class="type">int</span>,<span class="number">2</span>)	<span class="comment">//有缓冲通道</span></span><br></pre></td></tr></table></figure>
+
+<p>无缓冲：发送的Gorountine和接受的Gorountine同步化，也被称为同步通道</p>
+<p>有缓冲：可以解决同步问题，通道中缓冲满了发送方无法再发送，直到缓冲有空间</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">CalSquare</span><span class="params">()</span></span>&#123;</span><br><span class="line">    src := <span class="built_in">make</span>(<span class="keyword">chan</span> )</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="并发安全Lock"><a href="#并发安全Lock" class="headerlink" title="并发安全Lock"></a>并发安全Lock</h3><p>不加锁可能导致不同进程操作同一块内存，通过Sync完成</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="依赖管理"><a href="#依赖管理" class="headerlink" title="依赖管理"></a>依赖管理</h2><p>三要素：</p>
+<ol>
+<li>配置文件，描述依赖	go.mod 			（类似于CMAKE、makefile？）</li>
+<li>中心仓库管理依赖库    Proxy</li>
+<li>本地工具				       go get&#x2F;mod</li>
+</ol>
+<h3 id="go-mod"><a href="#go-mod" class="headerlink" title="go.mod"></a>go.mod</h3><h3 id="Proxy"><a href="#Proxy" class="headerlink" title="Proxy"></a>Proxy</h3><p>优点：稳定可靠</p>
+<p>GOPROXY&#x3D;”<a target="_blank" rel="noopener" href="https://proxy1.cn,https//proxy2.cn,direct%E2%80%9C">https://proxy1.cn,https://proxy2.cn,direct“</a> ”“内为服务站点url列表，direct表示源站 按顺序</p>
+<h3 id="go-get-x2F-mod"><a href="#go-get-x2F-mod" class="headerlink" title="go get&#x2F;mod"></a>go get&#x2F;mod</h3><p>命令go get example.org&#x2F;pkg </p>
+<ol>
+<li>@update 默认添加</li>
+<li>@none 删除依赖</li>
+<li>@v1.1.2 tag版本，语义版本</li>
+<li>@23dfdd5 特定的commit</li>
+<li>@master 分支最新的commit</li>
+</ol>
+<h4 id="GOPATH-不重要"><a href="#GOPATH-不重要" class="headerlink" title="GOPATH(不重要)"></a>GOPATH(不重要)</h4><p>·环境变量 $GOPATH<br>·项目代码直接依赖src<br>·go get 下载最新版本的包到src目录下</p>
+<p>若A、B两个项目依赖于某一pkg的不同版本：无法实现pkg的<em><strong>多版本控制</strong></em></p>
+<h4 id="Go-Vendor"><a href="#Go-Vendor" class="headerlink" title="Go Vendor"></a>Go Vendor</h4><h4 id="Go-Module"><a href="#Go-Module" class="headerlink" title="Go Module"></a>Go Module</h4><p>· 通过go.mod文件管理依赖包版本<br>· 通过go get&#x2F;go mod指令工具管理依赖包</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -530,767 +1502,8 @@
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2022/12/24/%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Wang Wenhui">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Gray's Blog">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Gray's Blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/12/24/%E6%BB%91%E5%8A%A8%E7%AA%97%E5%8F%A3/" class="post-title-link" itemprop="url">滑动窗口</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2022-12-24 17:12:18" itemprop="dateCreated datePublished" datetime="2022-12-24T17:12:18+08:00">2022-12-24</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-	<div>
-		
-	</div>
-    <div class="post-body" itemprop="articleBody">
-          
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2022/12/24/CPP%E5%93%88%E5%B8%8C%E8%A1%A8-unorderedmap/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Wang Wenhui">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Gray's Blog">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Gray's Blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/12/24/CPP%E5%93%88%E5%B8%8C%E8%A1%A8-unorderedmap/" class="post-title-link" itemprop="url">CPP哈希表-unordered_map</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2022-12-24 16:01:24" itemprop="dateCreated datePublished" datetime="2022-12-24T16:01:24+08:00">2022-12-24</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-03-11 16:42:59" itemprop="dateModified" datetime="2023-03-11T16:42:59+08:00">2023-03-11</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">算法</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-	<div>
-		
-	</div>
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="概述和模板定义"><a href="#概述和模板定义" class="headerlink" title="概述和模板定义"></a>概述和模板定义</h1><p>unordered_map容器在头文件<unordered_map>中，位于std命名空间中，并且容器中是无序的。<br>模板定义如下：（5个参数中，只有前两个是必须显示传值的）</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt; <span class="keyword">class</span> <span class="title class_">Key</span>,                        <span class="comment">//键值对中键的类型</span></span><br><span class="line">           <span class="keyword">class</span> <span class="title class_">T</span>,                          <span class="comment">//键值对中值的类型</span></span><br><span class="line">           <span class="keyword">class</span> <span class="title class_">Hash</span> = hash&lt;Key&gt;,           <span class="comment">//容器内部存储键值对所用的哈希函数</span></span><br><span class="line">           <span class="keyword">class</span> Pred = equal_to&lt;Key&gt;,       <span class="comment">//判断各个键值对键相同的规则</span></span><br><span class="line">           <span class="keyword">class</span> Alloc = allocator&lt; pair&lt;<span class="type">const</span> Key,T&gt; &gt;  <span class="comment">// 指定分配器对象的类型</span></span><br><span class="line">           &gt; <span class="keyword">class</span> unordered_map;</span><br></pre></td></tr></table></figure>
-
-<h1 id="创建容器的方法"><a href="#创建容器的方法" class="headerlink" title="创建容器的方法"></a>创建容器的方法</h1><p>除了常用的构造、拷贝构造、移动构造（构造的时候可以完成初始化操作），还有一种特殊的创建方法，用unordered_map提供的迭代器进行构造：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">//传入 2 个迭代器，</span><br><span class="line">std::unordered_map&lt;std::string, std::string&gt; umap2(++umap.begin(),umap.end());</span><br></pre></td></tr></table></figure>
-
-<p>通过此方式创建的 umap2 容器，其内部就包含 umap 容器中除第 1 个键值对外的所有其它键值对</p>
-<h1 id="常用成员函数"><a href="#常用成员函数" class="headerlink" title="常用成员函数"></a>常用成员函数</h1><table>
-<thead>
-<tr>
-<th>成员函数</th>
-<th>功能</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>begin()</td>
-<td>返回指向容器中第一个键值对的正向迭代器。</td>
-</tr>
-<tr>
-<td>end()</td>
-<td>返回指向容器中最后一个键值对之后位置的正向迭代器。</td>
-</tr>
-<tr>
-<td>cbegin()</td>
-<td>和 begin() 功能相同，只不过在其基础上增加了 const 属性，即该方法返回的迭代器不能用于修改容器内存储的键值对。</td>
-</tr>
-<tr>
-<td>cend()</td>
-<td>和 end() 功能相同，只不过在其基础上，增加了 const 属性，即该方法返回的迭代器不能用于修改容器内存储的键值对。</td>
-</tr>
-<tr>
-<td>empty()</td>
-<td>若容器为空，则返回 true；否则 false。</td>
-</tr>
-<tr>
-<td>size()</td>
-<td>返回当前容器中存有键值对的个数。</td>
-</tr>
-<tr>
-<td>max_size()</td>
-<td>返回容器所能容纳键值对的最大个数，不同的操作系统，其返回值亦不相同。</td>
-</tr>
-<tr>
-<td><em><strong>operator[key]</strong></em></td>
-<td>该模板类中重载了 [] 运算符，其功能是可以向访问数组中元素那样，只要给定某个键值对的键 key，就可以获取该键对应的值。注意，如果当前容器中没有以 key 为键的键值对，则其会使用该键向当前容器中插入一个新键值对。</td>
-</tr>
-<tr>
-<td>at(key)</td>
-<td>返回容器中存储的键 key 对应的值，如果 key 不存在，则会抛出 out_of_range 异常。</td>
-</tr>
-<tr>
-<td><em><strong>find(key)</strong></em></td>
-<td>查找以 key 为键的键值对，如果找到，则返回一个指向该键值对的正向迭代器；反之，则返回一个指向容器中最后一个键值对之后位置的迭代器（ end() 方法返回的迭代器）。</td>
-</tr>
-<tr>
-<td>count(key)</td>
-<td>在容器中查找以 key 键的键值对的个数。</td>
-</tr>
-<tr>
-<td>equal_range(key)</td>
-<td>返回一个 pair 对象，其包含 2 个迭代器，用于表明当前容器中键为 key 的键值对所在的范围。</td>
-</tr>
-<tr>
-<td><em><strong>emplace()</strong></em></td>
-<td>向容器中添加新键值对，效率比 insert() 方法高。</td>
-</tr>
-<tr>
-<td>emplace_hint()</td>
-<td>向容器中添加新键值对，效率比 insert() 方法高。</td>
-</tr>
-<tr>
-<td>**insert() **</td>
-<td>向容器中添加新键值对。</td>
-</tr>
-<tr>
-<td><em><strong>erase(key)</strong></em></td>
-<td>删除指定键值对。</td>
-</tr>
-<tr>
-<td>clear()</td>
-<td>清空容器，即删除容器中存储的所有键值对。</td>
-</tr>
-<tr>
-<td>swap()</td>
-<td>交换 2 个 unordered_map 容器存储的键值对，前提是必须保证这 2 个容器的类型完全相等。</td>
-</tr>
-<tr>
-<td>bucket_count()</td>
-<td>返回当前容器底层存储键值对时，使用桶（一个线性链表代表一个桶）的数量。</td>
-</tr>
-<tr>
-<td>max_bucket_count()</td>
-<td>返回当前系统中，unordered_map 容器底层最多可以使用多少桶。</td>
-</tr>
-<tr>
-<td>bucket_size(n)</td>
-<td>返回第 n 个桶中存储键值对的数量。</td>
-</tr>
-<tr>
-<td>bucket(key)</td>
-<td>返回以 key 为键的键值对所在桶的编号。</td>
-</tr>
-<tr>
-<td>load_factor()</td>
-<td>返回 unordered_map 容器中当前的负载因子。负载因子，指的是的当前容器中存储键值对的数量（size()）和使用桶数（bucket_count()）的比值，即 load_factor() &#x3D; size() &#x2F; bucket_count()。</td>
-</tr>
-<tr>
-<td>max_load_factor()</td>
-<td>返回或者设置当前 unordered_map 容器的负载因子。</td>
-</tr>
-<tr>
-<td>rehash(n)</td>
-<td>将当前容器底层使用桶的数量设置为 n。</td>
-</tr>
-<tr>
-<td>reserve()</td>
-<td>将存储桶的数量（也就是 bucket_count() 方法的返回值）设置为至少容纳count个元（不超过最大负载因子）所需的数量，并重新整理容器。</td>
-</tr>
-<tr>
-<td>hash_function()</td>
-<td>返回当前容器使用的哈希函数对象。</td>
-</tr>
-</tbody></table>
-<h1 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h1><p>迭代器-&gt;first返回键值对的键，迭代器-&gt;second返回键值对的值。</p>
-<p>很多涉及到出现次数的题目都可以用到无序图</p>
-<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p>C语言中文网：<a target="_blank" rel="noopener" href="http://c.biancheng.net/view/7231.html">http://c.biancheng.net/view/7231.html</a></p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2022/12/21/%E4%BD%8D%E8%BF%90%E7%AE%97/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Wang Wenhui">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Gray's Blog">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Gray's Blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/12/21/%E4%BD%8D%E8%BF%90%E7%AE%97/" class="post-title-link" itemprop="url">位运算</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2022-12-21 16:55:47 / 修改时间：19:25:20" itemprop="dateCreated datePublished" datetime="2022-12-21T16:55:47+08:00">2022-12-21</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">算法</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-	<div>
-		
-	</div>
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="位掩码"><a href="#位掩码" class="headerlink" title="位掩码"></a>位掩码</h1><p>若只包含小写字母，则可以用位掩码的最低26位分别表示每个字母是否出现（不记录出现次数）。<br>将a到z分别记为第0个字母到第25个字母。例如a表示0b0，b表示0b10，dac则表示0b1101，依此类推。</p>
-<p>这样如果要判断两个单词中是否出现重复字母，则可以用两个单词表示的数字进行与运算，如果<em><strong>a&amp;b &#x3D;&#x3D; 0</strong></em>，则表示两个单词没有重复字母。</p>
-<p>同样的思想，也可以将位掩码应用到其他地方。</p>
-<p>参考：<a target="_blank" rel="noopener" href="https://leetcode.cn/problems/aseY1I/solution/dan-ci-chang-du-de-zui-da-cheng-ji-by-le-l5mu/">单词长度的最大乘积 - 单词长度的最大乘积 - 力扣（LeetCode）</a></p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2022/12/20/C%E4%B8%8ECPP%E7%9A%84%E5%8C%BA%E5%88%AB/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Wang Wenhui">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Gray's Blog">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Gray's Blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/12/20/C%E4%B8%8ECPP%E7%9A%84%E5%8C%BA%E5%88%AB/" class="post-title-link" itemprop="url">C与CPP的区别</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2022-12-20 02:23:22 / 修改时间：02:25:09" itemprop="dateCreated datePublished" datetime="2022-12-20T02:23:22+08:00">2022-12-20</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/CPP/" itemprop="url" rel="index"><span itemprop="name">CPP</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-	<div>
-		
-	</div>
-    <div class="post-body" itemprop="articleBody">
-          
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2022/12/19/%E9%AB%98%E5%B9%B6%E5%8F%91%E5%B8%B8%E8%A7%81%E9%99%90%E6%B5%81%E6%96%B9%E5%BC%8F/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Wang Wenhui">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Gray's Blog">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Gray's Blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/12/19/%E9%AB%98%E5%B9%B6%E5%8F%91%E5%B8%B8%E8%A7%81%E9%99%90%E6%B5%81%E6%96%B9%E5%BC%8F/" class="post-title-link" itemprop="url">高并发常见限流方式</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2022-12-19 20:11:05 / 修改时间：21:38:30" itemprop="dateCreated datePublished" datetime="2022-12-19T20:11:05+08:00">2022-12-19</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E8%AE%A1%E7%BD%91/" itemprop="url" rel="index"><span itemprop="name">计网</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-	<div>
-		
-	</div>
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="常见限流方式（仅包含单机限流）"><a href="#常见限流方式（仅包含单机限流）" class="headerlink" title="常见限流方式（仅包含单机限流）"></a>常见限流方式（仅包含单机限流）</h1><h2 id="计数器"><a href="#计数器" class="headerlink" title="计数器"></a>计数器</h2><p><em><strong>原理</strong></em>：在一段时间间隔内，对请求进行计数，与阀值进行比较判断是否需要限流，一旦到了时间临界点，将计数器清零。</p>
-<p><em><strong>程序执行逻辑</strong></em>：</p>
-<ul>
-<li>在程序中设置一个变量 count，每接收一个请求就将count +1，同时记录请求时间。</li>
-<li>当下一个请求来的时候判断 count 的计数值是否超过设定的频次，以及当前请求的时间和第一次请求时间是否在 1 分钟内。（如果设定为n次&#x2F;min的话）</li>
-<li>如果在 1 分钟内并且超过设定的频次则说明请求过多，后面的请求就拒绝掉。</li>
-<li>如果该请求与第一个请求的间隔时间大于计数周期，且 count 值还在限流范围内，就重置 count。</li>
-</ul>
-<p><em><strong>缺陷</strong></em>：没有很好处理单位时间的边界。</p>
-<p>如下图，如果有个需求对于某个接口 &#x2F;query 每分钟最多允许访问 200 次，假设有个用户在第 59 秒的最后几毫秒瞬间发送 200 个请求，当 59 秒结束后 Counter 清零了，他在下一秒的时候又发送 200 个请求。那么在 1 秒钟内这个用户发送了 2 倍的请求，这个是符合设计逻辑的，这也是计数器方法的设计缺陷，系统可能会承受恶意用户的大量请求，甚至击穿系统。</p>
-<p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7ba261bc04c7442b8d93d6c159b7a992~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp" alt="img"></p>
-<h2 id="滑动窗口"><a href="#滑动窗口" class="headerlink" title="滑动窗口"></a>滑动窗口</h2><p>滑动窗口是针对计数器存在的临界点缺陷，所谓滑动窗口（Sliding window）是一种流量控制技术，这个词出现在 TCP 协议中。滑动窗口把固定时间片进行划分，并且随着时间的流逝，进行移动，固定数量的可以移动的格子，进行计数并判断阀值。</p>
-<p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/5755d987c19740f1a693f7db5294e2a1~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp" alt="img"></p>
-<p>上图中我们用红色的虚线代表一个时间窗口（一分钟），每个时间窗口有 6 个格子，每个格子是 10 秒钟。每过 10 秒钟时间窗口向右移动一格，可以看红色箭头的方向。我们为每个格子都设置一个独立的计数器 Counter，假如一个请求在 0:45 访问了那么我们将第五个格子的计数器 +1（也是就是 0:40~0:50），在判断限流的时候需要把所有格子的计数加起来和设定的频次进行比较即可。</p>
-<p>如何解决计数器的设计缺陷：</p>
-<p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/fde74d994f12411087e6f3c3f4417b66~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp" alt="img"></p>
-<p>当用户在 0:59 秒钟发送了 200 个请求就会被第六个格子的计数器记录 +200，当下一秒的时候时间窗口向右移动了一个，此时计数器已经记录了该用户发送的 200 个请求，所以再发送的话就会触发限流，则拒绝新的请求。</p>
-<p>其实计数器就是一个格子的滑动窗口，所以想让限流做的更精确只需要划分更多的格子就可以了，为了更精确我们也不知道到底该设置多少个格子，<strong>格子的数量影响着滑动窗口算法的精度，依然有时间片的概念，无法根本解决临界点问题。</strong></p>
-<h2 id="漏桶"><a href="#漏桶" class="headerlink" title="漏桶"></a>漏桶</h2><p><em><strong>原理</strong></em>：一个固定容量的漏桶，按照固定速率流出水滴。</p>
-<p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4af9ff00cab84a4fa622cd8e2a279f56~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp" alt="img"></p>
-<p>一个固定容量的桶，有水流进来，也有水流出去。对于流进来的水来说，我们无法预计一共有多少水会流进来，也无法预计水流的速度。但是对于流出去的水来说，这个桶可以固定水流出的速率（处理速度），从而达到流量整形和流量控制的效果。</p>
-<p><em><strong>特点</strong></em>：</p>
-<ul>
-<li>漏桶具有固定容量，出水速率是固定常量（流出请求）</li>
-<li>如果桶是空的，则不流出水滴</li>
-<li>可以以任意速率流入水滴到漏桶（流入请求）</li>
-<li>如果流入水滴超出了桶的容量，则流入的水滴溢出（新请求被拒绝）</li>
-</ul>
-<p>漏桶限制的是常量流出速率（即流出速率是一个固定常量值），<strong>所以最大的速率就是出水的速率，不能出现突发流量。</strong></p>
-<h2 id="令牌桶"><a href="#令牌桶" class="headerlink" title="令牌桶"></a>令牌桶</h2><p>令牌桶算法（Token Bucket）是网络流量整形（Traffic Shaping）和速率限制（Rate Limiting）中最常使用的一种算法。典型情况下，令牌桶算法用来控制发送到网络上的数据的数目，并允许突发数据的发送。</p>
-<p><img src="https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/68b7fe323e9e4fe0a83eb14897f018ba~tplv-k3u1fbpfcp-zoom-in-crop-mark:4536:0:0:0.awebp" alt="img"></p>
-<p>我们有一个固定的桶，桶里存放着令牌（token）。一开始桶是空的，系统按固定的时间（rate）往桶里添加令牌，直到桶里的令牌数满，多余的添加令牌请求会被丢弃。当请求来的时候，从桶里移除一个令牌，如果桶是空的则拒绝请求或者阻塞。</p>
-<p><em><strong>特点</strong></em>：</p>
-<ul>
-<li>令牌按固定的速率被放入令牌桶中</li>
-<li>桶中最多存放 B 个令牌，当桶满时，新添加的令牌被丢弃或拒绝</li>
-<li>如果桶中的令牌不足 N 个，则不会删除令牌，且请求将被限流（丢弃或阻塞等待）</li>
-</ul>
-<p><strong>令牌桶限制的是平均流入速率</strong>（允许突发请求，只要有令牌就可以处理，支持一次拿3个令牌，4个令牌…），<strong>并允许一定程度突发流量，所以也是非常常用的限流算法。</strong></p>
-<h1 id="限流对比"><a href="#限流对比" class="headerlink" title="限流对比"></a>限流对比</h1><p><strong>计数器：</strong></p>
-<ul>
-<li>优点：固定时间段计数，实现简单，适用不太精准的场景；</li>
-<li>缺点：对边界没有很好处理，导致限流不能精准控制。</li>
-</ul>
-<p><strong>滑动窗口：</strong></p>
-<ul>
-<li>优点：将固定时间段分块，时间比“计数器”复杂，适用于稍微精准的场景；</li>
-<li>缺点：实现稍微复杂，还是不能彻底解决“计数器”存在的边界问题。</li>
-</ul>
-<p><strong>漏桶：</strong></p>
-<ul>
-<li>优点：可以很好的控制消费频率；</li>
-<li>缺点：实现稍微复杂，单位时间内，不能多消费，感觉不太灵活。</li>
-</ul>
-<p><strong>令牌桶：</strong></p>
-<ul>
-<li>优点：可以解决“漏桶”不能灵活消费的问题，又能避免过渡消费，强烈推荐；</li>
-<li>缺点：实现稍微复杂，其它缺点没有想到。</li>
-</ul>
-<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p>掘金楼仔的文章(<a target="_blank" rel="noopener" href="https://juejin.cn/post/7145435951899574302">https://juejin.cn/post/7145435951899574302</a>)</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2022/11/21/CPP%E4%B8%AD%E7%9A%84%E6%8C%87%E9%92%88%E5%8F%82%E6%95%B0%E4%BC%A0%E9%80%92%E5%92%8C%E5%BC%95%E7%94%A8%E5%8F%82%E6%95%B0%E4%BC%A0%E9%80%92/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Wang Wenhui">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Gray's Blog">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Gray's Blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/11/21/CPP%E4%B8%AD%E7%9A%84%E6%8C%87%E9%92%88%E5%8F%82%E6%95%B0%E4%BC%A0%E9%80%92%E5%92%8C%E5%BC%95%E7%94%A8%E5%8F%82%E6%95%B0%E4%BC%A0%E9%80%92/" class="post-title-link" itemprop="url">CPP中的指针参数传递和引用参数传递</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2022-11-21 22:43:01" itemprop="dateCreated datePublished" datetime="2022-11-21T22:43:01+08:00">2022-11-21</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2022-12-20 02:24:23" itemprop="dateModified" datetime="2022-12-20T02:24:23+08:00">2022-12-20</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/CPP/" itemprop="url" rel="index"><span itemprop="name">CPP</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-	<div>
-		
-	</div>
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="指针参数传递"><a href="#指针参数传递" class="headerlink" title="指针参数传递"></a>指针参数传递</h1><p>指针参数传递本质上还是值传递，它和其他值传递一样，传递的也只是一个地址值。只不过能通过改变指针指向地址的值从而改变函数外实参的值。<br>参考代码：</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="type">void</span> <span class="title function_">fun1</span><span class="params">(<span class="type">int</span> * p)</span></span><br><span class="line">&#123;</span><br><span class="line">    (*p)++;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;fun1函数中(*p)++后*p的值\n%d\n&quot;</span>,*p);</span><br><span class="line">    <span class="type">int</span> a = <span class="number">20</span>;</span><br><span class="line">    p = &amp;a;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;p指向新地址后p的值\n%d\n&quot;</span>,p);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">int</span> a = <span class="number">1</span>;</span><br><span class="line">    <span class="type">int</span> * p = &amp;a;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;初始化后p的值和*p的值\n%d\n&quot;</span>,p);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%d\n&quot;</span>,*p);</span><br><span class="line">    fun1(p);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;fun1运行后p的值和*p的值\n%d\n&quot;</span>,p);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%d\n&quot;</span>,*p);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>从下图中可以看出，改变指针本身的值，函数内p的值改变了，但函数外p的值没有改变。</p>
-<p><img src="https://cdn.jsdelivr.net/gh/graywenhui/blogImage@main/img/image-20221121224719471.png" alt="image-20221121224719471"></p>
-<h1 id="引用参数传递"><a href="#引用参数传递" class="headerlink" title="引用参数传递"></a>引用参数传递</h1><p>引⽤参数传递和指针参数传递是不同的。</p>
-<p>虽然二者都是在被调函数栈空间上的⼀个局部变量，但是任何对于引⽤参数的处理<br>都会通过⼀个间接寻址的⽅式操作到主调函数中的相关变量。⽽对于指针传递的参数，如果改变被调函数中的指针<br>地址，它将应⽤不到主调函数的相关变量。如果想通过指针参数传递来改变主调函数中的相关变量（地址），那就得使⽤指向指针的指针或者指针引⽤。</p>
-<p>引用的实质其实是<em><strong>指针常量</strong></em>。</p>
-<h1 id="编译角度"><a href="#编译角度" class="headerlink" title="编译角度"></a>编译角度</h1><p>从编译的⻆度来讲，程序在编译时分别将指针和引⽤添加到符号表上，符号表中记录的是变量名及变量所对应地址。指针变量在符号表上对应的地址值为<strong>指针变量的地址值</strong>，⽽引⽤在符号表上对应的地址值为<strong>引用对象的地址值</strong>（与实参名字不同，地址相同）。符号表⽣成之后就不会再改，因此指针可以改变其指向的对象（指针变量中的值可以改），⽽引⽤对象则不能修改。</p>
-<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p>这篇博客用反汇编的方式很清楚的显示出传引用和传指针的区别<a target="_blank" rel="noopener" href="https://blog.csdn.net/K346K346/article/details/46805159">(41条消息) C++ 引用的本质_恋喵大鲤鱼的博客-CSDN博客_c++引用的本质</a></p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2022/10/25/Makefile%E7%9A%84%E4%BD%BF%E7%94%A8/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Wang Wenhui">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Gray's Blog">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Gray's Blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/10/25/Makefile%E7%9A%84%E4%BD%BF%E7%94%A8/" class="post-title-link" itemprop="url">Makefile的使用</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2022-10-25 23:32:01" itemprop="dateCreated datePublished" datetime="2022-10-25T23:32:01+08:00">2022-10-25</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-	<div>
-		
-	</div>
-    <div class="post-body" itemprop="articleBody">
-          
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/2/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/4/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/2/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/4/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 </div>

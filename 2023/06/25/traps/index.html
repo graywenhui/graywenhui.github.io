@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 5.4.2">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.13.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12},"copycode":{"enable":true,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="这个实验是让我们熟悉陷阱（trap）的 Backtrace (moderate)要求我们实现一个获取回溯信息的函数。 课程网站上给的信息足够多，写出来还是比较简单的。 12345678910111213&#x2F;&#x2F; 添加到printf.c文件中voidbacktrace(void)&amp;#123;  printf(&quot;backtrace:\n&quot;);  uint64 fp &#x3D; r_fp();">
+<meta property="og:type" content="article">
+<meta property="og:title" content="traps">
+<meta property="og:url" content="http://example.com/2023/06/25/traps/index.html">
+<meta property="og:site_name" content="Gray&#39;s Blog">
+<meta property="og:description" content="这个实验是让我们熟悉陷阱（trap）的 Backtrace (moderate)要求我们实现一个获取回溯信息的函数。 课程网站上给的信息足够多，写出来还是比较简单的。 12345678910111213&#x2F;&#x2F; 添加到printf.c文件中voidbacktrace(void)&amp;#123;  printf(&quot;backtrace:\n&quot;);  uint64 fp &#x3D; r_fp();">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-06-25T08:37:44.000Z">
+<meta property="article:modified_time" content="2023-08-11T07:59:50.355Z">
+<meta property="article:author" content="Wang Wenhui">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2023/06/25/traps/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2023/06/25/traps/","path":"2023/06/25/traps/","title":"traps"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>traps | Gray's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Gray's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Backtrace-moderate"><span class="nav-number">1.</span> <span class="nav-text">Backtrace (moderate)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Alarm-hard"><span class="nav-number">2.</span> <span class="nav-text">Alarm (hard)</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Wang Wenhui</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">43</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/06/25/traps/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Wang Wenhui">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Gray's Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="traps | Gray's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          traps
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-06-25 16:37:44" itemprop="dateCreated datePublished" datetime="2023-06-25T16:37:44+08:00">2023-06-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-08-11 15:59:50" itemprop="dateModified" datetime="2023-08-11T15:59:50+08:00">2023-08-11</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/6-S081-Lab/" itemprop="url" rel="index"><span itemprop="name">6.S081 Lab</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+	<div>
+		
+			<div>
+	
+		<div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+	
+</div>
+		
+	</div>
+    <div class="post-body" itemprop="articleBody">
+        <p>这个实验是让我们熟悉陷阱（trap）的</p>
+<h2 id="Backtrace-moderate"><a href="#Backtrace-moderate" class="headerlink" title="Backtrace (moderate)"></a>Backtrace (<a target="_blank" rel="noopener" href="https://pdos.csail.mit.edu/6.S081/2022/labs/guidance.html">moderate</a>)</h2><p>要求我们实现一个获取回溯信息的函数。</p>
+<p>课程网站上给的信息足够多，写出来还是比较简单的。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 添加到printf.c文件中</span></span><br><span class="line"><span class="function"><span class="type">void</span></span></span><br><span class="line"><span class="function"><span class="title">backtrace</span><span class="params">(<span class="type">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;backtrace:\n&quot;</span>);</span><br><span class="line">  uint64 fp = <span class="built_in">r_fp</span>();</span><br><span class="line">  uint64 base = <span class="built_in">PGROUNDUP</span>(fp);</span><br><span class="line">  <span class="keyword">while</span> (fp &lt; base) &#123; 	<span class="comment">//判断是否超过一整页了</span></span><br><span class="line">    uint64 ret_addr = *(uint64*)(fp - <span class="number">8</span>);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%p\n&quot;</span>, ret_addr);</span><br><span class="line">    fp = *(uint64*)(fp - <span class="number">16</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>网站告诉我们GCC编译器将当前执行函数的帧指针存储在寄存器s0中。在kernel&#x2F;riscv.h中添加以下函数：<code> static inline uint64 r_fp() &#123; uint64 x; asm volatile(&quot;mv %0, s0&quot; : &quot;=r&quot; (x) ); return x; &#125;</code>，所以<code>r_fp()</code>就可以获得帧指针。</p>
+<h2 id="Alarm-hard"><a href="#Alarm-hard" class="headerlink" title="Alarm (hard)"></a>Alarm (<a target="_blank" rel="noopener" href="https://pdos.csail.mit.edu/6.S081/2022/labs/guidance.html">hard</a>)</h2><p>这个实验我们需要为xv6添加一个功能，当进程使用CPU时间时定期向其发出警报。添加两个系统调用，一个是sigalarm，另一个是sigreturn。</p>
+<p>首先<code>struct proc</code>结构体中要加入几个字段。 还要在初始化和释放。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> alarm_interval; <span class="comment">//每次转动n次执行</span></span><br><span class="line"><span class="built_in">void</span> (*alarm_handler)(); <span class="comment">//处理函数</span></span><br><span class="line"><span class="type">int</span> count; <span class="comment">//当前转过的次数</span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> isalarm; <span class="comment">//当前是否已经在另一个处理中了</span></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">trapframe</span>* alarm_trapframe; <span class="comment">//用来保存当前的trapframe</span></span><br><span class="line"></span><br><span class="line"><span class="comment">//allocproc()中初始化</span></span><br><span class="line">p-&gt;alarm_interval = <span class="number">0</span>;</span><br><span class="line">p-&gt;alarm_handler = <span class="number">0</span>;</span><br><span class="line">p-&gt;count = <span class="number">0</span>;</span><br><span class="line">p-&gt;isalarm = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">if</span>((p-&gt;alarm_trapframe = (<span class="keyword">struct</span> trapframe *)<span class="built_in">kalloc</span>()) == <span class="number">0</span>)&#123;</span><br><span class="line">    <span class="built_in">freeproc</span>(p);</span><br><span class="line">    <span class="built_in">release</span>(&amp;p-&gt;lock);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//freeproc()中释放</span></span><br><span class="line"><span class="keyword">if</span>(p-&gt;alarm_trapframe)</span><br><span class="line">    <span class="built_in">kfree</span>((<span class="type">void</span>*)p-&gt;alarm_trapframe);</span><br><span class="line">p-&gt;alarm_trapframe = <span class="number">0</span>;</span><br><span class="line">p-&gt;alarm_interval = <span class="number">0</span>;</span><br><span class="line">p-&gt;alarm_handler = <span class="number">0</span>;</span><br><span class="line">p-&gt;count = <span class="number">0</span>;</span><br><span class="line">p-&gt;isalarm = <span class="number">0</span>;</span><br></pre></td></tr></table></figure>
+
+<p>然后就是两个系统调用</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">uint64</span></span><br><span class="line"><span class="function"><span class="title">sys_sigalarm</span><span class="params">(<span class="type">void</span>)</span> <span class="comment">// 传参</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="type">int</span> tick;</span><br><span class="line">  <span class="built_in">void</span> (*handler)();</span><br><span class="line">  <span class="built_in">argint</span>(<span class="number">0</span>,&amp;tick);</span><br><span class="line">  <span class="keyword">if</span> (tick &lt; <span class="number">0</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">  <span class="built_in">argaddr</span>(<span class="number">1</span>,(uint64*)&amp;handler);</span><br><span class="line">  <span class="keyword">if</span> (handler &lt; <span class="number">0</span>)</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">proc</span>* p = <span class="built_in">myproc</span>();</span><br><span class="line">  p-&gt;alarm_interval = tick;</span><br><span class="line">  p-&gt;alarm_handler = handler;</span><br><span class="line">  <span class="comment">// p-&gt;alarm_interval = 0;</span></span><br><span class="line">  <span class="comment">// p-&gt;alarm_trapframe = 0;</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">uint64</span></span><br><span class="line"><span class="function"><span class="title">sys_sigreturn</span><span class="params">(<span class="type">void</span>)</span> <span class="comment">// 用来恢复trapframe</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="built_in">memmove</span>(<span class="built_in">myproc</span>()-&gt;trapframe, <span class="built_in">myproc</span>()-&gt;alarm_trapframe, <span class="built_in">sizeof</span>(<span class="keyword">struct</span> trapframe));</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>usertrap中要修改的是时间中断的过程</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// give up the CPU if this is a timer interrupt.</span></span><br><span class="line"><span class="keyword">if</span>(which_dev == <span class="number">2</span>) &#123;</span><br><span class="line">    <span class="keyword">if</span> (p-&gt;alarm_interval != <span class="number">0</span> &amp;&amp; ++p-&gt;count == p-&gt;alarm_interval &amp;&amp; p-&gt;isalarm == <span class="number">0</span>) &#123; </span><br><span class="line">        <span class="comment">//判断条件是alarm_interval没被设为0且计数到了alarm_interval</span></span><br><span class="line">        <span class="comment">//且这个时候没有在alarm中</span></span><br><span class="line">        <span class="built_in">memmove</span>(p-&gt;alarm_trapframe, p-&gt;trapframe, <span class="built_in">sizeof</span>(<span class="keyword">struct</span> trapframe));</span><br><span class="line">        p-&gt;trapframe-&gt;epc = (uint64)p-&gt;alarm_handler;</span><br><span class="line">        p-&gt;count = <span class="number">0</span>;</span><br><span class="line">        p-&gt;isalarm = <span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">yield</span>();</span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/04/25/pagetable%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB/" rel="prev" title="pagetable源码阅读">
+                  <i class="fa fa-chevron-left"></i> pagetable源码阅读
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/06/29/copy-on-write/" rel="next" title="copy-on-write">
+                  copy-on-write <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Wang Wenhui</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>
