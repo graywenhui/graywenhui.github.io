@@ -125,7 +125,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">43</span>
+          <span class="site-state-item-count">46</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -165,6 +165,394 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/03/27/Makefile/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Wang Wenhui">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Gray's Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Gray's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2023/03/27/Makefile/" class="post-title-link" itemprop="url">Makefile</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2023-03-27 08:43:54 / 修改时间：17:29:48" itemprop="dateCreated datePublished" datetime="2023-03-27T08:43:54+08:00">2023-03-27</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/CPP/" itemprop="url" rel="index"><span itemprop="name">CPP</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+	<div>
+		
+	</div>
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="Makefile"><a href="#Makefile" class="headerlink" title="Makefile"></a>Makefile</h1><h2 id="规则"><a href="#规则" class="headerlink" title="规则"></a>规则</h2><p>一个Makefile文件由一个<strong>规则</strong>或多个<strong>规则</strong>组成<br>其他规则一般为第一条规则服务</p>
+<p><strong>目标 …: 依赖 …<br>    命令（shell命令）<br>    …</strong></p>
+<p>目标：最终要生成的文件<br>依赖：生成目标需要的文件或是目标<br>命令：执行命令对依赖操作，生成目标（必须tab缩进）</p>
+<p>示例：</p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">mubiao: yilai1.c yilai2.c yilai3.c</span></span><br><span class="line">	gcc yilai1.c yilai2.c yilai3.c -o mubiao</span><br></pre></td></tr></table></figure>
+
+<h2 id="工作原理"><a href="#工作原理" class="headerlink" title="工作原理"></a>工作原理</h2><h6 id="命令在执行之前，需要先检查规则中的依赖是否存在"><a href="#命令在执行之前，需要先检查规则中的依赖是否存在" class="headerlink" title="命令在执行之前，需要先检查规则中的依赖是否存在"></a>命令在执行之前，需要先检查规则中的依赖是否存在</h6><ol>
+<li>存在，执行命令</li>
+<li>不存在，向下检查其他的规则，查看是否有一个规则是生成这个依赖的，找到就执行这个生成依赖的规则，再执行当前命令</li>
+</ol>
+<h6 id="检测更新，在执行规则中的命令时，会比较目标和依赖文件的时间"><a href="#检测更新，在执行规则中的命令时，会比较目标和依赖文件的时间" class="headerlink" title="检测更新，在执行规则中的命令时，会比较目标和依赖文件的时间"></a>检测更新，在执行规则中的命令时，会比较目标和依赖文件的时间</h6><ol>
+<li>如果依赖的时间比目标的时间晚，需要重新生成目标</li>
+<li>如果依赖的时间比目标的时间早，目标不需要更新，对应规则的命令不需要被执行</li>
+</ol>
+<h6 id="如果有其他规则不会影响到第一条规则的执行，则不会执行"><a href="#如果有其他规则不会影响到第一条规则的执行，则不会执行" class="headerlink" title="如果有其他规则不会影响到第一条规则的执行，则不会执行"></a>如果有其他规则不会影响到第一条规则的执行，则不会执行</h6><p>问题：如果我第一条规则中的依赖需要第二条规则执行，而第二条规则的依赖又需要第三条规则执行，这样可行吗？</p>
+<h2 id="变量"><a href="#变量" class="headerlink" title="变量"></a>变量</h2><p>自定义变量：<br>    变量名&#x3D;变量值	var&#x3D;hello		$(var)<br>预定义变量：(这部分只能在<strong>命令</strong>中使用)<br>    AR：归档维护程序的名称，默认为ar<br>    CC：C编译器的名称，默认为cc<br>    CXX：C++编译器的名称，默认为g++<br>    $@:	目标的完整名称<br>    $&lt;：第一个依赖文件的名称<br>    $^：所有的依赖文件<br>获取变量的值<br>    $(变量名)</p>
+<p>示例：</p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">app:main.c a.c b.c</span></span><br><span class="line">	gcc -c main.c a.c b.c</span><br><span class="line">	</span><br><span class="line"><span class="section">app:main.c a.c b.c</span></span><br><span class="line">	<span class="variable">$(CC)</span> -c <span class="variable">$^</span> -o <span class="variable">$@</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="模式匹配"><a href="#模式匹配" class="headerlink" title="模式匹配"></a>模式匹配</h2><p>%.o:%.c<br>    %：通配符，匹配一个字符串	两个%匹配的是一个字符串</p>
+<p>示例：</p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">%.o:%.c</span></span><br><span class="line">	gcc -c &amp;&lt; -o &amp;@</span><br></pre></td></tr></table></figure>
+
+<h2 id="函数"><a href="#函数" class="headerlink" title="函数"></a>函数</h2><p>$(funcname params)</p>
+<p>示例：</p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$(<span class="built_in">wildcard</span> PATTERN...)</span></span><br><span class="line"><span class="comment">#功能：获取指定目录下指定类型的文件列表</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#参数：PATTERN指的是某个或多个目录下的对应的某种类型的文件，如果有多个目录，一般用空格间隔</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#返回：得到的若干个文件的列表，用空格隔开</span></span><br><span class="line"></span><br><span class="line"><span class="variable">$(<span class="built_in">wildcard</span> *.c ./sub/*.c)</span></span><br><span class="line"><span class="comment">#返回格式：a.c b.c c.c d.c e.c f.c</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$(<span class="built_in">patsubst</span> &lt;pattern&gt;,&lt;replacement&gt;,&lt;text&gt;)</span></span><br><span class="line"><span class="comment">#功能：查找&lt;text&gt;中的单词是否符合模式&lt;pattern&gt;，符合就用&lt;replacement&gt;替换</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#&lt;pattern&gt;可以包括通配符&#x27;%&#x27;，表示任意长度的字符串，如果&lt;replacement&gt;中也包含&#x27;%&#x27;,则这个字符串将是前面代表的字符串</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#返回：函数返回被替换过后的字符串</span></span><br><span class="line"></span><br><span class="line"><span class="variable">$(<span class="built_in">patsubst</span> %.c, %.o, x.c bar.c)</span></span><br><span class="line"><span class="comment">#返回格式：x.o bar.o</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h2><p>可以手动创建命令:</p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta"><span class="keyword">.PHONY</span>:clean</span></span><br><span class="line"><span class="section">make:</span></span><br><span class="line">	rm xxx -f</span><br><span class="line"><span class="comment">#.PHONY表示clean是伪目标，不会生成文件</span></span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/03/23/%E9%9D%99%E6%80%81%E5%BA%93%E5%92%8C%E5%8A%A8%E6%80%81%E5%BA%93/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Wang Wenhui">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Gray's Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Gray's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2023/03/23/%E9%9D%99%E6%80%81%E5%BA%93%E5%92%8C%E5%8A%A8%E6%80%81%E5%BA%93/" class="post-title-link" itemprop="url">静态库和动态库</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-03-23 16:30:10" itemprop="dateCreated datePublished" datetime="2023-03-23T16:30:10+08:00">2023-03-23</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-03-27 08:34:19" itemprop="dateModified" datetime="2023-03-27T08:34:19+08:00">2023-03-27</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/CPP/" itemprop="url" rel="index"><span itemprop="name">CPP</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+	<div>
+		
+	</div>
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="库"><a href="#库" class="headerlink" title="库"></a>库</h1><p> 两种库：静态库和动态库 （共享库）</p>
+<p><strong>区别：</strong> 静态库在程序的链接阶段被复制到了程序中；动态库在链接阶段没有被复制到程序中，而是程序在运行时由系统动态加载到内存中供程序调用。</p>
+<p><strong>好处：</strong>1、代码保密。2、方便部署和开发</p>
+<h2 id="静态库"><a href="#静态库" class="headerlink" title="静态库"></a>静态库</h2><p><em><strong>命名规则：</strong></em></p>
+<p>​	Linux：libxxx.a<br>​		lib：前缀（固定）<br>​		xxx：库的名字，自己起<br>​		.a：后缀（固定）</p>
+<p>​	Windows：libxxx.lib</p>
+<p><em><strong>制作：</strong></em></p>
+<p>​	gcc获得.o文件</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -c xxx.c xxx.c xxx.c</span><br></pre></td></tr></table></figure>
+
+<p>​	将.o文件打包，使用ac工具（archive）</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ar rcs libxxx.a xxx.o xxx.o</span><br></pre></td></tr></table></figure>
+
+<p>​	r - 将文件插入备存文件中</p>
+<p>​	c - 建立备存文件</p>
+<p>​	s - 索引</p>
+<p><em><strong>使用：</strong></em></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc main.c -o xxx -I 头文件所在文件夹 -l 名字 库所在文件夹 </span><br></pre></td></tr></table></figure>
+
+<h2 id="动态库"><a href="#动态库" class="headerlink" title="动态库"></a>动态库</h2><p><em><strong>命名规则：</strong></em></p>
+<p>​	Linux：libxxx.so<br>​		lib：前缀（固定）<br>​		xxx：库的名字，自己起<br>​		.so：后缀（固定）<br>​		在Linux下是一个可执行文件</p>
+<p>​	Windows：libxxx.dll</p>
+<p><em><strong>制作：</strong></em></p>
+<p>​	gcc获得.o文件，<strong>得到和位置无关的代码</strong></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -c -fpic/-fPIC xxx.c xxx.c</span><br></pre></td></tr></table></figure>
+
+<p>​	gcc得到动态库</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -shared xxx.o xxx.o -o libxxx.so</span><br></pre></td></tr></table></figure>
+
+<p><em><strong>使用：</strong></em></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc main.c -o xxx -I 头文件所在文件夹 -L 库所在文件夹 -l 名字</span><br></pre></td></tr></table></figure>
+
+<p> 发现运行不了，因为系统要知道绝对路径</p>
+<p>第一种方法：修改环境变量LD_LIBRARY_PATH</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:要添加的文件夹目录</span><br></pre></td></tr></table></figure>
+
+<p>永久配置：</p>
+<p>用户配置：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">vim .bashrc</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">进入了.bashrc 用vim编辑 在末尾增加</span></span><br><span class="line">export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:要添加的路径</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">保存 然后<span class="built_in">source</span></span></span><br><span class="line"></span><br><span class="line">source .bashrc</span><br></pre></td></tr></table></figure>
+
+<p>系统配置：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">sudo vim /etc/profile</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">在末尾增加</span></span><br><span class="line">export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:要添加的路径</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">保存 然后<span class="built_in">source</span></span></span><br><span class="line"></span><br><span class="line">source /etc/profile</span><br></pre></td></tr></table></figure>
+
+<p>第二种方法：修改&#x2F;etc&#x2F;ld.so.cache文件</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">sudo vim /etc/ld.so.conf</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">把路径写在里面就行，然后保存退出，更新</span></span><br><span class="line"></span><br><span class="line">sudo ldconfig</span><br></pre></td></tr></table></figure>
+
+<p>第三种方法：把库文件放在&#x2F;lib&#x2F;或&#x2F;usr&#x2F;lib目录下（不推荐）</p>
+<h2 id="对比"><a href="#对比" class="headerlink" title="对比"></a>对比</h2><p><strong>静态库：</strong><br>    优点：<br>        · 被打包到应用程序中加载速度快<br>        · 发布程序不用提供静态库，移植方便</p>
+<p>​	缺点：<br>​		· 消耗系统资源，浪费内存<br>​		· 更新、部署、发布麻烦</p>
+<p><strong>动态库：</strong><br>    优点：<br>        · 可以实现进程间资源共享<br>        · 更新、部署、发布简单<br>        · 可以控制何时加载动态库</p>
+<p>​	缺点：<br>​		· 加载速度比静态库慢<br>​		· 发布程序时需要提供依赖的动态库</p>
+<p>之前写过一次贪吃蛇，打包给同学试试的时候，用静态库所有同学都能玩，而用动态库有些同学就玩不了了，就是这个道理。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/03/11/CPP%E5%A4%A7%E5%B0%8F%E6%A0%B9%E5%A0%86-priority-queue/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Wang Wenhui">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Gray's Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Gray's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2023/03/11/CPP%E5%A4%A7%E5%B0%8F%E6%A0%B9%E5%A0%86-priority-queue/" class="post-title-link" itemprop="url">CPP大小根堆-priority_queue</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2023-03-11 14:44:25 / 修改时间：16:42:56" itemprop="dateCreated datePublished" datetime="2023-03-11T14:44:25+08:00">2023-03-11</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">算法</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+	<div>
+		
+	</div>
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="概述和模板定义"><a href="#概述和模板定义" class="headerlink" title="概述和模板定义"></a>概述和模板定义</h1><p>priority_queue容器在头文件<queue>中，位于std命名空间中,容器是有序的。</p>
+<p>模板定义如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;	<span class="keyword">typename</span> T,							<span class="comment">//容器中元素的类型</span></span><br><span class="line">        	<span class="keyword">typename</span> Container=std::vector&lt;T&gt;,	<span class="comment">//底层使用的容器，vector或</span></span><br><span class="line">												<span class="comment">//deque</span></span><br><span class="line">        	<span class="keyword">typename</span> Compare=std::less&lt;T&gt; &gt;	<span class="comment">//排序规则</span></span><br><span class="line">                							<span class="comment">//std::less&lt;T&gt; 		从大到小</span></span><br><span class="line">                							<span class="comment">//std::greater&lt;T&gt;	从小到大</span></span><br><span class="line">                							<span class="comment">//还可以自定义规则，做题一般不用</span></span><br><span class="line"><span class="keyword">class</span> priority_queue&#123;</span><br><span class="line">    <span class="comment">//......</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="创建容器的方法"><a href="#创建容器的方法" class="headerlink" title="创建容器的方法"></a>创建容器的方法</h1><p>最基本的：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">std::priority_queue&lt;<span class="type">int</span>&gt; values;</span><br></pre></td></tr></table></figure>
+
+<p>使用普通数组或其他容器：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//使用普通数组</span></span><br><span class="line"><span class="type">int</span> values[]&#123;<span class="number">4</span>,<span class="number">1</span>,<span class="number">3</span>,<span class="number">2</span>&#125;;</span><br><span class="line"><span class="function">std::priority_queue&lt;<span class="type">int</span>&gt; <span class="title">copy_values</span><span class="params">(values,values+<span class="number">4</span>)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//使用序列式容器</span></span><br><span class="line">std::array&lt;<span class="type">int</span>,4&gt;values&#123; <span class="number">4</span>,<span class="number">1</span>,<span class="number">3</span>,<span class="number">2</span> &#125;;</span><br><span class="line"><span class="function">std::priority_queue&lt;<span class="type">int</span>&gt; <span class="title">copy_values</span><span class="params">(values.begin(),values.end())</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>手动指定：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> values[]&#123; <span class="number">4</span>,<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span> &#125;;</span><br><span class="line">std::priority_queue&lt;<span class="type">int</span>, std::deque&lt;<span class="type">int</span>&gt;, std::greater&lt;<span class="type">int</span>&gt; &gt; <span class="built_in">copy_values</span>(values, values+<span class="number">4</span>);</span><br></pre></td></tr></table></figure>
+
+<h1 id="常用成员函数"><a href="#常用成员函数" class="headerlink" title="常用成员函数"></a>常用成员函数</h1><table>
+<thead>
+<tr>
+<th>成员函数</th>
+<th>功能</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>empty()</td>
+<td>如果 priority_queue 为空的话，返回 true；反之，返回 false。</td>
+</tr>
+<tr>
+<td>size()</td>
+<td>返回 priority_queue 中存储元素的个数。</td>
+</tr>
+<tr>
+<td>top()</td>
+<td>返回 priority_queue 中第一个元素的引用形式。</td>
+</tr>
+<tr>
+<td>push(const T&amp; obj)</td>
+<td>根据既定的排序规则，将元素 obj 的副本存储到 priority_queue 中适当的位置。</td>
+</tr>
+<tr>
+<td>push(T&amp;&amp; obj)</td>
+<td>根据既定的排序规则，将元素 obj 移动存储到 priority_queue 中适当的位置。</td>
+</tr>
+<tr>
+<td>emplace(Args&amp;&amp;… args)</td>
+<td>Args&amp;&amp;… args 表示构造一个存储类型的元素所需要的数据（对于类对象来说，可能需要多个数据构造出一个对象）。此函数的功能是根据既定的排序规则，在容器适配器适当的位置直接生成该新元素。</td>
+</tr>
+<tr>
+<td>pop()</td>
+<td>移除 priority_queue 容器适配器中第一个元素。</td>
+</tr>
+<tr>
+<td>swap(priority_queue<T>&amp; other)</td>
+<td>将两个 priority_queue 容器适配器中的元素进行互换，需要注意的是，进行互换的 2 个 priority_queue 容器适配器中存储的元素类型以及底层采用的基础容器类型，都必须相同。</td>
+</tr>
+</tbody></table>
+<p>适用于题目：（待补充）</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a target="_blank" rel="noopener" href="http://c.biancheng.net/view/6987.html">http://c.biancheng.net/view/6987.html</a></p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -866,269 +1254,6 @@
 	</div>
     <div class="post-body" itemprop="articleBody">
           
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/01/31/%E5%88%86%E5%B8%83%E5%BC%8F%E7%90%86%E8%AE%BA/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Wang Wenhui">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Gray's Blog">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Gray's Blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2023/01/31/%E5%88%86%E5%B8%83%E5%BC%8F%E7%90%86%E8%AE%BA/" class="post-title-link" itemprop="url">分布式理论</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2023-01-31 21:36:41 / 修改时间：21:41:07" itemprop="dateCreated datePublished" datetime="2023-01-31T21:36:41+08:00">2023-01-31</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/go/" itemprop="url" rel="index"><span itemprop="name">go</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-	<div>
-		
-	</div>
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="重点内容"><a href="#重点内容" class="headerlink" title="重点内容"></a>重点内容</h1><ol>
-<li>分布式概述</li>
-<li>系统模型</li>
-<li>理论基础</li>
-<li>分布式事务</li>
-<li>共识协议</li>
-<li>分布式实践</li>
-</ol>
-<h1 id="详细知识点"><a href="#详细知识点" class="headerlink" title="详细知识点"></a>详细知识点</h1><h2 id="What"><a href="#What" class="headerlink" title="What"></a>What</h2>
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/01/31/%E7%BA%BF%E7%A8%8B%E5%90%8C%E6%AD%A5/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Wang Wenhui">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Gray's Blog">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Gray's Blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2023/01/31/%E7%BA%BF%E7%A8%8B%E5%90%8C%E6%AD%A5/" class="post-title-link" itemprop="url">线程同步</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2023-01-31 15:24:15" itemprop="dateCreated datePublished" datetime="2023-01-31T15:24:15+08:00">2023-01-31</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-	<div>
-		
-	</div>
-    <div class="post-body" itemprop="articleBody">
-          
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/01/30/%E6%9E%B6%E6%9E%84/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Wang Wenhui">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Gray's Blog">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Gray's Blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2023/01/30/%E6%9E%B6%E6%9E%84/" class="post-title-link" itemprop="url">架构</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2023-01-30 20:08:56" itemprop="dateCreated datePublished" datetime="2023-01-30T20:08:56+08:00">2023-01-30</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-01-31 21:36:49" itemprop="dateModified" datetime="2023-01-31T21:36:49+08:00">2023-01-31</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/go/" itemprop="url" rel="index"><span itemprop="name">go</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-	<div>
-		
-	</div>
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="重点内容"><a href="#重点内容" class="headerlink" title="重点内容"></a>重点内容</h1><ol>
-<li>什么是架构</li>
-<li>后端架构剖析</li>
-<li>后端架构的挑战</li>
-<li>实战</li>
-</ol>
-<p>#详细知识点</p>
-<h2 id="What"><a href="#What" class="headerlink" title="What"></a>What</h2><p>定义：架构又称软件架构，是有关软件整体结构与组件的抽象描述，用于指导软件系统各个方面的设计。</p>
-<p>相当于是大厦的地基</p>
-<h3 id="单机架构"><a href="#单机架构" class="headerlink" title="单机架构"></a>单机架构</h3><p>all in one，把所有功能实现在一个进程里面，部署在一个机器上。</p>
-<p>这样做，优点是简单，缺点是运维需要停服，以及C10k问题<br>（C10K问题：服务器如何支持10k个并发连接，concurrent 10000 connection）</p>
-<p>听了之后的架构，我理解是一个人不同类的完整事情做完</p>
-<h3 id="单体架构"><a href="#单体架构" class="headerlink" title="单体架构"></a>单体架构</h3><p>单体架构：分布式部署<br>垂直应用架构：按应用垂直切分</p>
-<p>优点：水平扩容，运维不需要停服<br>问题：职责太多，开发效率不高、爆炸半径大</p>
-<p>垂直应用就是不同人做一件不同的完整事情</p>
-<h3 id="SOA、微服务-水平切分"><a href="#SOA、微服务-水平切分" class="headerlink" title="SOA、微服务|水平切分"></a>SOA、微服务|水平切分</h3><p>SOA（Service-Oriented Architecture）</p>
-
       
     </div>
 

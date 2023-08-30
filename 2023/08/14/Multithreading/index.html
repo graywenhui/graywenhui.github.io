@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 5.4.2">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha256-AbA177XfpSnFEvgpYu1jMygiLabzPCJCRIBtR5jGc0k=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.13.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12},"copycode":{"enable":true,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="之前学习的时候对为什么sleep内部要先释放锁，被唤醒以后再获得锁有点一直半解，学完以后就了解了。 为什么会有sleep和wakeup原先的信号量同步机制，v操作和p操作可能是这样的 123456789101112131415161718struct semaphore &amp;#123;    struct spinlock lock;    int count;&amp;#125;;void V(struc">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Multithreading">
+<meta property="og:url" content="http://example.com/2023/08/14/Multithreading/index.html">
+<meta property="og:site_name" content="Gray&#39;s Blog">
+<meta property="og:description" content="之前学习的时候对为什么sleep内部要先释放锁，被唤醒以后再获得锁有点一直半解，学完以后就了解了。 为什么会有sleep和wakeup原先的信号量同步机制，v操作和p操作可能是这样的 123456789101112131415161718struct semaphore &amp;#123;    struct spinlock lock;    int count;&amp;#125;;void V(struc">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-08-14T11:40:26.000Z">
+<meta property="article:modified_time" content="2023-08-24T16:06:52.104Z">
+<meta property="article:author" content="Wang Wenhui">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2023/08/14/Multithreading/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2023/08/14/Multithreading/","path":"2023/08/14/Multithreading/","title":"Multithreading"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Multithreading | Gray's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Gray's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E4%BC%9A%E6%9C%89sleep%E5%92%8Cwakeup"><span class="nav-number">1.</span> <span class="nav-text">为什么会有sleep和wakeup</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Thread-switching"><span class="nav-number">2.</span> <span class="nav-text">Thread switching</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#void-yield-void-%E8%B0%83%E7%94%A8"><span class="nav-number">2.1.</span> <span class="nav-text">void yield(void) 调用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#void-sched-void-%E8%B0%83%E7%94%A8"><span class="nav-number">2.2.</span> <span class="nav-text">void sched(void) 调用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#void-swtch-struct-context-struct-context-%E8%B0%83%E7%94%A8"><span class="nav-number">2.3.</span> <span class="nav-text">void swtch(struct context*, struct context*) 调用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#void-scheduler-void-%E8%B0%83%E7%94%A8"><span class="nav-number">2.4.</span> <span class="nav-text">void scheduler(void) 调用</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Sleep-amp-Wake-up"><span class="nav-number">3.</span> <span class="nav-text">Sleep &amp; Wake up</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Code"><span class="nav-number">3.1.</span> <span class="nav-text">Code</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Lab-Multithreading"><span class="nav-number">4.</span> <span class="nav-text">Lab: Multithreading</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Uthread-switching-between-threads"><span class="nav-number">4.1.</span> <span class="nav-text">Uthread:switching between threads</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Using-threads"><span class="nav-number">4.2.</span> <span class="nav-text">Using threads</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Barrier"><span class="nav-number">4.3.</span> <span class="nav-text">Barrier</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Wang Wenhui</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">46</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </div>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/08/14/Multithreading/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Wang Wenhui">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Gray's Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Multithreading | Gray's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Multithreading
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-08-14 19:40:26" itemprop="dateCreated datePublished" datetime="2023-08-14T19:40:26+08:00">2023-08-14</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-08-25 00:06:52" itemprop="dateModified" datetime="2023-08-25T00:06:52+08:00">2023-08-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/6-S081-Lab/" itemprop="url" rel="index"><span itemprop="name">6.S081 Lab</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+	<div>
+		
+			<div>
+	
+		<div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束<i class="fa fa-paw"></i>感谢您的阅读-------------</div>
+	
+</div>
+		
+	</div>
+    <div class="post-body" itemprop="articleBody">
+        <p>之前学习的时候对为什么sleep内部要先释放锁，被唤醒以后再获得锁有点一直半解，学完以后就了解了。</p>
+<h1 id="为什么会有sleep和wakeup"><a href="#为什么会有sleep和wakeup" class="headerlink" title="为什么会有sleep和wakeup"></a>为什么会有sleep和wakeup</h1><p>原先的信号量同步机制，v操作和p操作可能是这样的</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">semaphore</span> &#123;</span><br><span class="line">    <span class="keyword">struct</span> <span class="title class_">spinlock</span> lock;</span><br><span class="line">    <span class="type">int</span> count;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">V</span><span class="params">(<span class="keyword">struct</span> semaphore* s)</span> </span>&#123;</span><br><span class="line">    <span class="built_in">acquire</span>(&amp;s-&gt;lock);</span><br><span class="line">    s-&gt;count += <span class="number">1</span>;</span><br><span class="line">    <span class="built_in">release</span>(&amp;s-&gt;lock);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">P</span><span class="params">(<span class="keyword">struct</span> semaphore* s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">while</span> (s-&gt;count == <span class="number">0</span>)</span><br><span class="line">        ;</span><br><span class="line">    <span class="built_in">acquire</span>(&amp;s-&gt;lock);</span><br><span class="line">    s-&gt;count -= <span class="number">1</span>;</span><br><span class="line">    <span class="built_in">release</span>(&amp;s-&gt;lock);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在这样的情况下，（消费者）大部分时间都是在while循环中繁忙等待，我们希望有一种行为，它能够在等待的时候释放cpu，直到有其他调用将它唤醒，这样就不会将cpu浪费的循环中了。假设这样的一对调用（等待，和唤醒）为sleep和wakeup，并且它们的参数都只有一个semaphore类型的变量。</p>
+<p>这时候pv操作可能变成这样：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">V</span><span class="params">(<span class="keyword">struct</span> semaphore* s)</span> </span>&#123;</span><br><span class="line">    <span class="built_in">acquire</span>(&amp;s-&gt;lock);</span><br><span class="line">    s-&gt;count += <span class="number">1</span>;</span><br><span class="line">    <span class="built_in">wakeup</span>(s);  <span class="comment">// !pay attention</span></span><br><span class="line">    <span class="built_in">release</span>(&amp;s-&gt;lock);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">P</span><span class="params">(<span class="keyword">struct</span> semaphore* s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">while</span> (s-&gt;count == <span class="number">0</span>)</span><br><span class="line">        <span class="built_in">sleep</span>(s);  <span class="comment">// !pay attention</span></span><br><span class="line">    <span class="built_in">acquire</span>(&amp;s-&gt;lock);</span><br><span class="line">    s-&gt;count -= <span class="number">1</span>;</span><br><span class="line">    <span class="built_in">release</span>(&amp;s-&gt;lock);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这样又带来了一个新的问题，可能会丢失唤醒。如果有个进程调用p，p发现s-&gt;count为0，接着要执行sleep(s)，但在执行sleep之前，在这中间的时间段中，有另一个进程调用了v，将count++并且掉用wakeup，这时第一个进程还没开始调用sleep，所以它调用以后会需要等待下一个wakeup，这就丢失了之前的wakeup。</p>
+<p>根本原因是，v在不该运行的时候运行，违反了不变量-p只有在s-&gt;count&#x3D;&#x3D;0的时候才sleep，p在判断并且进入sleep之间，其他进程是不应该调用到wakeup的，所以我们立马想到应该加一个锁或者改变锁的位置，于是代码可能变成了这样。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">V</span><span class="params">(<span class="keyword">struct</span> semaphore* s)</span> </span>&#123;</span><br><span class="line">    <span class="built_in">acquire</span>(&amp;s-&gt;lock);</span><br><span class="line">    s-&gt;count += <span class="number">1</span>;</span><br><span class="line">    <span class="built_in">wakeup</span>(s);</span><br><span class="line">    <span class="built_in">release</span>(&amp;s-&gt;lock);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">P</span><span class="params">(<span class="keyword">struct</span> semaphore* s)</span> </span>&#123;</span><br><span class="line">    <span class="built_in">acquire</span>(&amp;s-&gt;lock);</span><br><span class="line">    <span class="keyword">while</span> (s-&gt;count == <span class="number">0</span>)</span><br><span class="line">        <span class="built_in">sleep</span>(s);</span><br><span class="line">    s-&gt;count -= <span class="number">1</span>;</span><br><span class="line">    <span class="built_in">release</span>(&amp;s-&gt;lock);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这又带来了一个新的问题，大家可以很快发现这一定会死锁。因为p在sleep的时候是获取着锁的，这意味着没有一个进程能成功在V中走到wakeup这步。</p>
+<p>所以我们需要更改sleep内部的内容。我们需要传递一个在sleep内需要先释放的锁，以便其他进程能够成功调用V，并且在需要睡眠的进程没有sleep之前将一直阻塞，知道需要睡眠等待的进程进入sleep并释放锁以后，才能获取到锁。在调用完wakeup后，睡眠的进程在被唤醒前又会再次获得锁。需要注意的是，这里传的锁就是之前已经传的结构体中的一个成员，为什么要传呢。因为其他的情况中，sleep的第一个参数可能没有锁，也可能需要获得的是另一个锁，所以还是需要传入一个锁的参数的。</p>
+<p>上面的内容也就解决了为什么sleep内部要先释放锁，被唤醒以后再获得锁的问题。</p>
+<h1 id="Thread-switching"><a href="#Thread-switching" class="headerlink" title="Thread switching"></a>Thread switching</h1><p>假如有两个线程相互间切换，宏观上需要走这么一个过程：先从第一个用户进程进入内核，保存该进程的状态并运行该线程的内核线程，然后从该内核线程切换到第二个用户进程对应的内核进程，该内核进程暂停自己，恢复对应用户进程的状态（第二个用户进程），回到用户进程中。</p>
+<p>更细致一点：定时器中断导致CPU从用户态进入内核态，trampoline将用户寄存器保存到进程对应的trapframe里；然后内核会执行usertrap代码，执行相应的中断处理程序，完了后会调用swtch函数；该函数保存用户进程对应的内核线程的寄存器到context对象。</p>
+<h2 id="void-yield-void-调用"><a href="#void-yield-void-调用" class="headerlink" title="void yield(void) 调用"></a>void yield(void) 调用</h2><p>在usertrap代码中我们能看到，当检测到是定时器中断时，会调用yield()</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 前面的代码在判断是中断后</span></span><br><span class="line"><span class="comment">// 会调用which_dev = devintr()</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// give up the CPU if this is a timer interrupt.</span></span><br><span class="line"><span class="keyword">if</span>(which_dev == <span class="number">2</span>)</span><br><span class="line">    <span class="built_in">yield</span>();</span><br></pre></td></tr></table></figure>
+
+<p>yield函数如下</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Give up the CPU for one scheduling round.</span></span><br><span class="line"><span class="function"><span class="type">void</span></span></span><br><span class="line"><span class="function"><span class="title">yield</span><span class="params">(<span class="type">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">proc</span> *p = <span class="built_in">myproc</span>();</span><br><span class="line">  <span class="built_in">acquire</span>(&amp;p-&gt;lock);</span><br><span class="line">  p-&gt;state = RUNNABLE;</span><br><span class="line">  <span class="built_in">sched</span>();</span><br><span class="line">  <span class="built_in">release</span>(&amp;p-&gt;lock);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>比较简单，获取锁，然后修改进程的状态，接着调用sched()，然后释放锁</p>
+<h2 id="void-sched-void-调用"><a href="#void-sched-void-调用" class="headerlink" title="void sched(void) 调用"></a>void sched(void) 调用</h2><p>sched函数如下，前面做了一些检查，然后就调用swtch()</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Switch to scheduler.  Must hold only p-&gt;lock</span></span><br><span class="line"><span class="comment">// and have changed proc-&gt;state. Saves and restores</span></span><br><span class="line"><span class="comment">// intena because intena is a property of this</span></span><br><span class="line"><span class="comment">// kernel thread, not this CPU. It should</span></span><br><span class="line"><span class="comment">// be proc-&gt;intena and proc-&gt;noff, but that would</span></span><br><span class="line"><span class="comment">// break in the few places where a lock is held but</span></span><br><span class="line"><span class="comment">// there&#x27;s no process.</span></span><br><span class="line"><span class="function"><span class="type">void</span></span></span><br><span class="line"><span class="function"><span class="title">sched</span><span class="params">(<span class="type">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="type">int</span> intena;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">proc</span> *p = <span class="built_in">myproc</span>();</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span>(!<span class="built_in">holding</span>(&amp;p-&gt;lock))</span><br><span class="line">    <span class="built_in">panic</span>(<span class="string">&quot;sched p-&gt;lock&quot;</span>);</span><br><span class="line">  <span class="keyword">if</span>(<span class="built_in">mycpu</span>()-&gt;noff != <span class="number">1</span>)</span><br><span class="line">    <span class="built_in">panic</span>(<span class="string">&quot;sched locks&quot;</span>);</span><br><span class="line">  <span class="keyword">if</span>(p-&gt;state == RUNNING)</span><br><span class="line">    <span class="built_in">panic</span>(<span class="string">&quot;sched running&quot;</span>);</span><br><span class="line">  <span class="keyword">if</span>(<span class="built_in">intr_get</span>())</span><br><span class="line">    <span class="built_in">panic</span>(<span class="string">&quot;sched interruptible&quot;</span>);</span><br><span class="line"></span><br><span class="line">  intena = <span class="built_in">mycpu</span>()-&gt;intena;</span><br><span class="line">  <span class="built_in">swtch</span>(&amp;p-&gt;context, &amp;<span class="built_in">mycpu</span>()-&gt;context);</span><br><span class="line">  <span class="built_in">mycpu</span>()-&gt;intena = intena;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="void-swtch-struct-context-struct-context-调用"><a href="#void-swtch-struct-context-struct-context-调用" class="headerlink" title="void swtch(struct context*, struct context*) 调用"></a>void swtch(struct context*, struct context*) 调用</h2><p>swtch函数如下，是汇编代码</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"># Context <span class="keyword">switch</span></span><br><span class="line">#</span><br><span class="line"><span class="meta">#   void swtch(struct context *old, struct context *new);</span></span><br><span class="line"># </span><br><span class="line"># Save current registers in old. Load from <span class="keyword">new</span>.	</span><br><span class="line"></span><br><span class="line">.globl swtch</span><br><span class="line">swtch:</span><br><span class="line">        sd ra, <span class="number">0</span>(a0)</span><br><span class="line">        sd sp, <span class="number">8</span>(a0)</span><br><span class="line">        sd s0, <span class="number">16</span>(a0)</span><br><span class="line">        sd s1, <span class="number">24</span>(a0)</span><br><span class="line">        sd s2, <span class="number">32</span>(a0)</span><br><span class="line">        sd s3, <span class="number">40</span>(a0)</span><br><span class="line">        sd s4, <span class="number">48</span>(a0)</span><br><span class="line">        sd s5, <span class="number">56</span>(a0)</span><br><span class="line">        sd s6, <span class="number">64</span>(a0)</span><br><span class="line">        sd s7, <span class="number">72</span>(a0)</span><br><span class="line">        sd s8, <span class="number">80</span>(a0)</span><br><span class="line">        sd s9, <span class="number">88</span>(a0)</span><br><span class="line">        sd s10, <span class="number">96</span>(a0)</span><br><span class="line">        sd s11, <span class="number">104</span>(a0)</span><br><span class="line"></span><br><span class="line">        ld ra, <span class="number">0</span>(a1)</span><br><span class="line">        ld sp, <span class="number">8</span>(a1)</span><br><span class="line">        ld s0, <span class="number">16</span>(a1)</span><br><span class="line">        ld s1, <span class="number">24</span>(a1)</span><br><span class="line">        ld s2, <span class="number">32</span>(a1)</span><br><span class="line">        ld s3, <span class="number">40</span>(a1)</span><br><span class="line">        ld s4, <span class="number">48</span>(a1)</span><br><span class="line">        ld s5, <span class="number">56</span>(a1)</span><br><span class="line">        ld s6, <span class="number">64</span>(a1)</span><br><span class="line">        ld s7, <span class="number">72</span>(a1)</span><br><span class="line">        ld s8, <span class="number">80</span>(a1)</span><br><span class="line">        ld s9, <span class="number">88</span>(a1)</span><br><span class="line">        ld s10, <span class="number">96</span>(a1)</span><br><span class="line">        ld s11, <span class="number">104</span>(a1)</span><br><span class="line">        </span><br><span class="line">        ret</span><br></pre></td></tr></table></figure>
+
+<p>a0是传入的第一个参数，a1是传入的第二个参数，结合sched调用里传入的参数和代码注释，不难看出作用就是将当前内核线程的寄存器中的内容保存到p-&gt;context结构体里,然后将c-&gt;context中的内容加载在当前内核线程的寄存器中。这里的p是当前线程的结构体，c是当前CPU的结构体。c-&gt;context里保存的是当前CPU的调度器线程的寄存器（每个CPU核都有一个进行调度的线程）。</p>
+<p>这里值得注意的是ra寄存器，因为ra寄存器存放的是函数返回的地址。指向了sched函数中调用swtch结束的地方，这是一开始当前线程ra寄存器。后面执行ld ra, 0(a1)的时候，ra寄存器里的内容就变成了scheduler函数的地址，所以我们执行ret的时候，就进入到了调度器线程里，并且在执行scheduler函数中的一部分，这里应该是swtch调用完后的c-&gt;proc &#x3D; 0(见下文)。</p>
+<h2 id="void-scheduler-void-调用"><a href="#void-scheduler-void-调用" class="headerlink" title="void scheduler(void) 调用"></a>void scheduler(void) 调用</h2><p>scheduler函数如下</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Per-CPU process scheduler.</span></span><br><span class="line"><span class="comment">// Each CPU calls scheduler() after setting itself up.</span></span><br><span class="line"><span class="comment">// Scheduler never returns.  It loops, doing:</span></span><br><span class="line"><span class="comment">//  - choose a process to run.</span></span><br><span class="line"><span class="comment">//  - swtch to start running that process.</span></span><br><span class="line"><span class="comment">//  - eventually that process transfers control</span></span><br><span class="line"><span class="comment">//    via swtch back to the scheduler.</span></span><br><span class="line"><span class="function"><span class="type">void</span></span></span><br><span class="line"><span class="function"><span class="title">scheduler</span><span class="params">(<span class="type">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">proc</span> *p;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">cpu</span> *c = <span class="built_in">mycpu</span>();</span><br><span class="line">  </span><br><span class="line">  c-&gt;proc = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">for</span>(;;)&#123;</span><br><span class="line">    <span class="comment">// Avoid deadlock by ensuring that devices can interrupt.</span></span><br><span class="line">    <span class="built_in">intr_on</span>();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span>(p = proc; p &lt; &amp;proc[NPROC]; p++) &#123;</span><br><span class="line">      <span class="built_in">acquire</span>(&amp;p-&gt;lock);</span><br><span class="line">      <span class="keyword">if</span>(p-&gt;state == RUNNABLE) &#123;</span><br><span class="line">        <span class="comment">// Switch to chosen process.  It is the process&#x27;s job</span></span><br><span class="line">        <span class="comment">// to release its lock and then reacquire it</span></span><br><span class="line">        <span class="comment">// before jumping back to us.</span></span><br><span class="line">        p-&gt;state = RUNNING;</span><br><span class="line">        c-&gt;proc = p;</span><br><span class="line">        <span class="built_in">swtch</span>(&amp;c-&gt;context, &amp;p-&gt;context);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Process is done running for now.</span></span><br><span class="line">        <span class="comment">// It should have changed its p-&gt;state before coming back.</span></span><br><span class="line">        c-&gt;proc = <span class="number">0</span>;</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="built_in">release</span>(&amp;p-&gt;lock);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里有一个需要注意的地方就是，我们现在是在调用swtch函数的返回状态，不过不是在上面的swtch函数返回，而是在之前CPU调用的返回状态，之前调用的结果是CPU运行了我们刚刚中断了的进程。这么说可能有点绕，可以理解为因为汇编代码修改了ra的内容，所以函数返回在时间上有延迟，现在返回的是之前的运行的swtch函数，而我们刚刚运行的swtch函数其实还没有返回。</p>
+<p>继续看代码的内容，这时候从swtch函数调用返回，下一步执行c-&gt;proc &#x3D; 0修改状态，表明这时候CPU没有在运行进程。然后释放锁，这里释放的锁是之前在yield里获取的锁，在yield里我们没有完全完成yield进入runable时有别的CPU能运行它，现在已经完全进入runable状态了所以我们释放锁。</p>
+<p>p-&gt;lock的两个作用：</p>
+<ol>
+<li>让出CPU有几步，改状态、保存上下文、停止使用当前进程的栈等，第一个作用就是确保这些步骤的原子性</li>
+<li>启动进程的时候也需要保证原子性，让别的CPU看不到它，所以需要加锁，这里还需要注意的是，切换进程的时候，还要关闭中断，因为如果在切换到一半的时候产生了中断，会导致不好的后果，比如可能寄存器没切换完，造成混乱等。</li>
+</ol>
+<p>现在我们在循环中，先获取锁，然后开始切换进程，修改完状态后，再次调用swtch函数，这里切换到这次循环中命中的进程。这里注意，之前在sched里调用swtch是swtch(&amp;p-&gt;context, &amp;mycpu()-&gt;context)，而在这里是swtch(&amp;c-&gt;context, &amp;p-&gt;context)，也就是这里是保存CPU调度进程的上下文，恢复命中进程的上下文。这里恢复的ra就会是这个进程之前被调用swtch(&amp;p-&gt;context, &amp;mycpu()-&gt;context)返回的地址。</p>
+<p>这可能会带来一个问题，我们能看到其实每次调用swtch返回到的其实都是另一个之前的swtch的调用，那第一次swtch调用的时候会返回到哪里呢。看它返回的地址只要关注ra寄存器，第一个进程启动后会调用allocproc，其中会设置好ra寄存器和sp寄存器。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Set up new context to start executing at forkret,</span></span><br><span class="line"><span class="comment">// which returns to user space.</span></span><br><span class="line"><span class="built_in">memset</span>(&amp;p-&gt;context, <span class="number">0</span>, <span class="built_in">sizeof</span>(p-&gt;context));</span><br><span class="line">p-&gt;context.ra = (uint64)forkret;</span><br><span class="line">p-&gt;context.sp = p-&gt;kstack + PGSIZE;</span><br><span class="line"></span><br><span class="line"><span class="keyword">return</span> p;</span><br></pre></td></tr></table></figure>
+
+<p>即第一个swtch返回后会执行forkret中的内容。</p>
+<h1 id="Sleep-amp-Wake-up"><a href="#Sleep-amp-Wake-up" class="headerlink" title="Sleep &amp; Wake up"></a>Sleep &amp; Wake up</h1><h2 id="Code"><a href="#Code" class="headerlink" title="Code"></a>Code</h2><p>这是xv6中的sleep和wakeup的代码</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span></span></span><br><span class="line"><span class="function"><span class="title">sleep</span><span class="params">(<span class="type">void</span> *chan, <span class="keyword">struct</span> spinlock *lk)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">proc</span> *p = <span class="built_in">myproc</span>();</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// Must acquire p-&gt;lock in order to</span></span><br><span class="line">  <span class="comment">// change p-&gt;state and then call sched.</span></span><br><span class="line">  <span class="comment">// Once we hold p-&gt;lock, we can be</span></span><br><span class="line">  <span class="comment">// guaranteed that we won&#x27;t miss any wakeup</span></span><br><span class="line">  <span class="comment">// (wakeup locks p-&gt;lock),</span></span><br><span class="line">  <span class="comment">// so it&#x27;s okay to release lk.</span></span><br><span class="line"></span><br><span class="line">  <span class="built_in">acquire</span>(&amp;p-&gt;lock);  <span class="comment">//DOC: sleeplock1</span></span><br><span class="line">  <span class="built_in">release</span>(lk);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Go to sleep.</span></span><br><span class="line">  p-&gt;chan = chan;</span><br><span class="line">  p-&gt;state = SLEEPING;</span><br><span class="line"></span><br><span class="line">  <span class="built_in">sched</span>();</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Tidy up.</span></span><br><span class="line">  p-&gt;chan = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Reacquire original lock.</span></span><br><span class="line">  <span class="built_in">release</span>(&amp;p-&gt;lock);</span><br><span class="line">  <span class="built_in">acquire</span>(lk);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Wake up all processes sleeping on chan.</span></span><br><span class="line"><span class="comment">// Must be called without any p-&gt;lock.</span></span><br><span class="line"><span class="function"><span class="type">void</span></span></span><br><span class="line"><span class="function"><span class="title">wakeup</span><span class="params">(<span class="type">void</span> *chan)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">proc</span> *p;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span>(p = proc; p &lt; &amp;proc[NPROC]; p++) &#123;</span><br><span class="line">    <span class="keyword">if</span>(p != <span class="built_in">myproc</span>())&#123;</span><br><span class="line">      <span class="built_in">acquire</span>(&amp;p-&gt;lock);</span><br><span class="line">      <span class="keyword">if</span>(p-&gt;state == SLEEPING &amp;&amp; p-&gt;chan == chan) &#123;</span><br><span class="line">        p-&gt;state = RUNNABLE;</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="built_in">release</span>(&amp;p-&gt;lock);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>当我们需要进程或者线程等待一些特定事件的发生时，我们比较容易想到的就是使用循环实现busywait，但这种方式遇到等待事件发生的时间相对长的话，效率就会非常的低。</p>
+<p>更可靠的机制就是在等待时让出CPU，发生后获取CPU。</p>
+<p>之前有解答为什么sleep中要先获取锁，再释放锁，可能会有人想在调用sleep之前先释放锁，其实这样还是会带了中间的空窗期的问题导致丢失wakeup。</p>
+<p>我们还可以看到sleep里做了一个锁</p>
+<h1 id="Lab-Multithreading"><a href="#Lab-Multithreading" class="headerlink" title="Lab: Multithreading"></a>Lab: Multithreading</h1><h2 id="Uthread-switching-between-threads"><a href="#Uthread-switching-between-threads" class="headerlink" title="Uthread:switching between threads"></a>Uthread:switching between threads</h2><p>这个实验让我们实现用户态进程系统的上下文切换机制，根据提示，我们只要在user&#x2F;uthread.c中的thread_create()和thread_schedule()和user&#x2F;uthread_switch.S中添加代码即可。</p>
+<p>首先根据提示，我们需要修改thread结构体来保存上下文切换时的寄存器，所以我们根据之前代码里的寄存器设计一个结构体并添加到thread中</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">tcontext</span> &#123;</span><br><span class="line">  uint64 ra;</span><br><span class="line">  uint64 sp;</span><br><span class="line">  uint64 s0;</span><br><span class="line">  uint64 s1;</span><br><span class="line">  uint64 s2;</span><br><span class="line">  uint64 s3;</span><br><span class="line">  uint64 s4;</span><br><span class="line">  uint64 s5;</span><br><span class="line">  uint64 s6;</span><br><span class="line">  uint64 s7;</span><br><span class="line">  uint64 s8;</span><br><span class="line">  uint64 s9;</span><br><span class="line">  uint64 s10;</span><br><span class="line">  uint64 s11;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">thread</span> &#123;</span><br><span class="line">  <span class="type">char</span>       stack[STACK_SIZE]; <span class="comment">/* the thread&#x27;s stack */</span></span><br><span class="line">  <span class="type">int</span>        state;             <span class="comment">/* FREE, RUNNING, RUNNABLE */</span></span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">tcontext</span> context;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>然后在uthread_switch.S进行保存寄存器的操作，只要参考之前的swtch.S就行。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">	.globl thread_switch</span><br><span class="line">thread_switch:</span><br><span class="line">	sd ra, 0(a0)</span><br><span class="line">	sd sp, 8(a0)</span><br><span class="line">	sd s0, 16(a0)</span><br><span class="line">	sd s1, 24(a0)</span><br><span class="line">	sd s2, 32(a0)</span><br><span class="line">	sd s3, 40(a0)</span><br><span class="line">	sd s4, 48(a0)</span><br><span class="line">	sd s5, 56(a0)</span><br><span class="line">	sd s6, 64(a0)</span><br><span class="line">	sd s7, 72(a0)</span><br><span class="line">	sd s8, 80(a0)</span><br><span class="line">	sd s9, 88(a0)</span><br><span class="line">	sd s10, 96(a0)</span><br><span class="line">	sd s11, 104(a0)</span><br><span class="line"></span><br><span class="line">	ld ra, 0(a1)</span><br><span class="line">	ld sp, 8(a1)</span><br><span class="line">	ld s0, 16(a1)</span><br><span class="line">	ld s1, 24(a1)</span><br><span class="line">	ld s2, 32(a1)</span><br><span class="line">	ld s3, 40(a1)</span><br><span class="line">	ld s4, 48(a1)</span><br><span class="line">	ld s5, 56(a1)</span><br><span class="line">	ld s6, 64(a1)</span><br><span class="line">	ld s7, 72(a1)</span><br><span class="line">	ld s8, 80(a1)</span><br><span class="line">	ld s9, 88(a1)</span><br><span class="line">	ld s10, 96(a1)</span><br><span class="line">	ld s11, 104(a1)</span><br><span class="line">	ret    /* return to ra */</span><br></pre></td></tr></table></figure>
+
+<p>然后是thread_schedule</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 这里按要求是要调用上面的thread_switch</span></span><br><span class="line"><span class="comment">// 参数就是上面的上下文</span></span><br><span class="line"><span class="keyword">if</span> (current_thread != next_thread) &#123;         <span class="comment">/* switch threads?  */</span></span><br><span class="line">    next_thread-&gt;state = RUNNING;</span><br><span class="line">    t = current_thread;</span><br><span class="line">    current_thread = next_thread;</span><br><span class="line">    <span class="comment">/* YOUR CODE HERE</span></span><br><span class="line"><span class="comment">     * Invoke thread_switch to switch from t to next_thread:</span></span><br><span class="line"><span class="comment">     * thread_switch(??, ??);</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="built_in">thread_switch</span>((uint64)&amp;t-&gt;context, (uint64)&amp;current_thread-&gt;context);</span><br><span class="line">&#125; <span class="keyword">else</span></span><br><span class="line">    next_thread = <span class="number">0</span>;</span><br></pre></td></tr></table></figure>
+
+<p>最后是thread_create</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 这里和前面的第一次调用swtch比较像 也是要指定ra和sp寄存器</span></span><br><span class="line"><span class="function"><span class="type">void</span> </span></span><br><span class="line"><span class="function"><span class="title">thread_create</span><span class="params">(<span class="type">void</span> (*func)())</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">thread</span> *t;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> (t = all_thread; t &lt; all_thread + MAX_THREAD; t++) &#123;</span><br><span class="line">    <span class="keyword">if</span> (t-&gt;state == FREE) <span class="keyword">break</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  t-&gt;state = RUNNABLE;</span><br><span class="line">  <span class="comment">// YOUR CODE HERE</span></span><br><span class="line">  t-&gt;context.ra = (uint64)func;</span><br><span class="line">  t-&gt;context.sp = (uint64)t-&gt;stack + STACK_SIZE;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Using-threads"><a href="#Using-threads" class="headerlink" title="Using threads"></a>Using threads</h2><p>这个实验比较简单，应该就是让我们熟悉unix下的线程库。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 在最开始定义5个锁，分别负责对应的BUCKET</span></span><br><span class="line"><span class="type">pthread_mutex_t</span> lock[NBUCKET];</span><br><span class="line"></span><br><span class="line"><span class="comment">// 然后在main程序里最开始的地方初始化一下锁</span></span><br><span class="line"><span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; NBUCKET; i++) &#123;</span><br><span class="line">    <span class="built_in">pthread_mutex_init</span>(&amp;lock[i], <span class="literal">NULL</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 这里就是简单添加一下插入前后获取锁和释放锁</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">put</span><span class="params">(<span class="type">int</span> key, <span class="type">int</span> value)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="type">int</span> i = key % NBUCKET;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// is the key already present?</span></span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">entry</span> *e = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">for</span> (e = table[i]; e != <span class="number">0</span>; e = e-&gt;next) &#123;</span><br><span class="line">    <span class="keyword">if</span> (e-&gt;key == key)</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span>(e)&#123;</span><br><span class="line">    <span class="comment">// update the existing key.</span></span><br><span class="line">    e-&gt;value = value;</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="comment">// the new is new.</span></span><br><span class="line">    <span class="built_in">pthread_mutex_lock</span>(&amp;lock[i]);</span><br><span class="line">    <span class="built_in">insert</span>(key, value, &amp;table[i], table[i]);</span><br><span class="line">    <span class="built_in">pthread_mutex_unlock</span>(&amp;lock[i]);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Barrier"><a href="#Barrier" class="headerlink" title="Barrier"></a>Barrier</h2><p>这个让我们熟悉条件变量以及wait和broadcast,也比较简单</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">static</span> <span class="type">void</span> </span></span><br><span class="line"><span class="function"><span class="title">barrier</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="comment">// YOUR CODE HERE</span></span><br><span class="line">  <span class="comment">//</span></span><br><span class="line">  <span class="comment">// Block until all threads have called barrier() and</span></span><br><span class="line">  <span class="comment">// then increment bstate.round.</span></span><br><span class="line">  <span class="comment">//</span></span><br><span class="line">  <span class="built_in">pthread_mutex_lock</span>(&amp;bstate.barrier_mutex);</span><br><span class="line">  bstate.nthread++;</span><br><span class="line">  <span class="keyword">if</span> (bstate.nthread == nthread) &#123;</span><br><span class="line">    bstate.round++;</span><br><span class="line">    bstate.nthread = <span class="number">0</span>;</span><br><span class="line">    <span class="built_in">pthread_cond_broadcast</span>(&amp;bstate.barrier_cond);</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="built_in">pthread_cond_wait</span>(&amp;bstate.barrier_cond, &amp;bstate.barrier_mutex);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="built_in">pthread_mutex_unlock</span>(&amp;bstate.barrier_mutex);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/07/06/STL/" rel="prev" title="STL">
+                  <i class="fa fa-chevron-left"></i> STL
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/08/25/Locks/" rel="next" title="Locks">
+                  Locks <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Wang Wenhui</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>

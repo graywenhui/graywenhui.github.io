@@ -125,7 +125,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">43</span>
+          <span class="site-state-item-count">46</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -165,6 +165,377 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/08/25/FileSystem/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Wang Wenhui">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Gray's Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Gray's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2023/08/25/FileSystem/" class="post-title-link" itemprop="url">FileSystem</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-08-25 17:56:22" itemprop="dateCreated datePublished" datetime="2023-08-25T17:56:22+08:00">2023-08-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-08-28 19:40:24" itemprop="dateModified" datetime="2023-08-28T19:40:24+08:00">2023-08-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/6-S081-Lab/" itemprop="url" rel="index"><span itemprop="name">6.S081 Lab</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+	<div>
+		
+	</div>
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><p>xv6文件系统分为7层，从底层网上依次是磁盘（Disk）、缓冲区高速缓存（Buffer cache）、日志（Logging）、索引结点（Inode）、目录（Directory）、路径名（Pathname）、文件描述符（File descriptor）。</p>
+<p>磁盘读取和写入virtio硬盘上的块（磁盘被分为一个个块）。缓冲区高速缓存缓存经常访问的块并同步对它们的访问。日志可以将多个更新操作包装到一个事务中，确保遇到崩溃时自动更新这些块，即保证这些更新操作要么全部成功，要么全部失败，它可以使用日志信息进行数据的还原和恢复。索引结点提供单独的文件，每个文件表示为一个索引结点，包含唯一的索引号（i-number）和保存文件数据的块。目录层将每个目录实现为一个特殊的索引结点，内容时一系列的目录项，每个目录项包含一个文件名和索引号，这点可以参照之前的lab用到的一些调用，比如fstat和相关的函数，就可以理解其中的意思了。路径名提供分层路径名，通过递归查找来解析它们。文件描述符是最高层的抽象，抽象了许多资源。</p>
+<h2 id="Buffer-cache"><a href="#Buffer-cache" class="headerlink" title="Buffer cache"></a>Buffer cache</h2><p>两个任务：</p>
+<ol>
+<li>同步访问</li>
+<li>缓存常用块</li>
+</ol>
+<p>主要接口是bread和bwrite，前者获取一个buf，进行读取或修改；后者能将更新写入磁盘。做操作之前还需要调用brelse释放缓冲区的锁。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/08/25/Locks/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Wang Wenhui">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Gray's Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Gray's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2023/08/25/Locks/" class="post-title-link" itemprop="url">Locks</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-08-25 00:10:28" itemprop="dateCreated datePublished" datetime="2023-08-25T00:10:28+08:00">2023-08-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-08-30 20:20:12" itemprop="dateModified" datetime="2023-08-30T20:20:12+08:00">2023-08-30</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/6-S081-Lab/" itemprop="url" rel="index"><span itemprop="name">6.S081 Lab</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+	<div>
+		
+	</div>
+    <div class="post-body" itemprop="articleBody">
+          <h2 id="Memory-allocator"><a href="#Memory-allocator" class="headerlink" title="Memory allocator"></a>Memory allocator</h2><p>这个实验是让我们解决锁争用的问题，原代码中我们在多CPU上运行的时候，只有一个空闲列表和一个空闲锁，导致即使是多CPU,实际上也只能有单个CPU能访问到，所以我们要为每个CPU维护一个空闲队列和锁。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 先将原来的单个kmem改为数组</span></span><br><span class="line"><span class="keyword">struct</span> &#123;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">spinlock</span> lock;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">run</span> *freelist;</span><br><span class="line">&#125; kmem[NCPU];</span><br></pre></td></tr></table></figure>
+
+<p>修改kinit，这里就是把原来的初始化一个变为为每个CPU都初始化，用到了实验里说到的snprintf来格式化名字。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span></span></span><br><span class="line"><span class="function"><span class="title">kinit</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="type">char</span> lockname[<span class="number">8</span>];</span><br><span class="line">  <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; NCPU; i++) &#123;</span><br><span class="line">    <span class="built_in">snprintf</span>(lockname, <span class="built_in">sizeof</span>(lockname), <span class="string">&quot;kmem_%d&quot;</span>, i);</span><br><span class="line">    <span class="built_in">initlock</span>(&amp;kmem[i].lock, lockname);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="built_in">freerange</span>(end, (<span class="type">void</span>*)PHYSTOP);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>接着是kfree，按要求里的提示“The function <code>cpuid</code> returns the current core number, but it’s only safe to call it and use its result when interrupts are turned off. You should use <code>push_off()</code> and <code>pop_off()</code> to turn interrupts off and on”，所以我们在获取cpuid的前后要关闭中断和打开中断。这里可能有疑问为什么要在最后再打开中断。7.4节中有提到，如果定时器中断并导致移动到另一个cpu，那这个cpuid将不再正确，所以要求在使用完返回值后再打开中断。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span></span></span><br><span class="line"><span class="function"><span class="title">kfree</span><span class="params">(<span class="type">void</span> *pa)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">run</span> *r;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span>(((uint64)pa % PGSIZE) != <span class="number">0</span> || (<span class="type">char</span>*)pa &lt; end || (uint64)pa &gt;= PHYSTOP)</span><br><span class="line">    <span class="built_in">panic</span>(<span class="string">&quot;kfree&quot;</span>);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Fill with junk to catch dangling refs.</span></span><br><span class="line">  <span class="built_in">memset</span>(pa, <span class="number">1</span>, PGSIZE);</span><br><span class="line"></span><br><span class="line">  r = (<span class="keyword">struct</span> run*)pa;</span><br><span class="line"></span><br><span class="line">  <span class="built_in">push_off</span>();</span><br><span class="line">  <span class="type">int</span> id = <span class="built_in">cpuid</span>();</span><br><span class="line">  <span class="built_in">acquire</span>(&amp;kmem[id].lock);</span><br><span class="line">  r-&gt;next = kmem[id].freelist;</span><br><span class="line">  kmem[id].freelist = r;</span><br><span class="line">  <span class="built_in">release</span>(&amp;kmem[id].lock);</span><br><span class="line">  <span class="built_in">pop_off</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>最后是kalloc</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> *</span></span><br><span class="line"><span class="function"><span class="title">kalloc</span><span class="params">(<span class="type">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">run</span> *r;</span><br><span class="line"></span><br><span class="line">  <span class="built_in">push_off</span>();</span><br><span class="line">  <span class="type">int</span> id = <span class="built_in">cpuid</span>();</span><br><span class="line">  <span class="built_in">acquire</span>(&amp;kmem[id].lock);</span><br><span class="line">  r = kmem[id].freelist;</span><br><span class="line">  <span class="keyword">if</span>(r)</span><br><span class="line">    kmem[id].freelist = r-&gt;next;</span><br><span class="line">  <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; NCPU; i++) &#123;</span><br><span class="line">      <span class="keyword">if</span> (i == id)</span><br><span class="line">        <span class="keyword">continue</span>;</span><br><span class="line">      <span class="built_in">acquire</span>(&amp;kmem[i].lock);</span><br><span class="line">      r = kmem[i].freelist;</span><br><span class="line">      <span class="keyword">if</span> (r) &#123;</span><br><span class="line">        kmem[i].freelist = r-&gt;next;</span><br><span class="line">        <span class="built_in">release</span>(&amp;kmem[i].lock);</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="built_in">release</span>(&amp;kmem[i].lock);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="built_in">release</span>(&amp;kmem[id].lock);</span><br><span class="line">  <span class="built_in">pop_off</span>();</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span>(r)</span><br><span class="line">    <span class="built_in">memset</span>((<span class="type">char</span>*)r, <span class="number">5</span>, PGSIZE); <span class="comment">// fill with junk</span></span><br><span class="line">  <span class="keyword">return</span> (<span class="type">void</span>*)r;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p> 这里主要做的修改是else的部分，主要就是在当前cpu上没有空闲内存后就获取别的cpu上的空闲内存。</p>
+<h2 id="Buffer-cache"><a href="#Buffer-cache" class="headerlink" title="Buffer cache"></a>Buffer cache</h2><p>这个实验和上个实验差不多，也是解决锁争用的问题，不过细节方面更多。</p>
+<p>先看它给的第一个hint：It  is OK to use a fixed number of buckets and not resize the hash table dynamically. Use a prime number of buckets (e.g., 13) to reduce the likelihood of hashing conflicts.<br>我们先按要求设计哈希桶。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">define</span> NBUCKET 13</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> HASH(id) (id % NBUCKET)</span></span><br><span class="line"><span class="comment">// 规则</span></span><br><span class="line"><span class="comment">// 相同的key值通过链表连接在一起</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">hashbuf</span> &#123;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">buf</span> head;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">spinlock</span> lock;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> &#123;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">buf</span> buf[NBUF];</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">hashbuf</span> buckets[NBUCKET];</span><br><span class="line">  <span class="comment">// Linked list of all buffers, through prev/next.</span></span><br><span class="line">  <span class="comment">// Sorted by how recently the buffer was used.</span></span><br><span class="line">  <span class="comment">// head.next is most recent, head.prev is least.</span></span><br><span class="line">  </span><br><span class="line">  <span class="comment">//struct buf head;</span></span><br><span class="line">&#125; bcache;</span><br></pre></td></tr></table></figure>
+
+<p>修改binit，和第一个实验一样，每个桶都单独初始化一个锁，然后将所有缓冲区先挂在桶0上。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span></span></span><br><span class="line"><span class="function"><span class="title">binit</span><span class="params">(<span class="type">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">buf</span> *b;</span><br><span class="line">  <span class="type">char</span> lockname[<span class="number">16</span>];</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; NBUCKET; i++) &#123;</span><br><span class="line">    <span class="built_in">snprintf</span>(lockname, <span class="built_in">sizeof</span>(lockname), <span class="string">&quot;bcache_%d&quot;</span>, i);</span><br><span class="line">    <span class="built_in">initlock</span>(&amp;bcache.buckets[i].lock, lockname);</span><br><span class="line"></span><br><span class="line">    bcache.buckets[i].head.prev = &amp;bcache.buckets[i].head;</span><br><span class="line">    bcache.buckets[i].head.next = &amp;bcache.buckets[i].head;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Create linked list of buffers</span></span><br><span class="line">  <span class="keyword">for</span>(b = bcache.buf; b &lt; bcache.buf+NBUF; b++)&#123;</span><br><span class="line">    b-&gt;next = bcache.buckets[<span class="number">0</span>].head.next;</span><br><span class="line">    b-&gt;prev = &amp;bcache.buckets[<span class="number">0</span>].head;</span><br><span class="line">    <span class="built_in">initsleeplock</span>(&amp;b-&gt;lock, <span class="string">&quot;buffer&quot;</span>);</span><br><span class="line">    bcache.buckets[<span class="number">0</span>].head.next-&gt;prev = b;</span><br><span class="line">    bcache.buckets[<span class="number">0</span>].head.next = b;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>提示里还让我们修改实现LRU的方式，就是增加一个时间字段，值越小代表最久未使用。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">buf</span> &#123;</span><br><span class="line">  <span class="type">int</span> valid;   <span class="comment">// has data been read from disk?</span></span><br><span class="line">  <span class="type">int</span> disk;    <span class="comment">// does disk &quot;own&quot; buf?</span></span><br><span class="line">  uint dev;</span><br><span class="line">  uint blockno;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">sleeplock</span> lock;</span><br><span class="line">  uint refcnt;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">buf</span> *prev; <span class="comment">// LRU cache list</span></span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">buf</span> *next;</span><br><span class="line">  uchar data[BSIZE];</span><br><span class="line">  uint time;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 原来的设计中这里会将缓冲改到头，但现在只会修改时间戳。</span></span><br><span class="line"><span class="function"><span class="type">void</span></span></span><br><span class="line"><span class="function"><span class="title">brelse</span><span class="params">(<span class="keyword">struct</span> buf *b)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">if</span>(!<span class="built_in">holdingsleep</span>(&amp;b-&gt;lock))</span><br><span class="line">    <span class="built_in">panic</span>(<span class="string">&quot;brelse&quot;</span>);</span><br><span class="line"></span><br><span class="line">  <span class="type">int</span> bid = <span class="built_in">HASH</span>(b-&gt;blockno);</span><br><span class="line"></span><br><span class="line">  <span class="built_in">releasesleep</span>(&amp;b-&gt;lock);</span><br><span class="line"></span><br><span class="line">  <span class="built_in">acquire</span>(&amp;bcache.buckets[bid].lock);</span><br><span class="line">  b-&gt;refcnt--;</span><br><span class="line"></span><br><span class="line">  <span class="built_in">acquire</span>(&amp;tickslock);</span><br><span class="line">  b-&gt;time = ticks;</span><br><span class="line">  <span class="built_in">release</span>(&amp;tickslock);</span><br><span class="line">  </span><br><span class="line">  <span class="built_in">release</span>(&amp;bcache.buckets[bid].lock);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>然后修改bget</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">static</span> <span class="keyword">struct</span> <span class="title class_">buf</span>*</span><br><span class="line"><span class="built_in">bget</span>(uint dev, uint blockno)</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">buf</span> *b;</span><br><span class="line"></span><br><span class="line">  <span class="type">int</span> bid = <span class="built_in">HASH</span>(blockno);</span><br><span class="line">  <span class="built_in">acquire</span>(&amp;bcache.buckets[bid].lock);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Is the block already cached?</span></span><br><span class="line">  <span class="comment">// 如果已经缓存了就增加计数然后更新时间戳</span></span><br><span class="line">  <span class="keyword">for</span>(b = bcache.buckets[bid].head.next; b != &amp;bcache.buckets[bid].head; b = b-&gt;next)&#123;</span><br><span class="line">    <span class="keyword">if</span>(b-&gt;dev == dev &amp;&amp; b-&gt;blockno == blockno)&#123;</span><br><span class="line">      b-&gt;refcnt++;</span><br><span class="line"></span><br><span class="line">      <span class="built_in">acquire</span>(&amp;tickslock);</span><br><span class="line">      b-&gt;time = ticks;</span><br><span class="line">      <span class="built_in">release</span>(&amp;tickslock);</span><br><span class="line"></span><br><span class="line">      <span class="built_in">release</span>(&amp;bcache.buckets[bid].lock);</span><br><span class="line">      <span class="built_in">acquiresleep</span>(&amp;b-&gt;lock);</span><br><span class="line">      <span class="keyword">return</span> b;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Not cached.</span></span><br><span class="line">  <span class="comment">// Recycle the least recently used (LRU) unused buffer.</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">// 没有缓存就先从当前的桶开始遍历，找到最近最少使用的缓冲区</span></span><br><span class="line">  b = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">buf</span> * tmp;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span>(<span class="type">int</span> i = bid, cycle = <span class="number">0</span>; cycle != NBUCKET; i = (i + <span class="number">1</span>) % NBUCKET)&#123;</span><br><span class="line">    cycle++;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (i != bid) &#123;</span><br><span class="line">      <span class="comment">// 这里要防止锁的重获取问题</span></span><br><span class="line">      <span class="keyword">if</span> (!<span class="built_in">holding</span>(&amp;bcache.buckets[i].lock))</span><br><span class="line">        <span class="built_in">acquire</span>(&amp;bcache.buckets[i].lock);</span><br><span class="line">      <span class="keyword">else</span> </span><br><span class="line">        <span class="keyword">continue</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> ( tmp = bcache.buckets[i].head.next; tmp != &amp;bcache.buckets[i].head; tmp = tmp-&gt;next) &#123;</span><br><span class="line">      <span class="comment">// 找到之前没用过的或者时间最早的</span></span><br><span class="line">      <span class="keyword">if</span> (tmp-&gt;refcnt == <span class="number">0</span> &amp;&amp; (b == <span class="number">0</span> || tmp-&gt;time &lt; b-&gt;time))</span><br><span class="line">        b = tmp;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (b) &#123;</span><br><span class="line">      <span class="keyword">if</span> (i != bid) &#123;</span><br><span class="line">        <span class="comment">// 将找到的缓冲区从原桶移到当前桶</span></span><br><span class="line">        b-&gt;next-&gt;prev = b-&gt;prev;</span><br><span class="line">        b-&gt;prev-&gt;next = b-&gt;next;</span><br><span class="line">        <span class="built_in">release</span>(&amp;bcache.buckets[i].lock);</span><br><span class="line"></span><br><span class="line">        b-&gt;next = bcache.buckets[bid].head.next;</span><br><span class="line">        b-&gt;prev = &amp;bcache.buckets[bid].head;</span><br><span class="line">        bcache.buckets[bid].head.next-&gt;prev = b;</span><br><span class="line">        bcache.buckets[bid].head.next = b;</span><br><span class="line">      &#125;</span><br><span class="line">      </span><br><span class="line">      b-&gt;dev = dev;</span><br><span class="line">      b-&gt;blockno = blockno;</span><br><span class="line">      b-&gt;valid = <span class="number">0</span>;</span><br><span class="line">      b-&gt;refcnt = <span class="number">1</span>;</span><br><span class="line">      <span class="built_in">acquire</span>(&amp;tickslock);</span><br><span class="line">      b-&gt;time = ticks;</span><br><span class="line">      <span class="built_in">release</span>(&amp;tickslock);</span><br><span class="line"></span><br><span class="line">      <span class="built_in">release</span>(&amp;bcache.buckets[bid].lock);</span><br><span class="line">      <span class="built_in">acquiresleep</span>(&amp;b-&gt;lock);</span><br><span class="line">      <span class="keyword">return</span> b;</span><br><span class="line"></span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      <span class="keyword">if</span> (i != bid)</span><br><span class="line">        <span class="built_in">release</span>(&amp;bcache.buckets[i].lock);</span><br><span class="line">      <span class="comment">//return b; </span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="built_in">panic</span>(<span class="string">&quot;bget: no buffers&quot;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>最后简单修改两个函数</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span></span></span><br><span class="line"><span class="function"><span class="title">bpin</span><span class="params">(<span class="keyword">struct</span> buf *b)</span> </span>&#123;</span><br><span class="line">  <span class="type">int</span> bid = <span class="built_in">HASH</span>(b-&gt;blockno);</span><br><span class="line">  <span class="built_in">acquire</span>(&amp;bcache.buckets[bid].lock);</span><br><span class="line">  b-&gt;refcnt++;</span><br><span class="line">  <span class="built_in">release</span>(&amp;bcache.buckets[bid].lock);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span></span></span><br><span class="line"><span class="function"><span class="title">bunpin</span><span class="params">(<span class="keyword">struct</span> buf *b)</span> </span>&#123;</span><br><span class="line">  <span class="type">int</span> bid = <span class="built_in">HASH</span>(b-&gt;blockno);</span><br><span class="line">  <span class="built_in">acquire</span>(&amp;bcache.buckets[bid].lock);</span><br><span class="line">  b-&gt;refcnt--;</span><br><span class="line">  <span class="built_in">release</span>(&amp;bcache.buckets[bid].lock);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/08/14/Multithreading/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Wang Wenhui">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Gray's Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Gray's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2023/08/14/Multithreading/" class="post-title-link" itemprop="url">Multithreading</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-08-14 19:40:26" itemprop="dateCreated datePublished" datetime="2023-08-14T19:40:26+08:00">2023-08-14</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-08-25 00:06:52" itemprop="dateModified" datetime="2023-08-25T00:06:52+08:00">2023-08-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/6-S081-Lab/" itemprop="url" rel="index"><span itemprop="name">6.S081 Lab</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+	<div>
+		
+	</div>
+    <div class="post-body" itemprop="articleBody">
+          <p>之前学习的时候对为什么sleep内部要先释放锁，被唤醒以后再获得锁有点一直半解，学完以后就了解了。</p>
+<h1 id="为什么会有sleep和wakeup"><a href="#为什么会有sleep和wakeup" class="headerlink" title="为什么会有sleep和wakeup"></a>为什么会有sleep和wakeup</h1><p>原先的信号量同步机制，v操作和p操作可能是这样的</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">semaphore</span> &#123;</span><br><span class="line">    <span class="keyword">struct</span> <span class="title class_">spinlock</span> lock;</span><br><span class="line">    <span class="type">int</span> count;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">V</span><span class="params">(<span class="keyword">struct</span> semaphore* s)</span> </span>&#123;</span><br><span class="line">    <span class="built_in">acquire</span>(&amp;s-&gt;lock);</span><br><span class="line">    s-&gt;count += <span class="number">1</span>;</span><br><span class="line">    <span class="built_in">release</span>(&amp;s-&gt;lock);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">P</span><span class="params">(<span class="keyword">struct</span> semaphore* s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">while</span> (s-&gt;count == <span class="number">0</span>)</span><br><span class="line">        ;</span><br><span class="line">    <span class="built_in">acquire</span>(&amp;s-&gt;lock);</span><br><span class="line">    s-&gt;count -= <span class="number">1</span>;</span><br><span class="line">    <span class="built_in">release</span>(&amp;s-&gt;lock);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在这样的情况下，（消费者）大部分时间都是在while循环中繁忙等待，我们希望有一种行为，它能够在等待的时候释放cpu，直到有其他调用将它唤醒，这样就不会将cpu浪费的循环中了。假设这样的一对调用（等待，和唤醒）为sleep和wakeup，并且它们的参数都只有一个semaphore类型的变量。</p>
+<p>这时候pv操作可能变成这样：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">V</span><span class="params">(<span class="keyword">struct</span> semaphore* s)</span> </span>&#123;</span><br><span class="line">    <span class="built_in">acquire</span>(&amp;s-&gt;lock);</span><br><span class="line">    s-&gt;count += <span class="number">1</span>;</span><br><span class="line">    <span class="built_in">wakeup</span>(s);  <span class="comment">// !pay attention</span></span><br><span class="line">    <span class="built_in">release</span>(&amp;s-&gt;lock);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">P</span><span class="params">(<span class="keyword">struct</span> semaphore* s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">while</span> (s-&gt;count == <span class="number">0</span>)</span><br><span class="line">        <span class="built_in">sleep</span>(s);  <span class="comment">// !pay attention</span></span><br><span class="line">    <span class="built_in">acquire</span>(&amp;s-&gt;lock);</span><br><span class="line">    s-&gt;count -= <span class="number">1</span>;</span><br><span class="line">    <span class="built_in">release</span>(&amp;s-&gt;lock);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这样又带来了一个新的问题，可能会丢失唤醒。如果有个进程调用p，p发现s-&gt;count为0，接着要执行sleep(s)，但在执行sleep之前，在这中间的时间段中，有另一个进程调用了v，将count++并且掉用wakeup，这时第一个进程还没开始调用sleep，所以它调用以后会需要等待下一个wakeup，这就丢失了之前的wakeup。</p>
+<p>根本原因是，v在不该运行的时候运行，违反了不变量-p只有在s-&gt;count&#x3D;&#x3D;0的时候才sleep，p在判断并且进入sleep之间，其他进程是不应该调用到wakeup的，所以我们立马想到应该加一个锁或者改变锁的位置，于是代码可能变成了这样。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">V</span><span class="params">(<span class="keyword">struct</span> semaphore* s)</span> </span>&#123;</span><br><span class="line">    <span class="built_in">acquire</span>(&amp;s-&gt;lock);</span><br><span class="line">    s-&gt;count += <span class="number">1</span>;</span><br><span class="line">    <span class="built_in">wakeup</span>(s);</span><br><span class="line">    <span class="built_in">release</span>(&amp;s-&gt;lock);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">P</span><span class="params">(<span class="keyword">struct</span> semaphore* s)</span> </span>&#123;</span><br><span class="line">    <span class="built_in">acquire</span>(&amp;s-&gt;lock);</span><br><span class="line">    <span class="keyword">while</span> (s-&gt;count == <span class="number">0</span>)</span><br><span class="line">        <span class="built_in">sleep</span>(s);</span><br><span class="line">    s-&gt;count -= <span class="number">1</span>;</span><br><span class="line">    <span class="built_in">release</span>(&amp;s-&gt;lock);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这又带来了一个新的问题，大家可以很快发现这一定会死锁。因为p在sleep的时候是获取着锁的，这意味着没有一个进程能成功在V中走到wakeup这步。</p>
+<p>所以我们需要更改sleep内部的内容。我们需要传递一个在sleep内需要先释放的锁，以便其他进程能够成功调用V，并且在需要睡眠的进程没有sleep之前将一直阻塞，知道需要睡眠等待的进程进入sleep并释放锁以后，才能获取到锁。在调用完wakeup后，睡眠的进程在被唤醒前又会再次获得锁。需要注意的是，这里传的锁就是之前已经传的结构体中的一个成员，为什么要传呢。因为其他的情况中，sleep的第一个参数可能没有锁，也可能需要获得的是另一个锁，所以还是需要传入一个锁的参数的。</p>
+<p>上面的内容也就解决了为什么sleep内部要先释放锁，被唤醒以后再获得锁的问题。</p>
+<h1 id="Thread-switching"><a href="#Thread-switching" class="headerlink" title="Thread switching"></a>Thread switching</h1><p>假如有两个线程相互间切换，宏观上需要走这么一个过程：先从第一个用户进程进入内核，保存该进程的状态并运行该线程的内核线程，然后从该内核线程切换到第二个用户进程对应的内核进程，该内核进程暂停自己，恢复对应用户进程的状态（第二个用户进程），回到用户进程中。</p>
+<p>更细致一点：定时器中断导致CPU从用户态进入内核态，trampoline将用户寄存器保存到进程对应的trapframe里；然后内核会执行usertrap代码，执行相应的中断处理程序，完了后会调用swtch函数；该函数保存用户进程对应的内核线程的寄存器到context对象。</p>
+<h2 id="void-yield-void-调用"><a href="#void-yield-void-调用" class="headerlink" title="void yield(void) 调用"></a>void yield(void) 调用</h2><p>在usertrap代码中我们能看到，当检测到是定时器中断时，会调用yield()</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 前面的代码在判断是中断后</span></span><br><span class="line"><span class="comment">// 会调用which_dev = devintr()</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// give up the CPU if this is a timer interrupt.</span></span><br><span class="line"><span class="keyword">if</span>(which_dev == <span class="number">2</span>)</span><br><span class="line">    <span class="built_in">yield</span>();</span><br></pre></td></tr></table></figure>
+
+<p>yield函数如下</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Give up the CPU for one scheduling round.</span></span><br><span class="line"><span class="function"><span class="type">void</span></span></span><br><span class="line"><span class="function"><span class="title">yield</span><span class="params">(<span class="type">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">proc</span> *p = <span class="built_in">myproc</span>();</span><br><span class="line">  <span class="built_in">acquire</span>(&amp;p-&gt;lock);</span><br><span class="line">  p-&gt;state = RUNNABLE;</span><br><span class="line">  <span class="built_in">sched</span>();</span><br><span class="line">  <span class="built_in">release</span>(&amp;p-&gt;lock);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>比较简单，获取锁，然后修改进程的状态，接着调用sched()，然后释放锁</p>
+<h2 id="void-sched-void-调用"><a href="#void-sched-void-调用" class="headerlink" title="void sched(void) 调用"></a>void sched(void) 调用</h2><p>sched函数如下，前面做了一些检查，然后就调用swtch()</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Switch to scheduler.  Must hold only p-&gt;lock</span></span><br><span class="line"><span class="comment">// and have changed proc-&gt;state. Saves and restores</span></span><br><span class="line"><span class="comment">// intena because intena is a property of this</span></span><br><span class="line"><span class="comment">// kernel thread, not this CPU. It should</span></span><br><span class="line"><span class="comment">// be proc-&gt;intena and proc-&gt;noff, but that would</span></span><br><span class="line"><span class="comment">// break in the few places where a lock is held but</span></span><br><span class="line"><span class="comment">// there&#x27;s no process.</span></span><br><span class="line"><span class="function"><span class="type">void</span></span></span><br><span class="line"><span class="function"><span class="title">sched</span><span class="params">(<span class="type">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="type">int</span> intena;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">proc</span> *p = <span class="built_in">myproc</span>();</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span>(!<span class="built_in">holding</span>(&amp;p-&gt;lock))</span><br><span class="line">    <span class="built_in">panic</span>(<span class="string">&quot;sched p-&gt;lock&quot;</span>);</span><br><span class="line">  <span class="keyword">if</span>(<span class="built_in">mycpu</span>()-&gt;noff != <span class="number">1</span>)</span><br><span class="line">    <span class="built_in">panic</span>(<span class="string">&quot;sched locks&quot;</span>);</span><br><span class="line">  <span class="keyword">if</span>(p-&gt;state == RUNNING)</span><br><span class="line">    <span class="built_in">panic</span>(<span class="string">&quot;sched running&quot;</span>);</span><br><span class="line">  <span class="keyword">if</span>(<span class="built_in">intr_get</span>())</span><br><span class="line">    <span class="built_in">panic</span>(<span class="string">&quot;sched interruptible&quot;</span>);</span><br><span class="line"></span><br><span class="line">  intena = <span class="built_in">mycpu</span>()-&gt;intena;</span><br><span class="line">  <span class="built_in">swtch</span>(&amp;p-&gt;context, &amp;<span class="built_in">mycpu</span>()-&gt;context);</span><br><span class="line">  <span class="built_in">mycpu</span>()-&gt;intena = intena;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="void-swtch-struct-context-struct-context-调用"><a href="#void-swtch-struct-context-struct-context-调用" class="headerlink" title="void swtch(struct context*, struct context*) 调用"></a>void swtch(struct context*, struct context*) 调用</h2><p>swtch函数如下，是汇编代码</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"># Context <span class="keyword">switch</span></span><br><span class="line">#</span><br><span class="line"><span class="meta">#   void swtch(struct context *old, struct context *new);</span></span><br><span class="line"># </span><br><span class="line"># Save current registers in old. Load from <span class="keyword">new</span>.	</span><br><span class="line"></span><br><span class="line">.globl swtch</span><br><span class="line">swtch:</span><br><span class="line">        sd ra, <span class="number">0</span>(a0)</span><br><span class="line">        sd sp, <span class="number">8</span>(a0)</span><br><span class="line">        sd s0, <span class="number">16</span>(a0)</span><br><span class="line">        sd s1, <span class="number">24</span>(a0)</span><br><span class="line">        sd s2, <span class="number">32</span>(a0)</span><br><span class="line">        sd s3, <span class="number">40</span>(a0)</span><br><span class="line">        sd s4, <span class="number">48</span>(a0)</span><br><span class="line">        sd s5, <span class="number">56</span>(a0)</span><br><span class="line">        sd s6, <span class="number">64</span>(a0)</span><br><span class="line">        sd s7, <span class="number">72</span>(a0)</span><br><span class="line">        sd s8, <span class="number">80</span>(a0)</span><br><span class="line">        sd s9, <span class="number">88</span>(a0)</span><br><span class="line">        sd s10, <span class="number">96</span>(a0)</span><br><span class="line">        sd s11, <span class="number">104</span>(a0)</span><br><span class="line"></span><br><span class="line">        ld ra, <span class="number">0</span>(a1)</span><br><span class="line">        ld sp, <span class="number">8</span>(a1)</span><br><span class="line">        ld s0, <span class="number">16</span>(a1)</span><br><span class="line">        ld s1, <span class="number">24</span>(a1)</span><br><span class="line">        ld s2, <span class="number">32</span>(a1)</span><br><span class="line">        ld s3, <span class="number">40</span>(a1)</span><br><span class="line">        ld s4, <span class="number">48</span>(a1)</span><br><span class="line">        ld s5, <span class="number">56</span>(a1)</span><br><span class="line">        ld s6, <span class="number">64</span>(a1)</span><br><span class="line">        ld s7, <span class="number">72</span>(a1)</span><br><span class="line">        ld s8, <span class="number">80</span>(a1)</span><br><span class="line">        ld s9, <span class="number">88</span>(a1)</span><br><span class="line">        ld s10, <span class="number">96</span>(a1)</span><br><span class="line">        ld s11, <span class="number">104</span>(a1)</span><br><span class="line">        </span><br><span class="line">        ret</span><br></pre></td></tr></table></figure>
+
+<p>a0是传入的第一个参数，a1是传入的第二个参数，结合sched调用里传入的参数和代码注释，不难看出作用就是将当前内核线程的寄存器中的内容保存到p-&gt;context结构体里,然后将c-&gt;context中的内容加载在当前内核线程的寄存器中。这里的p是当前线程的结构体，c是当前CPU的结构体。c-&gt;context里保存的是当前CPU的调度器线程的寄存器（每个CPU核都有一个进行调度的线程）。</p>
+<p>这里值得注意的是ra寄存器，因为ra寄存器存放的是函数返回的地址。指向了sched函数中调用swtch结束的地方，这是一开始当前线程ra寄存器。后面执行ld ra, 0(a1)的时候，ra寄存器里的内容就变成了scheduler函数的地址，所以我们执行ret的时候，就进入到了调度器线程里，并且在执行scheduler函数中的一部分，这里应该是swtch调用完后的c-&gt;proc &#x3D; 0(见下文)。</p>
+<h2 id="void-scheduler-void-调用"><a href="#void-scheduler-void-调用" class="headerlink" title="void scheduler(void) 调用"></a>void scheduler(void) 调用</h2><p>scheduler函数如下</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Per-CPU process scheduler.</span></span><br><span class="line"><span class="comment">// Each CPU calls scheduler() after setting itself up.</span></span><br><span class="line"><span class="comment">// Scheduler never returns.  It loops, doing:</span></span><br><span class="line"><span class="comment">//  - choose a process to run.</span></span><br><span class="line"><span class="comment">//  - swtch to start running that process.</span></span><br><span class="line"><span class="comment">//  - eventually that process transfers control</span></span><br><span class="line"><span class="comment">//    via swtch back to the scheduler.</span></span><br><span class="line"><span class="function"><span class="type">void</span></span></span><br><span class="line"><span class="function"><span class="title">scheduler</span><span class="params">(<span class="type">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">proc</span> *p;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">cpu</span> *c = <span class="built_in">mycpu</span>();</span><br><span class="line">  </span><br><span class="line">  c-&gt;proc = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">for</span>(;;)&#123;</span><br><span class="line">    <span class="comment">// Avoid deadlock by ensuring that devices can interrupt.</span></span><br><span class="line">    <span class="built_in">intr_on</span>();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span>(p = proc; p &lt; &amp;proc[NPROC]; p++) &#123;</span><br><span class="line">      <span class="built_in">acquire</span>(&amp;p-&gt;lock);</span><br><span class="line">      <span class="keyword">if</span>(p-&gt;state == RUNNABLE) &#123;</span><br><span class="line">        <span class="comment">// Switch to chosen process.  It is the process&#x27;s job</span></span><br><span class="line">        <span class="comment">// to release its lock and then reacquire it</span></span><br><span class="line">        <span class="comment">// before jumping back to us.</span></span><br><span class="line">        p-&gt;state = RUNNING;</span><br><span class="line">        c-&gt;proc = p;</span><br><span class="line">        <span class="built_in">swtch</span>(&amp;c-&gt;context, &amp;p-&gt;context);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Process is done running for now.</span></span><br><span class="line">        <span class="comment">// It should have changed its p-&gt;state before coming back.</span></span><br><span class="line">        c-&gt;proc = <span class="number">0</span>;</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="built_in">release</span>(&amp;p-&gt;lock);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里有一个需要注意的地方就是，我们现在是在调用swtch函数的返回状态，不过不是在上面的swtch函数返回，而是在之前CPU调用的返回状态，之前调用的结果是CPU运行了我们刚刚中断了的进程。这么说可能有点绕，可以理解为因为汇编代码修改了ra的内容，所以函数返回在时间上有延迟，现在返回的是之前的运行的swtch函数，而我们刚刚运行的swtch函数其实还没有返回。</p>
+<p>继续看代码的内容，这时候从swtch函数调用返回，下一步执行c-&gt;proc &#x3D; 0修改状态，表明这时候CPU没有在运行进程。然后释放锁，这里释放的锁是之前在yield里获取的锁，在yield里我们没有完全完成yield进入runable时有别的CPU能运行它，现在已经完全进入runable状态了所以我们释放锁。</p>
+<p>p-&gt;lock的两个作用：</p>
+<ol>
+<li>让出CPU有几步，改状态、保存上下文、停止使用当前进程的栈等，第一个作用就是确保这些步骤的原子性</li>
+<li>启动进程的时候也需要保证原子性，让别的CPU看不到它，所以需要加锁，这里还需要注意的是，切换进程的时候，还要关闭中断，因为如果在切换到一半的时候产生了中断，会导致不好的后果，比如可能寄存器没切换完，造成混乱等。</li>
+</ol>
+<p>现在我们在循环中，先获取锁，然后开始切换进程，修改完状态后，再次调用swtch函数，这里切换到这次循环中命中的进程。这里注意，之前在sched里调用swtch是swtch(&amp;p-&gt;context, &amp;mycpu()-&gt;context)，而在这里是swtch(&amp;c-&gt;context, &amp;p-&gt;context)，也就是这里是保存CPU调度进程的上下文，恢复命中进程的上下文。这里恢复的ra就会是这个进程之前被调用swtch(&amp;p-&gt;context, &amp;mycpu()-&gt;context)返回的地址。</p>
+<p>这可能会带来一个问题，我们能看到其实每次调用swtch返回到的其实都是另一个之前的swtch的调用，那第一次swtch调用的时候会返回到哪里呢。看它返回的地址只要关注ra寄存器，第一个进程启动后会调用allocproc，其中会设置好ra寄存器和sp寄存器。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Set up new context to start executing at forkret,</span></span><br><span class="line"><span class="comment">// which returns to user space.</span></span><br><span class="line"><span class="built_in">memset</span>(&amp;p-&gt;context, <span class="number">0</span>, <span class="built_in">sizeof</span>(p-&gt;context));</span><br><span class="line">p-&gt;context.ra = (uint64)forkret;</span><br><span class="line">p-&gt;context.sp = p-&gt;kstack + PGSIZE;</span><br><span class="line"></span><br><span class="line"><span class="keyword">return</span> p;</span><br></pre></td></tr></table></figure>
+
+<p>即第一个swtch返回后会执行forkret中的内容。</p>
+<h1 id="Sleep-amp-Wake-up"><a href="#Sleep-amp-Wake-up" class="headerlink" title="Sleep &amp; Wake up"></a>Sleep &amp; Wake up</h1><h2 id="Code"><a href="#Code" class="headerlink" title="Code"></a>Code</h2><p>这是xv6中的sleep和wakeup的代码</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span></span></span><br><span class="line"><span class="function"><span class="title">sleep</span><span class="params">(<span class="type">void</span> *chan, <span class="keyword">struct</span> spinlock *lk)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">proc</span> *p = <span class="built_in">myproc</span>();</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// Must acquire p-&gt;lock in order to</span></span><br><span class="line">  <span class="comment">// change p-&gt;state and then call sched.</span></span><br><span class="line">  <span class="comment">// Once we hold p-&gt;lock, we can be</span></span><br><span class="line">  <span class="comment">// guaranteed that we won&#x27;t miss any wakeup</span></span><br><span class="line">  <span class="comment">// (wakeup locks p-&gt;lock),</span></span><br><span class="line">  <span class="comment">// so it&#x27;s okay to release lk.</span></span><br><span class="line"></span><br><span class="line">  <span class="built_in">acquire</span>(&amp;p-&gt;lock);  <span class="comment">//DOC: sleeplock1</span></span><br><span class="line">  <span class="built_in">release</span>(lk);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Go to sleep.</span></span><br><span class="line">  p-&gt;chan = chan;</span><br><span class="line">  p-&gt;state = SLEEPING;</span><br><span class="line"></span><br><span class="line">  <span class="built_in">sched</span>();</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Tidy up.</span></span><br><span class="line">  p-&gt;chan = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// Reacquire original lock.</span></span><br><span class="line">  <span class="built_in">release</span>(&amp;p-&gt;lock);</span><br><span class="line">  <span class="built_in">acquire</span>(lk);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Wake up all processes sleeping on chan.</span></span><br><span class="line"><span class="comment">// Must be called without any p-&gt;lock.</span></span><br><span class="line"><span class="function"><span class="type">void</span></span></span><br><span class="line"><span class="function"><span class="title">wakeup</span><span class="params">(<span class="type">void</span> *chan)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">proc</span> *p;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span>(p = proc; p &lt; &amp;proc[NPROC]; p++) &#123;</span><br><span class="line">    <span class="keyword">if</span>(p != <span class="built_in">myproc</span>())&#123;</span><br><span class="line">      <span class="built_in">acquire</span>(&amp;p-&gt;lock);</span><br><span class="line">      <span class="keyword">if</span>(p-&gt;state == SLEEPING &amp;&amp; p-&gt;chan == chan) &#123;</span><br><span class="line">        p-&gt;state = RUNNABLE;</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="built_in">release</span>(&amp;p-&gt;lock);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>当我们需要进程或者线程等待一些特定事件的发生时，我们比较容易想到的就是使用循环实现busywait，但这种方式遇到等待事件发生的时间相对长的话，效率就会非常的低。</p>
+<p>更可靠的机制就是在等待时让出CPU，发生后获取CPU。</p>
+<p>之前有解答为什么sleep中要先获取锁，再释放锁，可能会有人想在调用sleep之前先释放锁，其实这样还是会带了中间的空窗期的问题导致丢失wakeup。</p>
+<p>我们还可以看到sleep里做了一个锁</p>
+<h1 id="Lab-Multithreading"><a href="#Lab-Multithreading" class="headerlink" title="Lab: Multithreading"></a>Lab: Multithreading</h1><h2 id="Uthread-switching-between-threads"><a href="#Uthread-switching-between-threads" class="headerlink" title="Uthread:switching between threads"></a>Uthread:switching between threads</h2><p>这个实验让我们实现用户态进程系统的上下文切换机制，根据提示，我们只要在user&#x2F;uthread.c中的thread_create()和thread_schedule()和user&#x2F;uthread_switch.S中添加代码即可。</p>
+<p>首先根据提示，我们需要修改thread结构体来保存上下文切换时的寄存器，所以我们根据之前代码里的寄存器设计一个结构体并添加到thread中</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">tcontext</span> &#123;</span><br><span class="line">  uint64 ra;</span><br><span class="line">  uint64 sp;</span><br><span class="line">  uint64 s0;</span><br><span class="line">  uint64 s1;</span><br><span class="line">  uint64 s2;</span><br><span class="line">  uint64 s3;</span><br><span class="line">  uint64 s4;</span><br><span class="line">  uint64 s5;</span><br><span class="line">  uint64 s6;</span><br><span class="line">  uint64 s7;</span><br><span class="line">  uint64 s8;</span><br><span class="line">  uint64 s9;</span><br><span class="line">  uint64 s10;</span><br><span class="line">  uint64 s11;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">struct</span> <span class="title class_">thread</span> &#123;</span><br><span class="line">  <span class="type">char</span>       stack[STACK_SIZE]; <span class="comment">/* the thread&#x27;s stack */</span></span><br><span class="line">  <span class="type">int</span>        state;             <span class="comment">/* FREE, RUNNING, RUNNABLE */</span></span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">tcontext</span> context;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>然后在uthread_switch.S进行保存寄存器的操作，只要参考之前的swtch.S就行。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">	.globl thread_switch</span><br><span class="line">thread_switch:</span><br><span class="line">	sd ra, 0(a0)</span><br><span class="line">	sd sp, 8(a0)</span><br><span class="line">	sd s0, 16(a0)</span><br><span class="line">	sd s1, 24(a0)</span><br><span class="line">	sd s2, 32(a0)</span><br><span class="line">	sd s3, 40(a0)</span><br><span class="line">	sd s4, 48(a0)</span><br><span class="line">	sd s5, 56(a0)</span><br><span class="line">	sd s6, 64(a0)</span><br><span class="line">	sd s7, 72(a0)</span><br><span class="line">	sd s8, 80(a0)</span><br><span class="line">	sd s9, 88(a0)</span><br><span class="line">	sd s10, 96(a0)</span><br><span class="line">	sd s11, 104(a0)</span><br><span class="line"></span><br><span class="line">	ld ra, 0(a1)</span><br><span class="line">	ld sp, 8(a1)</span><br><span class="line">	ld s0, 16(a1)</span><br><span class="line">	ld s1, 24(a1)</span><br><span class="line">	ld s2, 32(a1)</span><br><span class="line">	ld s3, 40(a1)</span><br><span class="line">	ld s4, 48(a1)</span><br><span class="line">	ld s5, 56(a1)</span><br><span class="line">	ld s6, 64(a1)</span><br><span class="line">	ld s7, 72(a1)</span><br><span class="line">	ld s8, 80(a1)</span><br><span class="line">	ld s9, 88(a1)</span><br><span class="line">	ld s10, 96(a1)</span><br><span class="line">	ld s11, 104(a1)</span><br><span class="line">	ret    /* return to ra */</span><br></pre></td></tr></table></figure>
+
+<p>然后是thread_schedule</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 这里按要求是要调用上面的thread_switch</span></span><br><span class="line"><span class="comment">// 参数就是上面的上下文</span></span><br><span class="line"><span class="keyword">if</span> (current_thread != next_thread) &#123;         <span class="comment">/* switch threads?  */</span></span><br><span class="line">    next_thread-&gt;state = RUNNING;</span><br><span class="line">    t = current_thread;</span><br><span class="line">    current_thread = next_thread;</span><br><span class="line">    <span class="comment">/* YOUR CODE HERE</span></span><br><span class="line"><span class="comment">     * Invoke thread_switch to switch from t to next_thread:</span></span><br><span class="line"><span class="comment">     * thread_switch(??, ??);</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="built_in">thread_switch</span>((uint64)&amp;t-&gt;context, (uint64)&amp;current_thread-&gt;context);</span><br><span class="line">&#125; <span class="keyword">else</span></span><br><span class="line">    next_thread = <span class="number">0</span>;</span><br></pre></td></tr></table></figure>
+
+<p>最后是thread_create</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 这里和前面的第一次调用swtch比较像 也是要指定ra和sp寄存器</span></span><br><span class="line"><span class="function"><span class="type">void</span> </span></span><br><span class="line"><span class="function"><span class="title">thread_create</span><span class="params">(<span class="type">void</span> (*func)())</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">thread</span> *t;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">for</span> (t = all_thread; t &lt; all_thread + MAX_THREAD; t++) &#123;</span><br><span class="line">    <span class="keyword">if</span> (t-&gt;state == FREE) <span class="keyword">break</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  t-&gt;state = RUNNABLE;</span><br><span class="line">  <span class="comment">// YOUR CODE HERE</span></span><br><span class="line">  t-&gt;context.ra = (uint64)func;</span><br><span class="line">  t-&gt;context.sp = (uint64)t-&gt;stack + STACK_SIZE;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Using-threads"><a href="#Using-threads" class="headerlink" title="Using threads"></a>Using threads</h2><p>这个实验比较简单，应该就是让我们熟悉unix下的线程库。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 在最开始定义5个锁，分别负责对应的BUCKET</span></span><br><span class="line"><span class="type">pthread_mutex_t</span> lock[NBUCKET];</span><br><span class="line"></span><br><span class="line"><span class="comment">// 然后在main程序里最开始的地方初始化一下锁</span></span><br><span class="line"><span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; NBUCKET; i++) &#123;</span><br><span class="line">    <span class="built_in">pthread_mutex_init</span>(&amp;lock[i], <span class="literal">NULL</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 这里就是简单添加一下插入前后获取锁和释放锁</span></span><br><span class="line"><span class="function"><span class="type">void</span> <span class="title">put</span><span class="params">(<span class="type">int</span> key, <span class="type">int</span> value)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="type">int</span> i = key % NBUCKET;</span><br><span class="line"></span><br><span class="line">  <span class="comment">// is the key already present?</span></span><br><span class="line">  <span class="keyword">struct</span> <span class="title class_">entry</span> *e = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">for</span> (e = table[i]; e != <span class="number">0</span>; e = e-&gt;next) &#123;</span><br><span class="line">    <span class="keyword">if</span> (e-&gt;key == key)</span><br><span class="line">      <span class="keyword">break</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span>(e)&#123;</span><br><span class="line">    <span class="comment">// update the existing key.</span></span><br><span class="line">    e-&gt;value = value;</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="comment">// the new is new.</span></span><br><span class="line">    <span class="built_in">pthread_mutex_lock</span>(&amp;lock[i]);</span><br><span class="line">    <span class="built_in">insert</span>(key, value, &amp;table[i], table[i]);</span><br><span class="line">    <span class="built_in">pthread_mutex_unlock</span>(&amp;lock[i]);</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Barrier"><a href="#Barrier" class="headerlink" title="Barrier"></a>Barrier</h2><p>这个让我们熟悉条件变量以及wait和broadcast,也比较简单</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">static</span> <span class="type">void</span> </span></span><br><span class="line"><span class="function"><span class="title">barrier</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="comment">// YOUR CODE HERE</span></span><br><span class="line">  <span class="comment">//</span></span><br><span class="line">  <span class="comment">// Block until all threads have called barrier() and</span></span><br><span class="line">  <span class="comment">// then increment bstate.round.</span></span><br><span class="line">  <span class="comment">//</span></span><br><span class="line">  <span class="built_in">pthread_mutex_lock</span>(&amp;bstate.barrier_mutex);</span><br><span class="line">  bstate.nthread++;</span><br><span class="line">  <span class="keyword">if</span> (bstate.nthread == nthread) &#123;</span><br><span class="line">    bstate.round++;</span><br><span class="line">    bstate.nthread = <span class="number">0</span>;</span><br><span class="line">    <span class="built_in">pthread_cond_broadcast</span>(&amp;bstate.barrier_cond);</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="built_in">pthread_cond_wait</span>(&amp;bstate.barrier_cond, &amp;bstate.barrier_mutex);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="built_in">pthread_mutex_unlock</span>(&amp;bstate.barrier_mutex);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -983,394 +1354,6 @@
 <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;kernel/types.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;kernel/param.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;user/user.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;kernel/fs.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> MAXLEN 20</span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> * argv[])</span> &#123;</span><br><span class="line">    <span class="type">char</span>* command = argv[<span class="number">1</span>]; <span class="comment">//grep</span></span><br><span class="line">    <span class="type">char</span> params[MAXARG][MAXLEN];</span><br><span class="line">    <span class="type">char</span> buf;</span><br><span class="line">    <span class="type">char</span>* m[MAXARG];</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//外层循环每次执行一个指令</span></span><br><span class="line">    <span class="keyword">while</span> (<span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="type">int</span> count = argc - <span class="number">1</span>;<span class="comment">//</span></span><br><span class="line">        <span class="built_in">memset</span>(params,<span class="number">0</span>,MAXARG * MAXLEN);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">1</span>; i &lt; argc; i++)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="built_in">strcpy</span>(params[i<span class="number">-1</span>], argv[i]);</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="type">int</span> cursor = <span class="number">0</span>; <span class="comment">// 字符串中的位置</span></span><br><span class="line">		<span class="type">int</span> flag = <span class="number">0</span>; <span class="comment">// 空格前是否有参数</span></span><br><span class="line">		<span class="type">int</span> read_result;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//内层循环每次读取一行指令m数组中</span></span><br><span class="line">        <span class="comment">//文件描述符0 是命令行读取</span></span><br><span class="line">        <span class="keyword">while</span> (((read_result = read(<span class="number">0</span>, &amp;buf, <span class="number">1</span>))) &gt; <span class="number">0</span> &amp;&amp; buf != <span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span> (buf == <span class="string">&#x27; &#x27;</span> &amp;&amp; flag == <span class="number">1</span>) &#123;</span><br><span class="line">				count++;</span><br><span class="line">				<span class="comment">// reset flag and p</span></span><br><span class="line">				cursor = <span class="number">0</span>;</span><br><span class="line">				flag = <span class="number">0</span>;</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">else</span> <span class="keyword">if</span> (buf != <span class="string">&#x27; &#x27;</span>) &#123;</span><br><span class="line">				params[count][cursor++] = buf;</span><br><span class="line">				flag = <span class="number">1</span>;</span><br><span class="line">			&#125;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// encounters EOF of input or \n</span></span><br><span class="line">		<span class="keyword">if</span> (read_result &lt;= <span class="number">0</span>) &#123;</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">for</span> (<span class="type">int</span> i=<span class="number">0</span>; i&lt;MAXARG<span class="number">-1</span>; i++) &#123;</span><br><span class="line">			m[i] = params[i];</span><br><span class="line">		&#125;</span><br><span class="line">		m[MAXARG<span class="number">-1</span>] = <span class="number">0</span>;</span><br><span class="line">		<span class="keyword">if</span> (fork() == <span class="number">0</span>) &#123;</span><br><span class="line">			exec(command, m);</span><br><span class="line">			<span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			wait((<span class="type">int</span> *) <span class="number">0</span>);</span><br><span class="line">		&#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>这里的关键是，传给xargs中argv[1]是实际要执行的命令，接着程序会循环执行每一条命令行中输入的命令。先把命令行参数依次复制到params数组中，然后再读取标准输入的内容，写入params接下来的位置中（上一步中，params写到params[argc-2],这步从argc-1开始写），读取到换行符或EOF后就fork出子进程执行命令。</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/03/27/Makefile/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Wang Wenhui">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Gray's Blog">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Gray's Blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2023/03/27/Makefile/" class="post-title-link" itemprop="url">Makefile</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2023-03-27 08:43:54 / 修改时间：17:29:48" itemprop="dateCreated datePublished" datetime="2023-03-27T08:43:54+08:00">2023-03-27</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/CPP/" itemprop="url" rel="index"><span itemprop="name">CPP</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-	<div>
-		
-	</div>
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="Makefile"><a href="#Makefile" class="headerlink" title="Makefile"></a>Makefile</h1><h2 id="规则"><a href="#规则" class="headerlink" title="规则"></a>规则</h2><p>一个Makefile文件由一个<strong>规则</strong>或多个<strong>规则</strong>组成<br>其他规则一般为第一条规则服务</p>
-<p><strong>目标 …: 依赖 …<br>    命令（shell命令）<br>    …</strong></p>
-<p>目标：最终要生成的文件<br>依赖：生成目标需要的文件或是目标<br>命令：执行命令对依赖操作，生成目标（必须tab缩进）</p>
-<p>示例：</p>
-<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">mubiao: yilai1.c yilai2.c yilai3.c</span></span><br><span class="line">	gcc yilai1.c yilai2.c yilai3.c -o mubiao</span><br></pre></td></tr></table></figure>
-
-<h2 id="工作原理"><a href="#工作原理" class="headerlink" title="工作原理"></a>工作原理</h2><h6 id="命令在执行之前，需要先检查规则中的依赖是否存在"><a href="#命令在执行之前，需要先检查规则中的依赖是否存在" class="headerlink" title="命令在执行之前，需要先检查规则中的依赖是否存在"></a>命令在执行之前，需要先检查规则中的依赖是否存在</h6><ol>
-<li>存在，执行命令</li>
-<li>不存在，向下检查其他的规则，查看是否有一个规则是生成这个依赖的，找到就执行这个生成依赖的规则，再执行当前命令</li>
-</ol>
-<h6 id="检测更新，在执行规则中的命令时，会比较目标和依赖文件的时间"><a href="#检测更新，在执行规则中的命令时，会比较目标和依赖文件的时间" class="headerlink" title="检测更新，在执行规则中的命令时，会比较目标和依赖文件的时间"></a>检测更新，在执行规则中的命令时，会比较目标和依赖文件的时间</h6><ol>
-<li>如果依赖的时间比目标的时间晚，需要重新生成目标</li>
-<li>如果依赖的时间比目标的时间早，目标不需要更新，对应规则的命令不需要被执行</li>
-</ol>
-<h6 id="如果有其他规则不会影响到第一条规则的执行，则不会执行"><a href="#如果有其他规则不会影响到第一条规则的执行，则不会执行" class="headerlink" title="如果有其他规则不会影响到第一条规则的执行，则不会执行"></a>如果有其他规则不会影响到第一条规则的执行，则不会执行</h6><p>问题：如果我第一条规则中的依赖需要第二条规则执行，而第二条规则的依赖又需要第三条规则执行，这样可行吗？</p>
-<h2 id="变量"><a href="#变量" class="headerlink" title="变量"></a>变量</h2><p>自定义变量：<br>    变量名&#x3D;变量值	var&#x3D;hello		$(var)<br>预定义变量：(这部分只能在<strong>命令</strong>中使用)<br>    AR：归档维护程序的名称，默认为ar<br>    CC：C编译器的名称，默认为cc<br>    CXX：C++编译器的名称，默认为g++<br>    $@:	目标的完整名称<br>    $&lt;：第一个依赖文件的名称<br>    $^：所有的依赖文件<br>获取变量的值<br>    $(变量名)</p>
-<p>示例：</p>
-<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">app:main.c a.c b.c</span></span><br><span class="line">	gcc -c main.c a.c b.c</span><br><span class="line">	</span><br><span class="line"><span class="section">app:main.c a.c b.c</span></span><br><span class="line">	<span class="variable">$(CC)</span> -c <span class="variable">$^</span> -o <span class="variable">$@</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="模式匹配"><a href="#模式匹配" class="headerlink" title="模式匹配"></a>模式匹配</h2><p>%.o:%.c<br>    %：通配符，匹配一个字符串	两个%匹配的是一个字符串</p>
-<p>示例：</p>
-<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">%.o:%.c</span></span><br><span class="line">	gcc -c &amp;&lt; -o &amp;@</span><br></pre></td></tr></table></figure>
-
-<h2 id="函数"><a href="#函数" class="headerlink" title="函数"></a>函数</h2><p>$(funcname params)</p>
-<p>示例：</p>
-<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$(<span class="built_in">wildcard</span> PATTERN...)</span></span><br><span class="line"><span class="comment">#功能：获取指定目录下指定类型的文件列表</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#参数：PATTERN指的是某个或多个目录下的对应的某种类型的文件，如果有多个目录，一般用空格间隔</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#返回：得到的若干个文件的列表，用空格隔开</span></span><br><span class="line"></span><br><span class="line"><span class="variable">$(<span class="built_in">wildcard</span> *.c ./sub/*.c)</span></span><br><span class="line"><span class="comment">#返回格式：a.c b.c c.c d.c e.c f.c</span></span><br></pre></td></tr></table></figure>
-
-<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$(<span class="built_in">patsubst</span> &lt;pattern&gt;,&lt;replacement&gt;,&lt;text&gt;)</span></span><br><span class="line"><span class="comment">#功能：查找&lt;text&gt;中的单词是否符合模式&lt;pattern&gt;，符合就用&lt;replacement&gt;替换</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#&lt;pattern&gt;可以包括通配符&#x27;%&#x27;，表示任意长度的字符串，如果&lt;replacement&gt;中也包含&#x27;%&#x27;,则这个字符串将是前面代表的字符串</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#返回：函数返回被替换过后的字符串</span></span><br><span class="line"></span><br><span class="line"><span class="variable">$(<span class="built_in">patsubst</span> %.c, %.o, x.c bar.c)</span></span><br><span class="line"><span class="comment">#返回格式：x.o bar.o</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="最后"><a href="#最后" class="headerlink" title="最后"></a>最后</h2><p>可以手动创建命令:</p>
-<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta"><span class="keyword">.PHONY</span>:clean</span></span><br><span class="line"><span class="section">make:</span></span><br><span class="line">	rm xxx -f</span><br><span class="line"><span class="comment">#.PHONY表示clean是伪目标，不会生成文件</span></span><br></pre></td></tr></table></figure>
-
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/03/23/%E9%9D%99%E6%80%81%E5%BA%93%E5%92%8C%E5%8A%A8%E6%80%81%E5%BA%93/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Wang Wenhui">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Gray's Blog">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Gray's Blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2023/03/23/%E9%9D%99%E6%80%81%E5%BA%93%E5%92%8C%E5%8A%A8%E6%80%81%E5%BA%93/" class="post-title-link" itemprop="url">静态库和动态库</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2023-03-23 16:30:10" itemprop="dateCreated datePublished" datetime="2023-03-23T16:30:10+08:00">2023-03-23</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-03-27 08:34:19" itemprop="dateModified" datetime="2023-03-27T08:34:19+08:00">2023-03-27</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/CPP/" itemprop="url" rel="index"><span itemprop="name">CPP</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-	<div>
-		
-	</div>
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="库"><a href="#库" class="headerlink" title="库"></a>库</h1><p> 两种库：静态库和动态库 （共享库）</p>
-<p><strong>区别：</strong> 静态库在程序的链接阶段被复制到了程序中；动态库在链接阶段没有被复制到程序中，而是程序在运行时由系统动态加载到内存中供程序调用。</p>
-<p><strong>好处：</strong>1、代码保密。2、方便部署和开发</p>
-<h2 id="静态库"><a href="#静态库" class="headerlink" title="静态库"></a>静态库</h2><p><em><strong>命名规则：</strong></em></p>
-<p>​	Linux：libxxx.a<br>​		lib：前缀（固定）<br>​		xxx：库的名字，自己起<br>​		.a：后缀（固定）</p>
-<p>​	Windows：libxxx.lib</p>
-<p><em><strong>制作：</strong></em></p>
-<p>​	gcc获得.o文件</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -c xxx.c xxx.c xxx.c</span><br></pre></td></tr></table></figure>
-
-<p>​	将.o文件打包，使用ac工具（archive）</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ar rcs libxxx.a xxx.o xxx.o</span><br></pre></td></tr></table></figure>
-
-<p>​	r - 将文件插入备存文件中</p>
-<p>​	c - 建立备存文件</p>
-<p>​	s - 索引</p>
-<p><em><strong>使用：</strong></em></p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc main.c -o xxx -I 头文件所在文件夹 -l 名字 库所在文件夹 </span><br></pre></td></tr></table></figure>
-
-<h2 id="动态库"><a href="#动态库" class="headerlink" title="动态库"></a>动态库</h2><p><em><strong>命名规则：</strong></em></p>
-<p>​	Linux：libxxx.so<br>​		lib：前缀（固定）<br>​		xxx：库的名字，自己起<br>​		.so：后缀（固定）<br>​		在Linux下是一个可执行文件</p>
-<p>​	Windows：libxxx.dll</p>
-<p><em><strong>制作：</strong></em></p>
-<p>​	gcc获得.o文件，<strong>得到和位置无关的代码</strong></p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -c -fpic/-fPIC xxx.c xxx.c</span><br></pre></td></tr></table></figure>
-
-<p>​	gcc得到动态库</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc -shared xxx.o xxx.o -o libxxx.so</span><br></pre></td></tr></table></figure>
-
-<p><em><strong>使用：</strong></em></p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">gcc main.c -o xxx -I 头文件所在文件夹 -L 库所在文件夹 -l 名字</span><br></pre></td></tr></table></figure>
-
-<p> 发现运行不了，因为系统要知道绝对路径</p>
-<p>第一种方法：修改环境变量LD_LIBRARY_PATH</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:要添加的文件夹目录</span><br></pre></td></tr></table></figure>
-
-<p>永久配置：</p>
-<p>用户配置：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">vim .bashrc</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">进入了.bashrc 用vim编辑 在末尾增加</span></span><br><span class="line">export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:要添加的路径</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">保存 然后<span class="built_in">source</span></span></span><br><span class="line"></span><br><span class="line">source .bashrc</span><br></pre></td></tr></table></figure>
-
-<p>系统配置：</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">sudo vim /etc/profile</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">在末尾增加</span></span><br><span class="line">export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:要添加的路径</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">保存 然后<span class="built_in">source</span></span></span><br><span class="line"></span><br><span class="line">source /etc/profile</span><br></pre></td></tr></table></figure>
-
-<p>第二种方法：修改&#x2F;etc&#x2F;ld.so.cache文件</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">sudo vim /etc/ld.so.conf</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash">把路径写在里面就行，然后保存退出，更新</span></span><br><span class="line"></span><br><span class="line">sudo ldconfig</span><br></pre></td></tr></table></figure>
-
-<p>第三种方法：把库文件放在&#x2F;lib&#x2F;或&#x2F;usr&#x2F;lib目录下（不推荐）</p>
-<h2 id="对比"><a href="#对比" class="headerlink" title="对比"></a>对比</h2><p><strong>静态库：</strong><br>    优点：<br>        · 被打包到应用程序中加载速度快<br>        · 发布程序不用提供静态库，移植方便</p>
-<p>​	缺点：<br>​		· 消耗系统资源，浪费内存<br>​		· 更新、部署、发布麻烦</p>
-<p><strong>动态库：</strong><br>    优点：<br>        · 可以实现进程间资源共享<br>        · 更新、部署、发布简单<br>        · 可以控制何时加载动态库</p>
-<p>​	缺点：<br>​		· 加载速度比静态库慢<br>​		· 发布程序时需要提供依赖的动态库</p>
-<p>之前写过一次贪吃蛇，打包给同学试试的时候，用静态库所有同学都能玩，而用动态库有些同学就玩不了了，就是这个道理。</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/03/11/CPP%E5%A4%A7%E5%B0%8F%E6%A0%B9%E5%A0%86-priority-queue/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Wang Wenhui">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Gray's Blog">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Gray's Blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2023/03/11/CPP%E5%A4%A7%E5%B0%8F%E6%A0%B9%E5%A0%86-priority-queue/" class="post-title-link" itemprop="url">CPP大小根堆-priority_queue</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-      
-
-      <time title="创建时间：2023-03-11 14:44:25 / 修改时间：16:42:56" itemprop="dateCreated datePublished" datetime="2023-03-11T14:44:25+08:00">2023-03-11</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E7%AE%97%E6%B3%95/" itemprop="url" rel="index"><span itemprop="name">算法</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-	<div>
-		
-	</div>
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="概述和模板定义"><a href="#概述和模板定义" class="headerlink" title="概述和模板定义"></a>概述和模板定义</h1><p>priority_queue容器在头文件<queue>中，位于std命名空间中,容器是有序的。</p>
-<p>模板定义如下：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">template</span> &lt;	<span class="keyword">typename</span> T,							<span class="comment">//容器中元素的类型</span></span><br><span class="line">        	<span class="keyword">typename</span> Container=std::vector&lt;T&gt;,	<span class="comment">//底层使用的容器，vector或</span></span><br><span class="line">												<span class="comment">//deque</span></span><br><span class="line">        	<span class="keyword">typename</span> Compare=std::less&lt;T&gt; &gt;	<span class="comment">//排序规则</span></span><br><span class="line">                							<span class="comment">//std::less&lt;T&gt; 		从大到小</span></span><br><span class="line">                							<span class="comment">//std::greater&lt;T&gt;	从小到大</span></span><br><span class="line">                							<span class="comment">//还可以自定义规则，做题一般不用</span></span><br><span class="line"><span class="keyword">class</span> priority_queue&#123;</span><br><span class="line">    <span class="comment">//......</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h1 id="创建容器的方法"><a href="#创建容器的方法" class="headerlink" title="创建容器的方法"></a>创建容器的方法</h1><p>最基本的：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">std::priority_queue&lt;<span class="type">int</span>&gt; values;</span><br></pre></td></tr></table></figure>
-
-<p>使用普通数组或其他容器：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//使用普通数组</span></span><br><span class="line"><span class="type">int</span> values[]&#123;<span class="number">4</span>,<span class="number">1</span>,<span class="number">3</span>,<span class="number">2</span>&#125;;</span><br><span class="line"><span class="function">std::priority_queue&lt;<span class="type">int</span>&gt; <span class="title">copy_values</span><span class="params">(values,values+<span class="number">4</span>)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">//使用序列式容器</span></span><br><span class="line">std::array&lt;<span class="type">int</span>,4&gt;values&#123; <span class="number">4</span>,<span class="number">1</span>,<span class="number">3</span>,<span class="number">2</span> &#125;;</span><br><span class="line"><span class="function">std::priority_queue&lt;<span class="type">int</span>&gt; <span class="title">copy_values</span><span class="params">(values.begin(),values.end())</span></span>;</span><br></pre></td></tr></table></figure>
-
-<p>手动指定：</p>
-<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> values[]&#123; <span class="number">4</span>,<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span> &#125;;</span><br><span class="line">std::priority_queue&lt;<span class="type">int</span>, std::deque&lt;<span class="type">int</span>&gt;, std::greater&lt;<span class="type">int</span>&gt; &gt; <span class="built_in">copy_values</span>(values, values+<span class="number">4</span>);</span><br></pre></td></tr></table></figure>
-
-<h1 id="常用成员函数"><a href="#常用成员函数" class="headerlink" title="常用成员函数"></a>常用成员函数</h1><table>
-<thead>
-<tr>
-<th>成员函数</th>
-<th>功能</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>empty()</td>
-<td>如果 priority_queue 为空的话，返回 true；反之，返回 false。</td>
-</tr>
-<tr>
-<td>size()</td>
-<td>返回 priority_queue 中存储元素的个数。</td>
-</tr>
-<tr>
-<td>top()</td>
-<td>返回 priority_queue 中第一个元素的引用形式。</td>
-</tr>
-<tr>
-<td>push(const T&amp; obj)</td>
-<td>根据既定的排序规则，将元素 obj 的副本存储到 priority_queue 中适当的位置。</td>
-</tr>
-<tr>
-<td>push(T&amp;&amp; obj)</td>
-<td>根据既定的排序规则，将元素 obj 移动存储到 priority_queue 中适当的位置。</td>
-</tr>
-<tr>
-<td>emplace(Args&amp;&amp;… args)</td>
-<td>Args&amp;&amp;… args 表示构造一个存储类型的元素所需要的数据（对于类对象来说，可能需要多个数据构造出一个对象）。此函数的功能是根据既定的排序规则，在容器适配器适当的位置直接生成该新元素。</td>
-</tr>
-<tr>
-<td>pop()</td>
-<td>移除 priority_queue 容器适配器中第一个元素。</td>
-</tr>
-<tr>
-<td>swap(priority_queue<T>&amp; other)</td>
-<td>将两个 priority_queue 容器适配器中的元素进行互换，需要注意的是，进行互换的 2 个 priority_queue 容器适配器中存储的元素类型以及底层采用的基础容器类型，都必须相同。</td>
-</tr>
-</tbody></table>
-<p>适用于题目：（待补充）</p>
-<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><p><a target="_blank" rel="noopener" href="http://c.biancheng.net/view/6987.html">http://c.biancheng.net/view/6987.html</a></p>
 
       
     </div>
