@@ -125,7 +125,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">46</span>
+          <span class="site-state-item-count">47</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -165,6 +165,139 @@
 
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/04/11/utilities/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Wang Wenhui">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Gray's Blog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="undefined | Gray's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2023/04/11/utilities/" class="post-title-link" itemprop="url">xv6 and Unix utilities</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-04-11 09:16:17" itemprop="dateCreated datePublished" datetime="2023-04-11T09:16:17+08:00">2023-04-11</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-04-18 16:20:51" itemprop="dateModified" datetime="2023-04-18T16:20:51+08:00">2023-04-18</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/6-S081-Lab/" itemprop="url" rel="index"><span itemprop="name">6.S081 Lab</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+	<div>
+		
+	</div>
+    <div class="post-body" itemprop="articleBody">
+          <p>第一个实验是写一些UNIX程序，分别是sleep、pingpong、Primes、find、xargs。每个程序会让你阅读xv6中的一些源代码，学习里面一些函数的使用，然后再实现任务。</p>
+<p>实验网址：[Lab: Xv6 and Unix utilities (mit.edu)](<a target="_blank" rel="noopener" href="https://pdos.csail.mit.edu/6.S081/2022/labs/util.html">https://pdos.csail.mit.edu/6.S081/2022/labs/util.html</a></p>
+<p>注：该系列实验均部分参考:</p>
+<p><a target="_blank" rel="noopener" href="http://xv6.dgs.zone/labs/answers/summary.html">实验解析 · 6.S081 All-In-One (dgs.zone)</a><br><a target="_blank" rel="noopener" href="https://github.com/tommyfan34/MIT_6S081">https://github.com/tommyfan34/MIT_6S081</a></p>
+<h2 id="sleep"><a href="#sleep" class="headerlink" title="sleep"></a>sleep</h2><p>这个实验主要是让我们学会命令行参数的使用，比较简单，没什么好说的。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;kernel/types.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;kernel/stat.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;user/user.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span></span><br><span class="line"><span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (argc &lt; <span class="number">2</span>) &#123;</span><br><span class="line">        <span class="built_in">fprintf</span>(<span class="number">2</span>,<span class="string">&quot;please enter at least one parameter&quot;</span>);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="type">int</span> time = atoi(argv[<span class="number">1</span>]);</span><br><span class="line">    sleep(time);</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>主要就是，如果没传要sleep的时间进来，就打印出一个报错信息，然后要用atoi函数将作为char*传进来的数字转换成int类型，然后main函数结束调用exit(0) （ps：实验中的要求）</p>
+<h2 id="pingpong"><a href="#pingpong" class="headerlink" title="pingpong"></a>pingpong</h2><p>这个实验主要是让我们学会进程间用管道通信的方式，也比较简单，先看代码：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;kernel/types.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;kernel/stat.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;user/user.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> RE 0</span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> WR 1</span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span></span><br><span class="line"><span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">int</span> parent_fd[<span class="number">2</span>];   <span class="comment">//parent_fd 是父进程向子进程传消息的管道</span></span><br><span class="line">    <span class="type">int</span> child_fd[<span class="number">2</span>];    <span class="comment">//child_fd 是子进程向父进程传消息的管道</span></span><br><span class="line">    pipe(parent_fd);</span><br><span class="line">    pipe(child_fd);</span><br><span class="line">    <span class="type">int</span> pid = fork();</span><br><span class="line">    <span class="type">char</span> buf[<span class="number">64</span>];   </span><br><span class="line">    <span class="keyword">if</span> (pid &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        close(parent_fd[RE]);</span><br><span class="line">        close(parent_fd[WR]);</span><br><span class="line">        close(child_fd[RE]);</span><br><span class="line">        close(child_fd[WR]);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (pid == <span class="number">0</span>) &#123;</span><br><span class="line">        close(child_fd[RE]);</span><br><span class="line">        close(parent_fd[WR]);</span><br><span class="line">        read(parent_fd[RE], buf, <span class="number">5</span>);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;%d: received %s\n&quot;</span>,getpid(),buf);</span><br><span class="line">        write(child_fd[WR],<span class="string">&quot;pong&quot;</span>,<span class="built_in">strlen</span>(<span class="string">&quot;pong&quot;</span>));</span><br><span class="line">        close(parent_fd[RE]);</span><br><span class="line">        close(child_fd[WR]);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        close(child_fd[WR]);</span><br><span class="line">        close(parent_fd[RE]);</span><br><span class="line">        write(parent_fd[WR],<span class="string">&quot;ping&quot;</span>,<span class="built_in">strlen</span>(<span class="string">&quot;ping&quot;</span>));</span><br><span class="line">        read(child_fd[RE], buf, <span class="number">5</span>);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;%d: received %s\n&quot;</span>,getpid(),buf);</span><br><span class="line">        close(parent_fd[WR]);</span><br><span class="line">        close(child_fd[RE]);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我认为的一些要点：</p>
+<ol>
+<li>pipe()函数，创建一个管道，传入数组的第一个值为管道读端，第二个值为管道写端，都是文件描述符。</li>
+<li>fork()函数，创建一个子进程，父进程和子进程都会返回，父进程返回自己的进程号（大于0），子进程返回0，并且父子进程都从当前位置开始执行。</li>
+<li>及时关闭用不到的文件描述符，比如在此例中，父进程通过parent_fd传消息给子进程，子进程通过child_fd传消息给父进程，这意味着父进程中，parent_fd的读端和child_fd的写端是不需要的，可以close()。子进程同理。</li>
+<li>不关闭文件描述符的危害：在这个程序中没有问题，但如果在多次read的程序中，假如在子进程中parent_fd的写端没有关闭，第一次read操作读到了管道中的父进程传递的数据，执行到第二次read，假如此时父进程的parent_fd的写端已经被关闭且管道中没有数据，由于子进程中没关闭，所以read操作会一直阻塞，直到有数据传入到管道中，可这时子进程阻塞了，没法跳出，这就是没有及时关闭不需要的文件描述符的后果。</li>
+</ol>
+<h2 id="primes"><a href="#primes" class="headerlink" title="primes"></a>primes</h2><p>这个实验主要是让我们通过管道的方式来进行素数筛选，加强我们对父子进程和管道的理解。有几个要求：</p>
+<ol>
+<li>用pipe和fork设置管道，第一个进程将2~35写管道。</li>
+<li>对每个素数，创建一个进程，该进程从左边管道读取数据，向右边管道写入数据。</li>
+<li>打印出每个素数。</li>
+</ol>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;kernel/types.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;kernel/stat.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;user/user.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">pri</span><span class="params">(<span class="type">int</span> * parent_fd)</span> ;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span></span><br><span class="line"><span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span> &#123;</span><br><span class="line">    <span class="type">int</span> parent_fd[<span class="number">2</span>];</span><br><span class="line">    pipe(parent_fd);</span><br><span class="line">    <span class="type">int</span> pid = fork();</span><br><span class="line">    <span class="keyword">if</span> (pid &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="built_in">fprintf</span>(<span class="number">2</span>,<span class="string">&quot;fork error&quot;</span>);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (pid == <span class="number">0</span>) &#123;</span><br><span class="line">        pri(parent_fd);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        close(parent_fd[<span class="number">0</span>]);</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">2</span>; i &lt;= <span class="number">35</span>; i++) &#123;</span><br><span class="line">            write(parent_fd[<span class="number">1</span>],&amp;i,<span class="keyword">sizeof</span>(<span class="type">int</span>));</span><br><span class="line">        &#125;</span><br><span class="line">        close(parent_fd[<span class="number">1</span>]);</span><br><span class="line">        wait(<span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">pri</span><span class="params">(<span class="type">int</span> * parent_fd)</span> &#123;</span><br><span class="line">    close(parent_fd[<span class="number">1</span>]);</span><br><span class="line"></span><br><span class="line">    <span class="type">int</span> child_fd[<span class="number">2</span>];</span><br><span class="line">    pipe(child_fd);</span><br><span class="line">    <span class="comment">//int* buf[35];</span></span><br><span class="line">    <span class="type">int</span> buf;</span><br><span class="line"></span><br><span class="line">    <span class="type">int</span> result = read(parent_fd[<span class="number">0</span>],&amp;buf,<span class="keyword">sizeof</span>(<span class="type">int</span>));</span><br><span class="line">    <span class="keyword">if</span> (result == <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="type">int</span> pid = fork();</span><br><span class="line">    <span class="keyword">if</span> (pid &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="built_in">fprintf</span>(<span class="number">2</span>,<span class="string">&quot;fork error&quot;</span>);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (pid == <span class="number">0</span>) &#123;</span><br><span class="line">        pri(child_fd);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        close(child_fd[<span class="number">0</span>]);</span><br><span class="line">        <span class="built_in">printf</span>(<span class="string">&quot;prime %d\n&quot;</span>,buf);</span><br><span class="line">        <span class="type">int</span> prime = buf;</span><br><span class="line">        <span class="keyword">while</span> (read(parent_fd[<span class="number">0</span>], &amp;buf, <span class="keyword">sizeof</span>(<span class="type">int</span>))) &#123;</span><br><span class="line">            <span class="keyword">if</span> (buf % prime != <span class="number">0</span> ) &#123;</span><br><span class="line">                write(child_fd[<span class="number">1</span>], &amp;buf, <span class="keyword">sizeof</span>(<span class="type">int</span>));</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        close(child_fd[<span class="number">1</span>]);</span><br><span class="line">        wait(<span class="number">0</span>);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这个实验有点难度，思路大概是这样，定义一个函数在子进程递归处理数据</p>
+<p>pri的作用大概是这样：</p>
+<p>对于传进来的父进程的管道描述符，读取第一个数据，如果读到的字节数为0，说明数据已经处理完了，就可以exit了。</p>
+<p>如果没读完，继续fork子进程^2，子进程^2中继续调用pri，这里pri传进去的是该子进程新创建的管道，这个管道中的数据将是处理过的数据。(注：这里子进程^2代表子进程又fork的子进程)</p>
+<p>子进程将第一个数据打印出来，这里的原因是，已知第一个数2为素数，所以第一个子进程打印出来的一定是2，这个子进程会做一个处理，将35内所有2的倍数从传给子进程^2的管道中剔除。所以管道中的第一个数永远都是素数。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">      <span class="comment">//buf为此前管道中读取到的第一个值</span></span><br><span class="line"><span class="type">int</span> prime = buf;</span><br><span class="line"><span class="keyword">while</span> (read(parent_fd[RE], &amp;buf, <span class="keyword">sizeof</span>(<span class="type">int</span>))) &#123;</span><br><span class="line">          <span class="keyword">if</span> (buf % prime != <span class="number">0</span> ) &#123;</span><br><span class="line">              write(child_fd[WR], &amp;buf, <span class="keyword">sizeof</span>(<span class="type">int</span>));</span><br><span class="line">          &#125;</span><br><span class="line">      &#125;</span><br></pre></td></tr></table></figure>
+
+<p>当然，及时关闭不需要的文件描述符是不必多说的了。</p>
+<h2 id="find"><a href="#find" class="headerlink" title="find"></a>find</h2><p>这个实验主要是让我们写一个简单版的UNIXfind程序，查找文件目录中具有特定名称的所有文件。实验让我们先阅读xv6中ls的代码学习怎么读取目录，要求find使用递归不断进入子目录中。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//这里先给出两个结构体的定义</span></span><br><span class="line"><span class="comment">//struct dirent结构体描述了一个文件的inum标识和名字。</span></span><br><span class="line"><span class="comment">//文件（可能是file、directory、device）</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">stat</span>结构体描述了一个文件的具体信息，包括文件类型、大小、<span class="title">inode</span> <span class="title">number</span>、引用计数等。</span></span><br><span class="line"><span class="class">#<span class="title">define</span> <span class="title">DIRSIZ</span> 14</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">dirent</span> &#123;</span></span><br><span class="line">  ushort inum;</span><br><span class="line">  <span class="type">char</span> name[DIRSIZ];</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> T_DIR     1   <span class="comment">// Directory</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> T_FILE    2   <span class="comment">// File</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> T_DEVICE  3   <span class="comment">// Device</span></span></span><br><span class="line"><span class="comment">//这里是三个宏定义给出的是stat中type类型</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">stat</span> &#123;</span></span><br><span class="line">  <span class="type">int</span> dev;     <span class="comment">// File system&#x27;s disk device</span></span><br><span class="line">  uint ino;    <span class="comment">// Inode number</span></span><br><span class="line">  <span class="type">short</span> type;  <span class="comment">// Type of file</span></span><br><span class="line">  <span class="type">short</span> nlink; <span class="comment">// Number of links to file</span></span><br><span class="line">  uint64 size; <span class="comment">// Size of file in bytes</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;kernel/types.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;kernel/stat.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;user/user.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;kernel/fs.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="type">void</span> <span class="title function_">find</span><span class="params">(<span class="type">char</span> * path, <span class="type">char</span> * file)</span>;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span></span><br><span class="line"><span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> *argv[])</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> (argc != <span class="number">3</span>) &#123;</span><br><span class="line">        <span class="built_in">fprintf</span>(<span class="number">2</span>,<span class="string">&quot;need more params&quot;</span>);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="type">char</span> * path = argv[<span class="number">1</span>];</span><br><span class="line">    <span class="type">char</span> * file = argv[<span class="number">2</span>];</span><br><span class="line">    find(path, file);</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="type">void</span></span><br><span class="line"><span class="title function_">find</span> <span class="params">(<span class="type">char</span> * path, <span class="type">char</span> * file)</span> &#123;</span><br><span class="line">    <span class="type">char</span> buf[<span class="number">512</span>], *p;</span><br><span class="line">  	<span class="type">int</span> fd;</span><br><span class="line">  	<span class="class"><span class="keyword">struct</span> <span class="title">dirent</span> <span class="title">de</span>;</span></span><br><span class="line">  	<span class="class"><span class="keyword">struct</span> <span class="title">stat</span> <span class="title">st</span>;</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> ((fd = open(path,<span class="number">0</span>)) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="built_in">fprintf</span>(<span class="number">2</span>,<span class="string">&quot;ERROR: cannot open %s\n&quot;</span>, path);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">    &#125; </span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (fstat(fd, &amp;st) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">        <span class="built_in">fprintf</span>(<span class="number">2</span>,<span class="string">&quot;ERROR: cannot stat %s\n&quot;</span>, path);</span><br><span class="line">        <span class="built_in">exit</span>(<span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">//这里没有像ls一样先判断类型是因为传进来的path一定是路径，</span></span><br><span class="line">    <span class="comment">//不会是文件</span></span><br><span class="line">    <span class="keyword">while</span> (read(fd, &amp;de, <span class="keyword">sizeof</span>(de)) == <span class="keyword">sizeof</span>(de)) &#123;</span><br><span class="line">        <span class="keyword">if</span> (de.inum == <span class="number">0</span>)  <span class="keyword">continue</span>;</span><br><span class="line">        <span class="built_in">strcpy</span>(buf,path);</span><br><span class="line">        p = buf + <span class="built_in">strlen</span>(buf);</span><br><span class="line">        *p++ = <span class="string">&#x27;/&#x27;</span>;</span><br><span class="line">        memmove(p, de.name, DIRSIZ);</span><br><span class="line">        p[DIRSIZ] = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> (stat(buf, &amp;st) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="built_in">fprintf</span>(<span class="number">2</span>, <span class="string">&quot;ERROR: cannot stat %s\n&quot;</span>, buf);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">switch</span>(st.type) &#123;</span><br><span class="line">            <span class="keyword">case</span> T_DEVICE:</span><br><span class="line">            <span class="keyword">case</span> T_FILE:</span><br><span class="line">                <span class="keyword">if</span> (<span class="built_in">strcmp</span>(file, de.name) == <span class="number">0</span>) &#123;</span><br><span class="line">				<span class="built_in">printf</span>(<span class="string">&quot;%s\n&quot;</span>, buf);</span><br><span class="line">			&#125;</span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">            <span class="keyword">case</span> T_DIR:</span><br><span class="line">                <span class="keyword">if</span> ((<span class="built_in">strcmp</span>(de.name, <span class="string">&quot;.&quot;</span>) != <span class="number">0</span>) &amp;&amp; (<span class="built_in">strcmp</span>(de.name, <span class="string">&quot;..&quot;</span>) != <span class="number">0</span>)) &#123;</span><br><span class="line">				    find(buf, file);</span><br><span class="line">                &#125;               </span><br><span class="line">                <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    close(fd);</span><br><span class="line">    <span class="keyword">return</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里只要仔细看一下xv6中的ls代码，了解struct dirent、struct stat结构体、open、fstat、stat函数的作用就能写出来。</p>
+<p>在该程序中，open函数返回path的文件描述符，fstat会将该path的信息传进定义的struct stat类型st中，和ls中不同的是，这里不会先判断类型，因为path一定是传进来的路径而不是文件（不考虑报错的情况下），while循环中每次读取该path下的一个文件（可能是file、directory、device），然后用stat函数将该文件的信息传入st中，接着判断类型，如果是文件就查看是否匹配输入的文件名，如果是目录就递归调用find函数。</p>
+<p>注：这里fstat和stat不同的地方在于，传入fstat的是文件描述符和stat，而传入stat的是char*和stat。fstat是一个system call，而stat只是一个普通的函数</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">int</span> <span class="title function_">fstat</span><span class="params">(<span class="type">int</span> fd, <span class="keyword">struct</span> stat*)</span>;</span><br><span class="line"><span class="type">int</span> <span class="title function_">stat</span><span class="params">(<span class="type">const</span> <span class="type">char</span> *n, <span class="keyword">struct</span> stat *st)</span>;</span><br></pre></td></tr></table></figure>
+
+<h2 id="xargs"><a href="#xargs" class="headerlink" title="xargs"></a>xargs</h2><p>这个实验我觉得要求给的有点绕，可能是之前不清楚xargs的作用吧，参考了一下别人的代码</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;kernel/types.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;kernel/param.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;user/user.h&quot;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&quot;kernel/fs.h&quot;</span></span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="keyword">define</span> MAXLEN 20</span></span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">(<span class="type">int</span> argc, <span class="type">char</span> * argv[])</span> &#123;</span><br><span class="line">    <span class="type">char</span>* command = argv[<span class="number">1</span>]; <span class="comment">//grep</span></span><br><span class="line">    <span class="type">char</span> params[MAXARG][MAXLEN];</span><br><span class="line">    <span class="type">char</span> buf;</span><br><span class="line">    <span class="type">char</span>* m[MAXARG];</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//外层循环每次执行一个指令</span></span><br><span class="line">    <span class="keyword">while</span> (<span class="number">1</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="type">int</span> count = argc - <span class="number">1</span>;<span class="comment">//</span></span><br><span class="line">        <span class="built_in">memset</span>(params,<span class="number">0</span>,MAXARG * MAXLEN);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">1</span>; i &lt; argc; i++)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="built_in">strcpy</span>(params[i<span class="number">-1</span>], argv[i]);</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="type">int</span> cursor = <span class="number">0</span>; <span class="comment">// 字符串中的位置</span></span><br><span class="line">		<span class="type">int</span> flag = <span class="number">0</span>; <span class="comment">// 空格前是否有参数</span></span><br><span class="line">		<span class="type">int</span> read_result;</span><br><span class="line"></span><br><span class="line">        <span class="comment">//内层循环每次读取一行指令m数组中</span></span><br><span class="line">        <span class="comment">//文件描述符0 是命令行读取</span></span><br><span class="line">        <span class="keyword">while</span> (((read_result = read(<span class="number">0</span>, &amp;buf, <span class="number">1</span>))) &gt; <span class="number">0</span> &amp;&amp; buf != <span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span> (buf == <span class="string">&#x27; &#x27;</span> &amp;&amp; flag == <span class="number">1</span>) &#123;</span><br><span class="line">				count++;</span><br><span class="line">				<span class="comment">// reset flag and p</span></span><br><span class="line">				cursor = <span class="number">0</span>;</span><br><span class="line">				flag = <span class="number">0</span>;</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">else</span> <span class="keyword">if</span> (buf != <span class="string">&#x27; &#x27;</span>) &#123;</span><br><span class="line">				params[count][cursor++] = buf;</span><br><span class="line">				flag = <span class="number">1</span>;</span><br><span class="line">			&#125;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// encounters EOF of input or \n</span></span><br><span class="line">		<span class="keyword">if</span> (read_result &lt;= <span class="number">0</span>) &#123;</span><br><span class="line">			<span class="keyword">break</span>;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">for</span> (<span class="type">int</span> i=<span class="number">0</span>; i&lt;MAXARG<span class="number">-1</span>; i++) &#123;</span><br><span class="line">			m[i] = params[i];</span><br><span class="line">		&#125;</span><br><span class="line">		m[MAXARG<span class="number">-1</span>] = <span class="number">0</span>;</span><br><span class="line">		<span class="keyword">if</span> (fork() == <span class="number">0</span>) &#123;</span><br><span class="line">			exec(command, m);</span><br><span class="line">			<span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			wait((<span class="type">int</span> *) <span class="number">0</span>);</span><br><span class="line">		&#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">0</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这里的关键是，传给xargs中argv[1]是实际要执行的命令，接着程序会循环执行每一条命令行中输入的命令。先把命令行参数依次复制到params数组中，然后再读取标准输入的内容，写入params接下来的位置中（上一步中，params写到params[argc-2],这步从argc-1开始写），读取到换行符或EOF后就fork出子进程执行命令。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1183,77 +1316,6 @@
 </ol>
 <h3 id="稳定性"><a href="#稳定性" class="headerlink" title="稳定性"></a>稳定性</h3><p>熔断：保护调用方，防止被调用的服务出现问题而影响到整个链路<br>限流：保护被调用方，防止大流量把服务压垮<br>超时控制：避免浪费资源在不可用节点上</p>
 
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/02/04/%E9%BB%91%E7%81%B0%E4%BA%A7%E7%9B%91%E6%8E%A7%E4%B8%8E%E9%98%B2%E5%BE%A1/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Wang Wenhui">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Gray's Blog">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="undefined | Gray's Blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2023/02/04/%E9%BB%91%E7%81%B0%E4%BA%A7%E7%9B%91%E6%8E%A7%E4%B8%8E%E9%98%B2%E5%BE%A1/" class="post-title-link" itemprop="url">黑灰产监控与防御</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2023-02-04 13:57:49" itemprop="dateCreated datePublished" datetime="2023-02-04T13:57:49+08:00">2023-02-04</time>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-	<div>
-		
-	</div>
-    <div class="post-body" itemprop="articleBody">
-          
       
     </div>
 
